@@ -1,8 +1,10 @@
 # Стратегия внедрения AI-рекомендаций для RetailPartnerX
 
+> **Сокращения:** [Глоссарий сокращений](Glossary.md) (T&M, FP, NDCG@10, SLA и др.)
+
 **Документ для согласования с заказчиком**  
 Роль: архитектор решений, компания-интегратор  
-Версия: 1.0 | Май 2026
+Версия: 1.0
 
 ---
 
@@ -211,21 +213,21 @@ flowchart LR
     M --> R[Production<br/>мес. 7–10]
 ```
 
-**План-график (ориентир ~10 мес.):**
+**План-график (недели и месяцы от T0, ~10 мес.):**
+
+*T0 — согласованный старт программы; календарные даты не используются.*
 
 ```mermaid
-gantt
+timeline
     title Roadmap AI-рекомендаций RetailPartnerX
-    dateFormat YYYY-MM-DD
-    axisFormat %b %Y
     section Discovery
-    Workshop и charter PoC     :d1, 2026-05-01, 14d
+        Нед. 0–2 : Workshop и charter PoC
     section PoC
-    Data audit, offline-метрики :poc, after d1, 42d
+        Нед. 3–8 : Data audit, offline-метрики
     section MVP
-    API, интеграция, A/B pilot  :mvp, after poc, 90d
+        Мес. 3–6 : API, интеграция, A/B pilot
     section Production
-    MLOps и масштабирование     :prod, after mvp, 60d
+        Мес. 7–10 : MLOps и масштабирование
 ```
 
 ---
