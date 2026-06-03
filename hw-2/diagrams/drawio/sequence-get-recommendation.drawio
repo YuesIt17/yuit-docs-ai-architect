@@ -1,0 +1,163 @@
+<mxfile host="app.diagrams.net" agent="hw-2-generator-js">
+  <diagram name="Sequence get recommendation" id="de20bb55-ba7e-4c84-84b8-5d854f2e135f">
+    <mxGraphModel dx="1111" dy="749" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1430" pageHeight="1026" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="3" parent="1" style="fillColor=none;strokeColor=#6c8ebf;dashed=1;dashPattern=1 4;html=1;" value="" vertex="1">
+          <mxGeometry height="780" width="2" x="103" y="82" as="geometry" />
+        </mxCell>
+        <mxCell id="4" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;align=center;fontStyle=1;" value="Frontend" vertex="1">
+          <mxGeometry height="44" width="108" x="180" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="5" parent="1" style="fillColor=none;strokeColor=#6c8ebf;dashed=1;dashPattern=1 4;html=1;" value="" vertex="1">
+          <mxGeometry height="780" width="2" x="233" y="82" as="geometry" />
+        </mxCell>
+        <mxCell id="6" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;align=center;fontStyle=1;" value="Backend" vertex="1">
+          <mxGeometry height="44" width="108" x="310" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="7" parent="1" style="fillColor=none;strokeColor=#6c8ebf;dashed=1;dashPattern=1 4;html=1;" value="" vertex="1">
+          <mxGeometry height="780" width="2" x="363" y="82" as="geometry" />
+        </mxCell>
+        <mxCell id="8" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;align=center;fontStyle=1;" value="Rec.&amp;#10;Controller" vertex="1">
+          <mxGeometry height="44" width="108" x="440" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="9" parent="1" style="fillColor=none;strokeColor=#6c8ebf;dashed=1;dashPattern=1 4;html=1;" value="" vertex="1">
+          <mxGeometry height="780" width="2" x="493" y="82" as="geometry" />
+        </mxCell>
+        <mxCell id="10" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;align=center;fontStyle=1;" value="Scenario&amp;#10;Router" vertex="1">
+          <mxGeometry height="44" width="108" x="570" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="11" parent="1" style="fillColor=none;strokeColor=#6c8ebf;dashed=1;dashPattern=1 4;html=1;" value="" vertex="1">
+          <mxGeometry height="780" width="2" x="623" y="82" as="geometry" />
+        </mxCell>
+        <mxCell id="12" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;align=center;fontStyle=1;" value="Candidate&amp;#10;Loader" vertex="1">
+          <mxGeometry height="44" width="108" x="700" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="13" parent="1" style="fillColor=none;strokeColor=#6c8ebf;dashed=1;dashPattern=1 4;html=1;" value="" vertex="1">
+          <mxGeometry height="780" width="2" x="753" y="82" as="geometry" />
+        </mxCell>
+        <mxCell id="14" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;align=center;fontStyle=1;" value="Ranker" vertex="1">
+          <mxGeometry height="44" width="108" x="830" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="15" parent="1" style="fillColor=none;strokeColor=#6c8ebf;dashed=1;dashPattern=1 4;html=1;" value="" vertex="1">
+          <mxGeometry height="780" width="2" x="883" y="82" as="geometry" />
+        </mxCell>
+        <mxCell id="16" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;align=center;fontStyle=1;" value="Response&amp;#10;Builder" vertex="1">
+          <mxGeometry height="44" width="108" x="960" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="17" parent="1" style="fillColor=none;strokeColor=#6c8ebf;dashed=1;dashPattern=1 4;html=1;" value="" vertex="1">
+          <mxGeometry height="780" width="2" x="1013" y="82" as="geometry" />
+        </mxCell>
+        <mxCell id="18" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;align=center;fontStyle=1;" value="SQL DB" vertex="1">
+          <mxGeometry height="44" width="108" x="1090" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="19" parent="1" style="fillColor=none;strokeColor=#6c8ebf;dashed=1;dashPattern=1 4;html=1;" value="" vertex="1">
+          <mxGeometry height="780" width="2" x="1143" y="82" as="geometry" />
+        </mxCell>
+        <mxCell id="20" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;align=center;fontStyle=1;" value="Redis" vertex="1">
+          <mxGeometry height="44" width="108" x="1220" y="30" as="geometry" />
+        </mxCell>
+        <mxCell id="21" parent="1" style="fillColor=none;strokeColor=#6c8ebf;dashed=1;dashPattern=1 4;html=1;" value="" vertex="1">
+          <mxGeometry height="780" width="2" x="1273" y="82" as="geometry" />
+        </mxCell>
+        <mxCell id="22" edge="1" parent="1" style="endArrow=block;html=1;strokeColor=#333333;fontColor=#333333;fontSize=11;verticalAlign=bottom;labelBackgroundColor=#ffffff;" value="Открывает карточку SKU-123">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="104" y="130" as="sourcePoint" />
+            <mxPoint x="234" y="130" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="23" edge="1" parent="1" style="endArrow=block;html=1;strokeColor=#333333;fontColor=#333333;fontSize=11;verticalAlign=bottom;labelBackgroundColor=#ffffff;" value="GET /products/SKU-123">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="234" y="178" as="sourcePoint" />
+            <mxPoint x="364" y="178" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="24" edge="1" parent="1" style="endArrow=block;html=1;strokeColor=#333333;fontColor=#333333;fontSize=11;verticalAlign=bottom;labelBackgroundColor=#ffffff;" value="POST /get_recommendation">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="364" y="226" as="sourcePoint" />
+            <mxPoint x="494" y="226" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="25" parent="1" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#fff2cc;strokeColor=#d6b656;size=14;align=left;" value="user_id, context=product_page&amp;#10;product_id, limit=10" vertex="1">
+          <mxGeometry height="50" width="200" x="374" y="262" as="geometry" />
+        </mxCell>
+        <mxCell id="26" edge="1" parent="1" style="endArrow=block;html=1;strokeColor=#333333;fontColor=#333333;fontSize=11;verticalAlign=bottom;labelBackgroundColor=#ffffff;" value="resolve(context)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="494" y="322" as="sourcePoint" />
+            <mxPoint x="624" y="322" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="27" edge="1" parent="1" style="endArrow=block;html=1;strokeColor=#333333;fontColor=#333333;fontSize=11;verticalAlign=bottom;labelBackgroundColor=#ffffff;" value="loadCandidates(user, product)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="624" y="370" as="sourcePoint" />
+            <mxPoint x="754" y="370" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="28" edge="1" parent="1" style="endArrow=block;html=1;strokeColor=#333333;fontColor=#333333;fontSize=11;verticalAlign=bottom;labelBackgroundColor=#ffffff;" value="GET precomputed SKU-123">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="754" y="418" as="sourcePoint" />
+            <mxPoint x="1274" y="418" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="29" edge="1" parent="1" style="endArrow=open;html=1;dashed=1;dashPattern=8 8;strokeColor=#333333;fontColor=#333333;fontSize=11;verticalAlign=bottom;labelBackgroundColor=#ffffff;" value="candidates[]">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1274" y="466" as="sourcePoint" />
+            <mxPoint x="754" y="466" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="30" edge="1" parent="1" style="endArrow=block;html=1;strokeColor=#333333;fontColor=#333333;fontSize=11;verticalAlign=bottom;labelBackgroundColor=#ffffff;" value="SELECT history, co-purchase">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="754" y="514" as="sourcePoint" />
+            <mxPoint x="1144" y="514" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="31" edge="1" parent="1" style="endArrow=open;html=1;dashed=1;dashPattern=8 8;strokeColor=#333333;fontColor=#333333;fontSize=11;verticalAlign=bottom;labelBackgroundColor=#ffffff;" value="rows">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1144" y="562" as="sourcePoint" />
+            <mxPoint x="754" y="562" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="32" edge="1" parent="1" style="endArrow=block;html=1;strokeColor=#333333;fontColor=#333333;fontSize=11;verticalAlign=bottom;labelBackgroundColor=#ffffff;" value="rank(candidates, user)">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="754" y="610" as="sourcePoint" />
+            <mxPoint x="884" y="610" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="33" edge="1" parent="1" style="endArrow=block;html=1;strokeColor=#333333;fontColor=#333333;fontSize=11;verticalAlign=bottom;labelBackgroundColor=#ffffff;" value="scored list">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="884" y="658" as="sourcePoint" />
+            <mxPoint x="1014" y="658" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="34" edge="1" parent="1" style="endArrow=open;html=1;dashed=1;dashPattern=8 8;strokeColor=#333333;fontColor=#333333;fontSize=11;verticalAlign=bottom;labelBackgroundColor=#ffffff;" value="recommendations[]">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="1014" y="706" as="sourcePoint" />
+            <mxPoint x="494" y="706" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="35" edge="1" parent="1" style="endArrow=open;html=1;dashed=1;dashPattern=8 8;strokeColor=#333333;fontColor=#333333;fontSize=11;verticalAlign=bottom;labelBackgroundColor=#ffffff;" value="200 OK">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="494" y="754" as="sourcePoint" />
+            <mxPoint x="364" y="754" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="36" edge="1" parent="1" style="endArrow=open;html=1;dashed=1;dashPattern=8 8;strokeColor=#333333;fontColor=#333333;fontSize=11;verticalAlign=bottom;labelBackgroundColor=#ffffff;" value="product + recommendations">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="364" y="802" as="sourcePoint" />
+            <mxPoint x="234" y="802" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="37" edge="1" parent="1" style="endArrow=open;html=1;dashed=1;dashPattern=8 8;strokeColor=#333333;fontColor=#333333;fontSize=11;verticalAlign=bottom;labelBackgroundColor=#ffffff;" value="С этим покупают">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="234" y="850" as="sourcePoint" />
+            <mxPoint x="104" y="850" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="zSFDcyxtj4mjshBvnAiQ-37" parent="1" style="rounded=0;whiteSpace=wrap;html=1;fillColor=#dae8fc;strokeColor=#6c8ebf;align=center;fontStyle=1;" value="User" vertex="1">
+          <mxGeometry height="44" width="108" x="50" y="30" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

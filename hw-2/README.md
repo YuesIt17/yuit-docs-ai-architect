@@ -2,6 +2,8 @@
 
 **Многоуровневое проектирование: от C4 Model до спецификации API**
 
+> **Сокращения:** [Глоссарий](Glossary.md) · **Артефакты:** [diagrams/](diagrams/) (Mermaid + Draw.io) · [openapi/recommendation-api.yaml](openapi/recommendation-api.yaml)
+
 ## Цель
 
 Спроектировать многоуровневую архитектуру AI-сервиса с использованием диаграмм C4 и спецификации API для согласования интеграции.
@@ -52,3 +54,14 @@
 
 - создавать диаграммы контекста и контейнеров (C1 и C2) для AI-решений, используя Draw.io или Structurizr;
 - разрабатывать LLD для отдельных контейнеров, включая C3-диаграммы и OpenAPI-спецификации API.
+
+## Артефакты решения (RetailPartnerX)
+
+| Артефакт | Путь |
+|----------|------|
+| Диаграммы Mermaid | [diagrams/mermaid/](diagrams/mermaid/) |
+| Диаграммы Draw.io | [diagrams/drawio/](diagrams/drawio/) — сохранить `.drawio` из [diagrams.net](https://app.diagrams.net/) |
+| OpenAPI | [openapi/recommendation-api.yaml](openapi/recommendation-api.yaml) |
+| Кейс hw-1 | [RetailPartnerX_AI_Strategy.md](../hw-1/RetailPartnerX_AI_Strategy.md) |
+
+**Примечание:** Sequence и API согласованы с C3 **recsys**; C3 RAG — future (см. [diagrams/README.md](diagrams/README.md)).
