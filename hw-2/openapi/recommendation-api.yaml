@@ -28,6 +28,8 @@ paths:
         Вызывается Backend при отображении блока рекомендаций
         (карточка товара, чекаут). Синхронный запрос, p95 latency target 250 ms.
       operationId: getRecommendation
+      security:
+        - bearerAuth: []
       requestBody:
         required: true
         content:
@@ -38,14 +40,14 @@ paths:
               productPage:
                 summary: Карточка товара
                 value:
-                  user_id: "usr-7f3a2b1c"
+                  user_id: "1002847"
                   context: product_page
                   product_id: "SKU-123"
                   limit: 10
               checkout:
                 summary: Чекаут
                 value:
-                  user_id: "usr-7f3a2b1c"
+                  user_id: "1002847"
                   context: checkout
                   product_id: null
                   limit: 12
@@ -59,7 +61,7 @@ paths:
               examples:
                 success:
                   value:
-                    request_id: "req-9c4e1a0d"
+                    request_id: "f47ac10b-58cc-4372-a567-0e02b2c3d479"
                     recommendations:
                       - sku_id: "SKU-456"
                         score: 0.92
@@ -68,7 +70,7 @@ paths:
                         score: 0.87
                         title: "Лук репчатый 500 г"
         '400':
-          description: Невалидный запрос
+          description: Невалидный запрос — некорректные или отсутствующие поля
           content:
             application/json:
               schema:
@@ -77,9 +79,24 @@ paths:
                 invalidContext:
                   value:
                     code: INVALID_CONTEXT
-                    message: "context must be product_page or checkout"
+                    message: "Поле context должно быть product_page или checkout"
+                missingProductId:
+                  value:
+                    code: MISSING_PRODUCT_ID
+                    message: "Для context=product_page обязателен product_id"
+        '401':
+          description: Не авторизован — отсутствует или недействителен токен доступа
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                unauthorized:
+                  value:
+                    code: UNAUTHORIZED
+                    message: "Требуется действительный Bearer-токен или API-ключ"
         '404':
-          description: Пользователь или товар не найден
+          description: Не найдено — пользователь или товар отсутствует в каталоге
           content:
             application/json:
               schema:
@@ -88,9 +105,13 @@ paths:
                 userNotFound:
                   value:
                     code: USER_NOT_FOUND
-                    message: "user_id not found"
+                    message: "Пользователь с указанным user_id не найден"
+                productNotFound:
+                  value:
+                    code: PRODUCT_NOT_FOUND
+                    message: "Товар с указанным product_id не найден"
         '503':
-          description: AI Service недоступен или модель не готова
+          description: Сервис недоступен — пайплайн ранжирования или LLM временно недоступен
           content:
             application/json:
               schema:
@@ -99,9 +120,9 @@ paths:
                 serviceUnavailable:
                   value:
                     code: SERVICE_UNAVAILABLE
-                    message: "ranking pipeline temporarily unavailable"
+                    message: "Пайплайн рекомендаций временно недоступен, повторите запрос позже"
         '500':
-          description: Внутренняя ошибка
+          description: Внутренняя ошибка сервера
           content:
             application/json:
               schema:
@@ -110,9 +131,15 @@ paths:
                 internal:
                   value:
                     code: INTERNAL_ERROR
-                    message: "unexpected error"
+                    message: "Внутренняя ошибка AI Service"
 
 components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Токен сервис-сервис (Backend → AI Service)
   schemas:
     RecommendationContext:
       type: string
@@ -130,8 +157,8 @@ components:
       properties:
         user_id:
           type: string
-          description: Идентификатор клиента (loyalty_id или guest token)
-          example: "usr-7f3a2b1c"
+          description: Номер карты лояльности или guest-токен
+          example: "1002847"
         context:
           $ref: '#/components/schemas/RecommendationContext'
         product_id:
@@ -174,7 +201,8 @@ components:
       properties:
         request_id:
           type: string
-          description: Correlation ID для логов и трассировки
+          description: UUID запроса для логов и трассировки
+          example: "f47ac10b-58cc-4372-a567-0e02b2c3d479"
         recommendations:
           type: array
           items:
@@ -188,5 +216,7 @@ components:
       properties:
         code:
           type: string
+          description: Машиночитаемый код ошибки
         message:
           type: string
+          description: Описание ошибки для логов и отображения оператору
