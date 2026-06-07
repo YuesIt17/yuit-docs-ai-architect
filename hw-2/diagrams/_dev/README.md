@@ -13,7 +13,7 @@
 ```bash
 node tools/drawio-mcp/src/cli.mjs \
   --spec hw-2/diagrams/_dev/specs/c1-context.json \
-  --output hw-2/diagrams/drawio/c1-context.drawio
+  --output hw-2/diagrams/c1-context.drawio
 ```
 
 Конвенции: [tools/drawio-mcp/CONVENTIONS.md](../../../tools/drawio-mcp/CONVENTIONS.md).

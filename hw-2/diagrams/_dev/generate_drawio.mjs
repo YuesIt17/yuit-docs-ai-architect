@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * hw-2 dev helper — specs in _dev/specs, submission *.drawio in ../drawio/.
+ * hw-2 dev helper — specs in _dev/specs, submission *.drawio in ../ (diagrams/).
  * Frozen files are not overwritten (see specs/manifest.json).
  */
 import { spawnSync } from "node:child_process";

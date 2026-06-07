@@ -2,7 +2,7 @@
 
 **Многоуровневое проектирование: от C4 Model до спецификации API**
 
-> **Сокращения:** [Глоссарий](Glossary.md) · **Артефакты:** [diagrams/drawio/](diagrams/drawio/) · [openapi/recommendation-api.yaml](openapi/recommendation-api.yaml)
+> **Сокращения:** [Глоссарий](Glossary.md) · **Артефакты:** [diagrams/](diagrams/) · [openapi/recommendation-api.yaml](openapi/recommendation-api.yaml)
 
 ## Цель
 
@@ -59,7 +59,7 @@
 
 | Артефакт | Путь |
 |----------|------|
-| Диаграммы Draw.io | [diagrams/drawio/](diagrams/drawio/) — C1, C2, C3, Sequence |
+| Диаграммы Draw.io | [diagrams/](diagrams/) — C1, C2, C3, Sequence |
 | OpenAPI | [openapi/recommendation-api.yaml](openapi/recommendation-api.yaml) |
 | Кейс hw-1 | [RetailPartnerX_AI_Strategy.md](../hw-1/RetailPartnerX_AI_Strategy.md) |
 | Состав и связность | [diagrams/README.md](diagrams/README.md) |

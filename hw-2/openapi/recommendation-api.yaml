@@ -3,7 +3,7 @@ info:
   title: RetailPartnerX AI Recommendation Service API
   description: |
     Контракт интеграции Backend → AI Service для персональных рекомендаций.
-    Согласован с Sequence в diagrams/drawio/sequence-get-recommendation.drawio.
+    Согласован с Sequence в diagrams/sequence-get-recommendation.drawio.
   version: 1.0.0
   contact:
     name: RetailPartnerX Integration
@@ -26,7 +26,9 @@ paths:
       summary: Получить ранжированный список рекомендаций
       description: |
         Вызывается Backend при отображении блока рекомендаций
-        (карточка товара, чекаут). Синхронный запрос, p95 latency target 250 ms.
+        (карточка товара, чекаут). Синхронный запрос; целевая метрика
+        эксплуатации — p95 latency (см. NFR в стратегии hw-1); числовой
+        порог SLO согласуется с заказчиком после замеров MVP.
       operationId: getRecommendation
       security:
         - bearerAuth: []
