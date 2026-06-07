@@ -1,0 +1,20 @@
+{
+  "name": "drawio-mcp",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "description": "MCP server and CLI for generating Draw.io diagrams from JSON specs",
+  "bin": {
+    "drawio-mcp": "./src/index.mjs",
+    "drawio-gen": "./src/cli.mjs"
+  },
+  "scripts": {
+    "start": "node src/index.mjs",
+    "generate": "node src/cli.mjs",
+    "generate:hw-2": "node src/cli.mjs --hw hw-2"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "zod": "^3.24.2"
+  }
+}

@@ -1,0 +1,96 @@
+{
+  "title": "C1 Context",
+  "pageWidth": 1060,
+  "pageHeight": 520,
+  "nodes": [
+    {
+      "id": "shopper",
+      "label": "Покупатель\nСайт / приложение",
+      "style": "person",
+      "x": 40,
+      "y": 200,
+      "w": 100,
+      "h": 140
+    },
+    {
+      "id": "recsys",
+      "label": "Система персональных\nрекомендаций\nРанжирование SKU",
+      "style": "system",
+      "x": 400,
+      "y": 220,
+      "w": 220,
+      "h": 100
+    },
+    {
+      "id": "pim",
+      "label": "PIM\nКаталог, SKU",
+      "style": "external",
+      "x": 860,
+      "y": 110,
+      "w": 160,
+      "h": 70
+    },
+    {
+      "id": "cdp",
+      "label": "CDP / CRM\nПрофиль, события",
+      "style": "external",
+      "x": 860,
+      "y": 235,
+      "w": 160,
+      "h": 70
+    },
+    {
+      "id": "loyalty",
+      "label": "Программа лояльности",
+      "style": "external",
+      "x": 860,
+      "y": 370,
+      "w": 160,
+      "h": 70
+    }
+  ],
+  "edges": [
+    {
+      "from": "shopper",
+      "to": "recsys",
+      "label": "Просмотр рекомендаций [HTTPS]",
+      "exitX": 1,
+      "exitY": 0.5,
+      "entryX": 0,
+      "entryY": 0.5,
+      "labelOffset": { "x": 0, "y": -12 }
+    },
+    {
+      "from": "recsys",
+      "to": "pim",
+      "label": "Каталог и остатки [API]",
+      "exitX": 1,
+      "exitY": 0.25,
+      "entryX": 0,
+      "entryY": 0.5,
+      "waypoints": [{ "x": 740, "y": 145 }],
+      "labelOffset": { "x": 0, "y": -12 }
+    },
+    {
+      "from": "recsys",
+      "to": "cdp",
+      "label": "События и профиль [API/stream]",
+      "exitX": 1,
+      "exitY": 0.5,
+      "entryX": 0,
+      "entryY": 0.5,
+      "labelOffset": { "x": 0, "y": -12 }
+    },
+    {
+      "from": "recsys",
+      "to": "loyalty",
+      "label": "Идентификация [API]",
+      "exitX": 1,
+      "exitY": 0.75,
+      "entryX": 0,
+      "entryY": 0.5,
+      "waypoints": [{ "x": 740, "y": 405 }],
+      "labelOffset": { "x": 0, "y": -12 }
+    }
+  ]
+}

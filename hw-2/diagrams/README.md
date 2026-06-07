@@ -1,40 +1,51 @@
 # Диаграммы hw-2 — RetailPartnerX
 
-Архитектура MVP: персональные рекомендации на **карточке товара**. Кейс: [RetailPartnerX_AI_Strategy.md](../hw-1/RetailPartnerX_AI_Strategy.md).
+MVP: персональные рекомендации на **карточке товара**. Кейс: [RetailPartnerX_AI_Strategy.md](../hw-1/RetailPartnerX_AI_Strategy.md) · термины: [Glossary.md](../Glossary.md).
 
-| Папка | Инструмент | Назначение |
-|-------|------------|------------|
-| [mermaid/](mermaid/) | **C4** + `sequenceDiagram` в `.md` | [mermaid/README.md](mermaid/README.md), [PREVIEW.md](mermaid/PREVIEW.md) |
-| [drawio/](drawio/) | [diagrams.net](https://app.diagrams.net/) | C4-нотация для сдачи, синхрон с GitHub |
+## Для сдачи
 
-**Глоссарий:** [Glossary.md](../Glossary.md)
+| Артефакт | Путь |
+|----------|------|
+| **Draw.io** (C1, C2, C3, Sequence) | [drawio/](drawio/) — 4 файла `.drawio` |
+| **OpenAPI** | [openapi/recommendation-api.yaml](../openapi/recommendation-api.yaml) |
 
-## Состав диаграмм
+### Файлы Draw.io
 
-| Файл | Уровень | Роль |
-|------|---------|------|
-| `c1-context` | C1 | Границы системы и внешние интеграции |
-| `c2-containers` | C2 | Frontend, Backend, AI Service, SQL DB, Vector DB |
-| `c3-ai-service-recsys` | C3 | **Основной** LLD: recsys (MVP / PoC) |
-| `c3-ai-service-rag-future` | C3 | **Future:** RAG + LLM (Prod / genAI) |
-| `sequence-get-recommendation` | Sequence | Сценарий «запрос рекомендации» |
+| Файл | Уровень |
+|------|---------|
+| [c1-context.drawio](drawio/c1-context.drawio) | C1 — контекст |
+| [c2-containers.drawio](drawio/c2-containers.drawio) | C2 — контейнеры |
+| [c3-ai-service-recsys.drawio](drawio/c3-ai-service-recsys.drawio) | C3 — AI Service (recsys + LLM) |
+| [sequence-get-recommendation.drawio](drawio/sequence-get-recommendation.drawio) | Sequence — запрос рекомендации |
 
-## Связность (критерии ДЗ)
+Открыть в [diagrams.net](https://app.diagrams.net/) или приложении Draw.io. Ссылку на `hw-2/diagrams/drawio/` + OpenAPI — в форму сдачи.
 
-**Sequence и OpenAPI** согласованы только с **recsys** (`c3-ai-service-recsys`):
+## Связность (проверить перед отправкой)
 
-- C3: Controller → Router → Loader → Ranker → Response Builder
-- Sequence: те же компоненты + Frontend, Backend, SQL DB, Redis
-- API: `POST /get_recommendation` — [openapi/recommendation-api.yaml](../openapi/recommendation-api.yaml)
+**C3 recsys + Sequence + OpenAPI** — одна цепочка MVP:
 
-RAG-схема — отдельный этап; не используется в Sequence/API MVP.
+- C3: Controller → Router → Loader → Ranker → RAG Manager → Prompt Factory → LLM Client → Response Builder (+ SQL DB, Redis, Vector DB)
+- Sequence: те же компоненты AI Service + Frontend, Backend, SQL DB, Redis, Vector DB
+- API: `POST /get_recommendation` — поля `user_id`, `context`, `product_id`, `limit`; ответ `recommendations[]` (`sku_id`, `score`, `title`); ошибки 400, 404, 503, 500
 
-## Чеклист связности
+| C3 | Sequence |
+|----|----------|
+| Recommendation Controller | Rec. Controller |
+| Scenario Router | Scenario Router |
+| Candidate Loader | Candidate Loader |
+| Ranker | Ranker |
+| RAG Manager | RAG Manager |
+| Prompt Template Factory | Prompt Factory |
+| LLM Client | LLM Client |
+| Response Builder | Response Builder |
+| SQL DB / Redis / Vector DB | SQL DB / Redis / Vector DB |
 
-[CONSISTENCY-CHECKLIST.md](CONSISTENCY-CHECKLIST.md)
+**C2:** Frontend, Backend, AI Service, SQL DB, Vector DB; Backend → AI Service подписано `get_recommendation`; компоненты C3 не рисуют на C2.
 
-## Сдача
+## Для себя (не сдавать)
 
-- Диаграммы: ссылка на `hw-2/diagrams/drawio/` (после сохранения `.drawio` из diagrams.net)
-- Дополнительно: `hw-2/diagrams/mermaid/` для превью в репозитории
-- OpenAPI: [openapi/recommendation-api.yaml](../openapi/recommendation-api.yaml)
+| Папка | Назначение |
+|-------|------------|
+| [_dev/](_dev/) | JSON-specs, генератор, шаблоны |
+| [_dev/templates/](_dev/templates/) | Пример «чистого RAG» из формулировки ДЗ (не входит в MVP) |
+| [tools/drawio-mcp/](../../tools/drawio-mcp/) | MCP/CLI перегенерации layout |

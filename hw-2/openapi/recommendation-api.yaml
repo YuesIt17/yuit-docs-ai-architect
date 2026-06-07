@@ -3,7 +3,7 @@ info:
   title: RetailPartnerX AI Recommendation Service API
   description: |
     Контракт интеграции Backend → AI Service для персональных рекомендаций.
-    Согласован с Sequence в diagrams/mermaid/sequence-get-recommendation.md.
+    Согласован с Sequence в diagrams/drawio/sequence-get-recommendation.drawio.
   version: 1.0.0
   contact:
     name: RetailPartnerX Integration

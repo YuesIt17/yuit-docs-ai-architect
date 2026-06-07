@@ -1,0 +1,146 @@
+{
+  "title": "C3 AI Service RAG future",
+  "pageWidth": 980,
+  "pageHeight": 480,
+  "nodes": [
+    {
+      "id": "boundary",
+      "label": "AI Service — RAG future Prod",
+      "style": "boundary",
+      "x": 30,
+      "y": 50,
+      "w": 1200,
+      "h": 380
+    },
+    {
+      "id": "ctrl",
+      "label": "Controller",
+      "style": "component",
+      "x": 80,
+      "y": 100,
+      "w": 180,
+      "h": 75,
+      "parent": "boundary"
+    },
+    {
+      "id": "rag",
+      "label": "RAG Manager",
+      "style": "component",
+      "x": 380,
+      "y": 100,
+      "w": 170,
+      "h": 75,
+      "parent": "boundary"
+    },
+    {
+      "id": "prompts",
+      "label": "Prompt Template\nFactory",
+      "style": "component",
+      "x": 688,
+      "y": 100,
+      "w": 172,
+      "h": 75,
+      "parent": "boundary"
+    },
+    {
+      "id": "llm",
+      "label": "LLM Client",
+      "style": "component",
+      "x": 980,
+      "y": 100,
+      "w": 161,
+      "h": 75,
+      "parent": "boundary"
+    },
+    {
+      "id": "vec",
+      "label": "Vector DB",
+      "style": "db",
+      "x": 363,
+      "y": 260,
+      "w": 205,
+      "h": 85,
+      "parent": "boundary"
+    },
+    {
+      "id": "sql",
+      "label": "SQL DB",
+      "style": "db",
+      "x": 130,
+      "y": 320,
+      "w": 140,
+      "h": 85
+    }
+  ],
+  "edges": [
+    {
+      "from": "ctrl",
+      "to": "rag",
+      "label": "Контекст",
+      "parent": "boundary",
+      "exitX": 1,
+      "exitY": 0.5,
+      "entryX": 0,
+      "entryY": 0.5,
+      "labelOffset": { "x": 0, "y": -12 }
+    },
+    {
+      "from": "rag",
+      "to": "prompts",
+      "label": "Контекст",
+      "parent": "boundary",
+      "exitX": 1,
+      "exitY": 0.5,
+      "entryX": 0,
+      "entryY": 0.5,
+      "labelOffset": { "x": 0, "y": -12 }
+    },
+    {
+      "from": "prompts",
+      "to": "llm",
+      "label": "Prompt",
+      "parent": "boundary",
+      "exitX": 1,
+      "exitY": 0.5,
+      "entryX": 0,
+      "entryY": 0.5,
+      "labelOffset": { "x": 0, "y": -12 }
+    },
+    {
+      "from": "llm",
+      "to": "ctrl",
+      "label": "Ответ",
+      "parent": "boundary",
+      "exitX": 0.5,
+      "exitY": 0,
+      "entryX": 0.5,
+      "entryY": 0,
+      "waypoints": [
+        { "x": 1060, "y": 62 },
+        { "x": 170, "y": 62 }
+      ],
+      "labelOffset": { "x": 0, "y": -12 }
+    },
+    {
+      "from": "rag",
+      "to": "vec",
+      "label": "Similarity search",
+      "parent": "boundary",
+      "exitX": 0.5,
+      "exitY": 1,
+      "entryX": 0.5,
+      "entryY": 0,
+      "labelOffset": { "x": 12, "y": 0 }
+    },
+    {
+      "from": "ctrl",
+      "to": "sql",
+      "label": "Логирование",
+      "exitX": 0.5,
+      "exitY": 1,
+      "entryX": 0.5,
+      "entryY": 0,
+      "labelOffset": { "x": -12, "y": 0 }
+    }
+  ]
+}

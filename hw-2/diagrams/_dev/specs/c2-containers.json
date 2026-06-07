@@ -1,0 +1,165 @@
+{
+  "title": "C2 Containers",
+  "pageWidth": 1240,
+  "pageHeight": 620,
+  "nodes": [
+    {
+      "id": "shopper",
+      "label": "Покупатель",
+      "style": "person",
+      "x": 30,
+      "y": 265,
+      "w": 90,
+      "h": 120
+    },
+    {
+      "id": "boundary",
+      "label": "RetailPartnerX E-commerce",
+      "style": "boundary",
+      "x": 210,
+      "y": 190,
+      "w": 780,
+      "h": 440
+    },
+    {
+      "id": "fe",
+      "label": "Frontend\nWeb, iOS, Android",
+      "style": "container",
+      "x": 40,
+      "y": 88,
+      "w": 160,
+      "h": 79,
+      "parent": "boundary"
+    },
+    {
+      "id": "be",
+      "label": "Backend\nBFF, корзина",
+      "style": "container",
+      "x": 260,
+      "y": 88,
+      "w": 160,
+      "h": 79,
+      "parent": "boundary"
+    },
+    {
+      "id": "ai",
+      "label": "AI Service\nРекомендации",
+      "style": "container",
+      "x": 585,
+      "y": 88,
+      "w": 160,
+      "h": 79,
+      "parent": "boundary"
+    },
+    {
+      "id": "sql",
+      "label": "SQL DB\nPostgreSQL",
+      "style": "db",
+      "x": 260,
+      "y": 282,
+      "w": 150,
+      "h": 84,
+      "parent": "boundary"
+    },
+    {
+      "id": "vec",
+      "label": "Vector DB\nопционально / RAG future",
+      "style": "db",
+      "x": 580,
+      "y": 282,
+      "w": 170,
+      "h": 84,
+      "parent": "boundary"
+    },
+    {
+      "id": "pim",
+      "label": "PIM\nКаталог",
+      "style": "external",
+      "x": 475,
+      "y": 50,
+      "w": 150,
+      "h": 70
+    }
+  ],
+  "edges": [
+    {
+      "from": "shopper",
+      "to": "fe",
+      "label": "HTTPS",
+      "entryX": 0,
+      "entryY": 0.5,
+      "waypoints": [{ "x": 185, "y": 318 }],
+      "labelOffset": { "x": 0, "y": -12 }
+    },
+    {
+      "from": "fe",
+      "to": "be",
+      "label": "REST",
+      "parent": "boundary",
+      "exitX": 1,
+      "exitY": 0.5,
+      "entryX": 0,
+      "entryY": 0.5,
+      "labelOffset": { "x": 0, "y": -12 }
+    },
+    {
+      "from": "be",
+      "to": "ai",
+      "label": "get_recommendation",
+      "parent": "boundary",
+      "exitX": 1,
+      "exitY": 0.5,
+      "entryX": 0,
+      "entryY": 0.5,
+      "labelOffset": { "x": 0, "y": -12 }
+    },
+    {
+      "from": "be",
+      "to": "sql",
+      "label": "SQL",
+      "parent": "boundary",
+      "exitX": 0.5,
+      "exitY": 1,
+      "entryX": 0.5,
+      "entryY": 0,
+      "waypoints": [{ "x": 335, "y": 167 }],
+      "labelOffset": { "x": 0, "y": -10 }
+    },
+    {
+      "from": "ai",
+      "to": "sql",
+      "label": "SQL",
+      "parent": "boundary",
+      "exitX": 0.25,
+      "exitY": 1,
+      "entryX": 0.75,
+      "entryY": 0,
+      "labelOffset": { "x": 0, "y": -10 }
+    },
+    {
+      "from": "ai",
+      "to": "vec",
+      "label": "опционально",
+      "parent": "boundary",
+      "exitX": 0.5,
+      "exitY": 1,
+      "entryX": 0.5,
+      "entryY": 0,
+      "labelOffset": { "x": 0, "y": -10 }
+    },
+    {
+      "from": "be",
+      "to": "pim",
+      "label": "REST",
+      "exitX": 0.5,
+      "exitY": 0,
+      "entryX": 0.5,
+      "entryY": 1,
+      "waypoints": [
+        { "x": 550, "y": 165 },
+        { "x": 550, "y": 120 }
+      ],
+      "labelOffset": { "x": 0, "y": -12 }
+    }
+  ]
+}

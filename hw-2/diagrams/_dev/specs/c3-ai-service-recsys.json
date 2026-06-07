@@ -1,0 +1,262 @@
+{
+  "title": "C3 AI Service recsys + LLM",
+  "pageWidth": 1280,
+  "pageHeight": 520,
+  "nodes": [
+    {
+      "id": "boundary",
+      "label": "AI Service — рекомендации + LLM",
+      "style": "boundary",
+      "x": 20,
+      "y": 20,
+      "w": 1240,
+      "h": 480
+    },
+    {
+      "id": "ctrl",
+      "label": "Recommendation Controller\nREST API",
+      "style": "component",
+      "x": 40,
+      "y": 55,
+      "w": 150,
+      "h": 70,
+      "parent": "boundary"
+    },
+    {
+      "id": "router",
+      "label": "Scenario Router",
+      "style": "component",
+      "x": 210,
+      "y": 55,
+      "w": 140,
+      "h": 70,
+      "parent": "boundary"
+    },
+    {
+      "id": "loader",
+      "label": "Candidate Loader",
+      "style": "component",
+      "x": 370,
+      "y": 55,
+      "w": 150,
+      "h": 70,
+      "parent": "boundary"
+    },
+    {
+      "id": "ranker",
+      "label": "Ranker\nML pre-score",
+      "style": "component",
+      "x": 540,
+      "y": 55,
+      "w": 120,
+      "h": 70,
+      "parent": "boundary"
+    },
+    {
+      "id": "rag",
+      "label": "RAG Manager",
+      "style": "component",
+      "x": 680,
+      "y": 55,
+      "w": 140,
+      "h": 70,
+      "parent": "boundary"
+    },
+    {
+      "id": "prompts",
+      "label": "Prompt Template\nFactory",
+      "style": "component",
+      "x": 840,
+      "y": 55,
+      "w": 160,
+      "h": 70,
+      "parent": "boundary"
+    },
+    {
+      "id": "llm",
+      "label": "LLM Client",
+      "style": "component",
+      "x": 1020,
+      "y": 55,
+      "w": 130,
+      "h": 70,
+      "parent": "boundary"
+    },
+    {
+      "id": "builder",
+      "label": "Response Builder",
+      "style": "component",
+      "x": 520,
+      "y": 250,
+      "w": 160,
+      "h": 70,
+      "parent": "boundary"
+    },
+    {
+      "id": "sql",
+      "label": "SQL DB",
+      "style": "db",
+      "x": 350,
+      "y": 360,
+      "w": 140,
+      "h": 80,
+      "parent": "boundary"
+    },
+    {
+      "id": "cache",
+      "label": "Redis Cache",
+      "style": "db",
+      "x": 530,
+      "y": 360,
+      "w": 140,
+      "h": 80,
+      "parent": "boundary"
+    },
+    {
+      "id": "vec",
+      "label": "Vector DB",
+      "style": "db",
+      "x": 680,
+      "y": 360,
+      "w": 140,
+      "h": 80,
+      "parent": "boundary"
+    }
+  ],
+  "edges": [
+    {
+      "from": "ctrl",
+      "to": "router",
+      "label": "Маршрутизация",
+      "parent": "boundary",
+      "exitX": 1,
+      "exitY": 0.5,
+      "entryX": 0,
+      "entryY": 0.5,
+      "labelOffset": { "x": 0, "y": -12 }
+    },
+    {
+      "from": "router",
+      "to": "loader",
+      "label": "Кандидаты",
+      "parent": "boundary",
+      "exitX": 1,
+      "exitY": 0.5,
+      "entryX": 0,
+      "entryY": 0.5,
+      "labelOffset": { "x": 0, "y": -12 }
+    },
+    {
+      "from": "loader",
+      "to": "ranker",
+      "label": "Кандидаты",
+      "parent": "boundary",
+      "exitX": 1,
+      "exitY": 0.5,
+      "entryX": 0,
+      "entryY": 0.5,
+      "labelOffset": { "x": 0, "y": -12 }
+    },
+    {
+      "from": "router",
+      "to": "rag",
+      "label": "Контекст",
+      "parent": "boundary",
+      "exitX": 0.75,
+      "exitY": 1,
+      "entryX": 0,
+      "entryY": 0.5,
+      "waypoints": [{ "x": 280, "y": 200 }, { "x": 650, "y": 200 }],
+      "labelOffset": { "x": 0, "y": -12 }
+    },
+    {
+      "from": "ranker",
+      "to": "prompts",
+      "label": "Top-K",
+      "parent": "boundary",
+      "exitX": 1,
+      "exitY": 0.5,
+      "entryX": 0,
+      "entryY": 0.5,
+      "labelOffset": { "x": 0, "y": -12 }
+    },
+    {
+      "from": "rag",
+      "to": "prompts",
+      "label": "Контекст",
+      "parent": "boundary",
+      "exitX": 1,
+      "exitY": 0.5,
+      "entryX": 0,
+      "entryY": 0.5,
+      "waypoints": [{ "x": 820, "y": 90 }],
+      "labelOffset": { "x": 0, "y": -12 }
+    },
+    {
+      "from": "rag",
+      "to": "vec",
+      "label": "Similarity search",
+      "parent": "boundary",
+      "exitX": 0.5,
+      "exitY": 1,
+      "entryX": 0.5,
+      "entryY": 0,
+      "labelOffset": { "x": 12, "y": 0 }
+    },
+    {
+      "from": "prompts",
+      "to": "llm",
+      "label": "Prompt",
+      "parent": "boundary",
+      "exitX": 1,
+      "exitY": 0.5,
+      "entryX": 0,
+      "entryY": 0.5,
+      "labelOffset": { "x": 0, "y": -12 }
+    },
+    {
+      "from": "llm",
+      "to": "builder",
+      "label": "Scored list",
+      "parent": "boundary",
+      "exitX": 0.5,
+      "exitY": 1,
+      "entryX": 1,
+      "entryY": 0.5,
+      "waypoints": [{ "x": 1085, "y": 285 }],
+      "labelOffset": { "x": 10, "y": 0 }
+    },
+    {
+      "from": "builder",
+      "to": "ctrl",
+      "label": "JSON response",
+      "parent": "boundary",
+      "exitX": 0,
+      "exitY": 0.5,
+      "waypoints": [{ "x": 115, "y": 285 }],
+      "labelOffset": { "x": 0, "y": 0 }
+    },
+    {
+      "from": "loader",
+      "to": "sql",
+      "label": "Read",
+      "parent": "boundary",
+      "exitX": 0.35,
+      "exitY": 1,
+      "entryX": 0.5,
+      "entryY": 0,
+      "labelOffset": { "x": -10, "y": 0 }
+    },
+    {
+      "from": "loader",
+      "to": "cache",
+      "label": "Read",
+      "parent": "boundary",
+      "exitX": 0.65,
+      "exitY": 1,
+      "entryX": 0.5,
+      "entryY": 0,
+      "labelOffset": { "x": 10, "y": 0 }
+    }
+  ]
+}

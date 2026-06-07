@@ -1,0 +1,62 @@
+{
+  "title": "Sequence get recommendation",
+  "pageWidth": 1920,
+  "pageHeight": 1280,
+  "sequence": {
+    "colWidth": 120,
+    "boxWidth": 100,
+    "startX": 40,
+    "headerY": 30,
+    "headerH": 44,
+    "msgY0": 130,
+    "msgStep": 46,
+    "lifelineHeight": 900,
+    "participants": [
+      { "id": "shopper", "label": "Покупатель", "type": "person" },
+      { "id": "frontend", "label": "Frontend", "type": "lifeline" },
+      { "id": "backend", "label": "Backend", "type": "lifeline" },
+      { "id": "controller", "label": "Rec.\nController", "type": "lifeline" },
+      { "id": "router", "label": "Scenario\nRouter", "type": "lifeline" },
+      { "id": "loader", "label": "Candidate\nLoader", "type": "lifeline" },
+      { "id": "ranker", "label": "Ranker", "type": "lifeline" },
+      { "id": "rag", "label": "RAG\nManager", "type": "lifeline" },
+      { "id": "prompts", "label": "Prompt\nFactory", "type": "lifeline" },
+      { "id": "llm", "label": "LLM\nClient", "type": "lifeline" },
+      { "id": "builder", "label": "Response\nBuilder", "type": "lifeline" },
+      { "id": "sql", "label": "SQL DB", "type": "lifeline" },
+      { "id": "redis", "label": "Redis", "type": "lifeline" },
+      { "id": "vec", "label": "Vector DB", "type": "lifeline" }
+    ],
+    "messages": [
+      { "from": 0, "to": 1, "label": "Открывает карточку SKU-123" },
+      { "from": 1, "to": 2, "label": "GET /products/SKU-123" },
+      { "from": 2, "to": 3, "label": "POST /get_recommendation" },
+      { "from": 3, "to": 4, "label": "resolve(context)" },
+      { "from": 4, "to": 7, "label": "context(product_id)" },
+      { "from": 7, "to": 13, "label": "similarity search" },
+      { "from": 13, "to": 7, "label": "chunks[]", "return": true },
+      { "from": 4, "to": 5, "label": "loadCandidates(user, product)" },
+      { "from": 5, "to": 12, "label": "GET precomputed SKU-123" },
+      { "from": 12, "to": 5, "label": "candidates[]", "return": true },
+      { "from": 5, "to": 11, "label": "SELECT history, co-purchase" },
+      { "from": 11, "to": 5, "label": "rows", "return": true },
+      { "from": 5, "to": 6, "label": "rank(candidates, user)" },
+      { "from": 6, "to": 8, "label": "Top-K" },
+      { "from": 7, "to": 8, "label": "context" },
+      { "from": 8, "to": 9, "label": "prompt" },
+      { "from": 9, "to": 10, "label": "scored list" },
+      { "from": 10, "to": 3, "label": "recommendations[]", "return": true },
+      { "from": 3, "to": 2, "label": "200 OK", "return": true },
+      { "from": 2, "to": 1, "label": "product + recommendations", "return": true },
+      { "from": 1, "to": 0, "label": "С этим покупают", "return": true }
+    ],
+    "notes": [
+      {
+        "afterMessage": 2,
+        "label": "user_id, context=product_page\nproduct_id, limit=10",
+        "w": 200,
+        "h": 50
+      }
+    ]
+  }
+}

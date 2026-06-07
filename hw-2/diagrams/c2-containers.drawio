@@ -1,14 +1,14 @@
 <mxfile host="65bd71144e">
     <diagram name="C2 Containers" id="84515f5b-d249-4d82-b741-c8f15fe3e2c3">
-        <mxGraphModel dx="670" dy="374" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1240" pageHeight="620" math="0" shadow="0">
+        <mxGraphModel dx="1007" dy="638" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1240" pageHeight="620" math="0" shadow="0">
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
                 <mxCell id="2" value="Покупатель" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#08427B;fontColor=#ffffff;" parent="1" vertex="1">
-                    <mxGeometry x="30" y="265" width="90" height="120" as="geometry"/>
+                    <mxGeometry x="30" y="267.6" width="90" height="120" as="geometry"/>
                 </mxCell>
                 <mxCell id="3" value="RetailPartnerX E-commerce" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 8;fillColor=none;strokeColor=#666666;align=left;verticalAlign=top;fontStyle=1;fontColor=#333333;" parent="1" vertex="1">
-                    <mxGeometry x="210" y="190" width="780" height="440" as="geometry"/>
+                    <mxGeometry x="210" y="200" width="780" height="440" as="geometry"/>
                 </mxCell>
                 <mxCell id="4" value="Frontend&amp;#10;Web, iOS, Android" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#438DD5;strokeColor=#3C7FC0;fontColor=#ffffff;align=center;" parent="3" vertex="1">
                     <mxGeometry x="40" y="88" width="160" height="79.2" as="geometry"/>
@@ -60,7 +60,8 @@
                     <mxGeometry relative="1" as="geometry">
                         <mxPoint y="-12" as="offset"/>
                         <Array as="points">
-                            <mxPoint x="185" y="318"/>
+                            <mxPoint x="150" y="328"/>
+                            <mxPoint x="150" y="328"/>
                         </Array>
                     </mxGeometry>
                 </mxCell>

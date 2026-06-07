@@ -1,0 +1,12 @@
+{
+  "hwId": "hw-2",
+  "description": "RetailPartnerX — submission drawio in diagrams/drawio; specs in _dev/specs",
+  "defaultOutputDir": "hw-2/diagrams/drawio",
+  "frozen": [
+    "c1-context.drawio",
+    "c2-containers.drawio",
+    "c3-ai-service-recsys.drawio",
+    "sequence-get-recommendation.drawio"
+  ],
+  "diagrams": []
+}
