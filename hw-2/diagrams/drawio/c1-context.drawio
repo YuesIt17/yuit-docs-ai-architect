@@ -1,39 +1,51 @@
-<mxfile host="app.diagrams.net" agent="hw-2-generator-js" version="22.1.0">
-  <diagram name="C1 Context" id="3b18fdd6-9904-4726-807e-89c60e902b66">
-    <mxGraphModel dx="1200" dy="800" grid="1" gridSize="10" guides="1" tooltips="1"
-      connect="1" arrows="1" fold="1" page="1" pageScale="1"
-      pageWidth="1400" pageHeight="900" math="0" shadow="0">
-      <root>
-        <mxCell id="0"/>
-        <mxCell id="1" parent="0"/>
-        <mxCell id="2" value="Покупатель&amp;#10;Сайт / приложение" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#08427B;fontColor=#ffffff;" vertex="1" parent="1">
-          <mxGeometry x="80" y="280" width="100" height="140" as="geometry"/>
-        </mxCell>
-        <mxCell id="3" value="Система персональных&amp;#10;рекомендаций&amp;#10;Ранжирование SKU" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#438DD5;strokeColor=#3C7FC0;fontColor=#ffffff;align=center;" vertex="1" parent="1">
-          <mxGeometry x="320" y="240" width="220" height="100" as="geometry"/>
-        </mxCell>
-        <mxCell id="4" value="PIM&amp;#10;Каталог, SKU" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#999999;strokeColor=#666666;fontColor=#ffffff;align=center;" vertex="1" parent="1">
-          <mxGeometry x="640" y="120" width="160" height="70" as="geometry"/>
-        </mxCell>
-        <mxCell id="5" value="CDP / CRM&amp;#10;Профиль, события" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#999999;strokeColor=#666666;fontColor=#ffffff;align=center;" vertex="1" parent="1">
-          <mxGeometry x="640" y="240" width="160" height="70" as="geometry"/>
-        </mxCell>
-        <mxCell id="6" value="Программа лояльности" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#999999;strokeColor=#666666;fontColor=#ffffff;align=center;" vertex="1" parent="1">
-          <mxGeometry x="640" y="360" width="160" height="70" as="geometry"/>
-        </mxCell>
-        <mxCell id="7" value="Просматривает рекомендации [HTTPS]" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#666666;fontColor=#333333;" edge="1" parent="1" source="2" target="3">
-          <mxGeometry relative="1" as="geometry"/>
-        </mxCell>
-        <mxCell id="8" value="Каталог и остатки [API]" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#666666;fontColor=#333333;" edge="1" parent="1" source="3" target="4">
-          <mxGeometry relative="1" as="geometry"/>
-        </mxCell>
-        <mxCell id="9" value="События и профиль [API/stream]" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#666666;fontColor=#333333;" edge="1" parent="1" source="3" target="5">
-          <mxGeometry relative="1" as="geometry"/>
-        </mxCell>
-        <mxCell id="10" value="Идентификация [API]" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#666666;fontColor=#333333;" edge="1" parent="1" source="3" target="6">
-          <mxGeometry relative="1" as="geometry"/>
-        </mxCell>
-      </root>
-    </mxGraphModel>
-  </diagram>
+<mxfile host="65bd71144e">
+    <diagram name="C1 Context" id="272d558c-957f-4efc-b157-de9db47d9e6f">
+        <mxGraphModel dx="972" dy="542" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1060" pageHeight="520" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="2" value="Покупатель&amp;#10;Сайт / приложение" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#08427B;fontColor=#ffffff;" parent="1" vertex="1">
+                    <mxGeometry x="40" y="200" width="100" height="140" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="Система персональных&amp;#10;рекомендаций&amp;#10;Ранжирование SKU" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#438DD5;strokeColor=#3C7FC0;fontColor=#ffffff;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="400" y="220" width="220" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="PIM&amp;#10;Каталог, SKU" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#999999;strokeColor=#666666;fontColor=#ffffff;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="860" y="110" width="160" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="CDP / CRM&amp;#10;Профиль, события" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#999999;strokeColor=#666666;fontColor=#ffffff;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="860" y="235" width="160" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="6" value="Программа лояльности" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#999999;strokeColor=#666666;fontColor=#ffffff;align=center;" parent="1" vertex="1">
+                    <mxGeometry x="860" y="370" width="160" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="7" value="Просмотр рекомендаций [HTTPS]" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#666666;fontColor=#333333;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="2" target="3" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint y="-12" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="8" value="Каталог и остатки [API]" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#666666;fontColor=#333333;labelBackgroundColor=#ffffff;exitX=1;exitY=0.25;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="3" target="4" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="740" y="145"/>
+                        </Array>
+                        <mxPoint y="-12" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="9" value="События и профиль [API/stream]" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#666666;fontColor=#333333;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="3" target="5" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint y="-12" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="10" value="Идентификация [API]" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#666666;fontColor=#333333;labelBackgroundColor=#ffffff;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="3" target="6" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="740" y="405"/>
+                        </Array>
+                        <mxPoint y="-12" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
 </mxfile>
