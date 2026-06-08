@@ -2,7 +2,7 @@
 
 Краткое описание проделанной работы: **что спроектировано, почему так, как артефакты связаны**.
 
-Кейс: [RetailPartnerX_AI_Strategy.md](../hw-1/RetailPartnerX_AI_Strategy.md) · термины: [Glossary.md](../Glossary.md)
+Кейс: [RetailPartnerX_AI_Strategy.md](../../hw-1/RetailPartnerX_AI_Strategy.md) · термины: [Glossary.md](../Glossary.md)
 
 ---
 
@@ -18,7 +18,7 @@
 
 ## NFR: откуда p95 и что означает «95»
 
-**Источник термина:** [RetailPartnerX_AI_Strategy.md](../hw-1/RetailPartnerX_AI_Strategy.md) — в NFR/SLO для Production указаны *latency (p95)* и мониторинг *p95 latency*; расшифровка — [hw-1/Glossary.md](../hw-1/Glossary.md) (*95th percentile latency*).
+**Источник термина:** [RetailPartnerX_AI_Strategy.md](../../hw-1/RetailPartnerX_AI_Strategy.md) — в NFR/SLO для Production указаны *latency (p95)* и мониторинг *p95 latency*; расшифровка — [hw-1/Glossary.md](../../hw-1/Glossary.md) (*95th percentile latency*).
 
 **Что такое p95:** время, в которое укладываются **95% запросов**; остальные 5% — «хвост» (медленные выбросы). Не среднее и не «каждый запрос», а типичная практика SLA/SLO в проде: среднее скрывает редкие тормоза, p99 часто слишком жёсткий для MVP.
 
