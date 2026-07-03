@@ -60,20 +60,91 @@ function formatLabel(label) {
   return escapeXml(label).replace(/\n/g, "<br/>");
 }
 
+function anchor(node, pos, ax = 0.5, ay = 0.5) {
+  return { x: pos.x + node.w * ax, y: pos.y + node.h * ay };
+}
+
+function edgeWaypoint(nodes, edge, point, cache) {
+  if (edge.parent) {
+    const parent = absPos(nodes, edge.parent, cache);
+    return { x: parent.x + point.x, y: parent.y + point.y };
+  }
+  return point;
+}
+
+function buildEdgePoints(nodes, from, to, edge, cache) {
+  const fromPos = absPos(nodes, from.id, cache);
+  const toPos = absPos(nodes, to.id, cache);
+  const start = anchor(from, fromPos, edge.exitX ?? 0.5, edge.exitY ?? 0.5);
+  const end = anchor(to, toPos, edge.entryX ?? 0.5, edge.entryY ?? 0.5);
+  const mids = (edge.waypoints ?? []).map((point) => edgeWaypoint(nodes, edge, point, cache));
+  return [start, ...mids, end];
+}
+
+function pointsToPath(points) {
+  if (points.length === 0) {
+    return "";
+  }
+  let path = `M ${points[0].x} ${points[0].y}`;
+  for (let i = 1; i < points.length; i += 1) {
+    path += ` L ${points[i].x} ${points[i].y}`;
+  }
+  return path;
+}
+
+function labelPosition(points, offset = {}) {
+  const idx = Math.max(0, Math.floor((points.length - 1) / 2));
+  const a = points[idx];
+  const b = points[idx + 1] ?? a;
+  return {
+    x: (a.x + b.x) / 2 + (offset.x ?? 0),
+    y: (a.y + b.y) / 2 + (offset.y ?? 0),
+  };
+}
+
 /** Simple SVG preview from C4 JSON spec (fallback when cloud export is empty). */
 export function renderSpecSvg(spec) {
   const nodes = spec.nodes ?? [];
   const pageWidth = spec.pageWidth ?? 1400;
   const pageHeight = spec.pageHeight ?? 900;
+  const posCache = new Map();
   const parts = [
     `<?xml version="1.0" encoding="UTF-8"?>`,
     `<svg xmlns="http://www.w3.org/2000/svg" width="${pageWidth}" height="${pageHeight}" font-family="Segoe UI, Arial, sans-serif">`,
+    `<defs><marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker></defs>`,
     `<rect width="100%" height="100%" fill="#ffffff"/>`,
     `<text x="${pageWidth / 2}" y="28" fill="#333" font-size="16" font-weight="bold" text-anchor="middle">${escapeXml(spec.title)}</text>`,
   ];
 
+  const edgeParts = [];
+  const labelParts = [];
+  for (const edge of spec.edges ?? []) {
+    const from = nodes.find((n) => n.id === edge.from);
+    const to = nodes.find((n) => n.id === edge.to);
+    if (!from || !to) {
+      continue;
+    }
+    const points = buildEdgePoints(nodes, from, to, edge, posCache);
+    const path = pointsToPath(points);
+    const dash = edge.dashed ? ' stroke-dasharray="6 4"' : "";
+    edgeParts.push(
+      `<path d="${path}" fill="none" stroke="#666" stroke-width="1.5"${dash} marker-end="url(#arrow)"/>`,
+    );
+    if (edge.label) {
+      const label = labelPosition(points, edge.labelOffset ?? {});
+      const labelWidth = Math.max(48, edge.label.length * 6);
+      labelParts.push(
+        `<rect x="${label.x - labelWidth / 2}" y="${label.y - 11}" width="${labelWidth}" height="14" fill="#ffffff" stroke="none"/>`,
+      );
+      labelParts.push(
+        `<text x="${label.x}" y="${label.y}" fill="#333" font-size="10" text-anchor="middle">${escapeXml(edge.label)}</text>`,
+      );
+    }
+  }
+  parts.push(...edgeParts);
+
   for (const node of nodes) {
-    const { x, y } = absPos(nodes, node.id);
+    const { x, y } = absPos(nodes, node.id, posCache);
     const fill = FILL[node.style] ?? "#438DD5";
     const color = TEXT[node.style] ?? "#ffffff";
     const stroke = node.style === "boundary" ? "#666666" : "#3C7FC0";
@@ -109,32 +180,7 @@ export function renderSpecSvg(spec) {
     });
   }
 
-  for (const edge of spec.edges ?? []) {
-    const from = nodes.find((n) => n.id === edge.from);
-    const to = nodes.find((n) => n.id === edge.to);
-    if (!from || !to) {
-      continue;
-    }
-    const a = absPos(nodes, from.id);
-    const b = absPos(nodes, to.id);
-    const x1 = a.x + from.w / 2;
-    const y1 = a.y + from.h / 2;
-    const x2 = b.x + to.w / 2;
-    const y2 = b.y + to.h / 2;
-    const dash = edge.dashed ? ' stroke-dasharray="6 4"' : "";
-    parts.push(
-      `<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" stroke="#666" stroke-width="1.5"${dash} marker-end="url(#arrow)"/>`,
-    );
-    if (edge.label) {
-      parts.push(
-        `<text x="${(x1 + x2) / 2}" y="${(y1 + y2) / 2 - 6}" fill="#333" font-size="10" text-anchor="middle">${escapeXml(edge.label)}</text>`,
-      );
-    }
-  }
-
-  parts.push(
-    `<defs><marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#666"/></marker></defs>`,
-  );
+  parts.push(...labelParts);
   parts.push("</svg>");
   return parts.join("\n");
 }

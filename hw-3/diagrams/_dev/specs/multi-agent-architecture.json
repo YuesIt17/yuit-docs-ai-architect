@@ -177,9 +177,9 @@
       "from": "shopper",
       "to": "fe",
       "label": "HTTPS",
-      "entryX": 0,
-      "entryY": 0.5,
-      "waypoints": [{ "x": 155, "y": 380 }],
+      "entryX": 0.5,
+      "entryY": 0,
+      "waypoints": [{ "x": 155, "y": 380 }, { "x": 155, "y": 95 }],
       "labelOffset": { "x": 0, "y": -12 }
     },
     {
@@ -217,7 +217,7 @@
       "labelOffset": { "x": 0, "y": -10 }
     },
     {
-      "from": "orch",
+      "from": "parser",
       "to": "search",
       "label": "delegate",
       "parent": "ai_boundary",
@@ -225,10 +225,11 @@
       "exitY": 1,
       "entryX": 0.5,
       "entryY": 0,
-      "labelOffset": { "x": -20, "y": 0 }
+      "waypoints": [{ "x": 275, "y": 125 }, { "x": 105, "y": 125 }],
+      "labelOffset": { "x": -18, "y": 0 }
     },
     {
-      "from": "orch",
+      "from": "parser",
       "to": "policy",
       "label": "delegate",
       "parent": "ai_boundary",
@@ -236,31 +237,31 @@
       "exitY": 1,
       "entryX": 0.5,
       "entryY": 0,
-      "waypoints": [{ "x": 105, "y": 140 }, { "x": 275, "y": 140 }],
-      "labelOffset": { "x": 0, "y": -10 }
+      "waypoints": [{ "x": 275, "y": 125 }],
+      "labelOffset": { "x": 12, "y": -8 }
     },
     {
-      "from": "orch",
+      "from": "parser",
       "to": "promo",
       "label": "delegate",
       "parent": "ai_boundary",
-      "exitX": 1,
-      "exitY": 0.75,
-      "entryX": 0,
-      "entryY": 0.5,
-      "waypoints": [{ "x": 200, "y": 130 }],
+      "exitX": 0.5,
+      "exitY": 1,
+      "entryX": 0.5,
+      "entryY": 0,
+      "waypoints": [{ "x": 275, "y": 125 }, { "x": 440, "y": 125 }],
       "labelOffset": { "x": 0, "y": -10 }
     },
     {
-      "from": "orch",
+      "from": "parser",
       "to": "basket",
       "label": "delegate",
       "parent": "ai_boundary",
-      "exitX": 1,
-      "exitY": 0.5,
-      "entryX": 0,
-      "entryY": 0.25,
-      "waypoints": [{ "x": 200, "y": 100 }],
+      "exitX": 0.5,
+      "exitY": 1,
+      "entryX": 0.5,
+      "entryY": 0,
+      "waypoints": [{ "x": 275, "y": 125 }, { "x": 610, "y": 125 }],
       "labelOffset": { "x": 0, "y": -10 }
     },
     {
@@ -272,7 +273,7 @@
       "exitY": 1,
       "entryX": 0.5,
       "entryY": 0,
-      "waypoints": [{ "x": 505, "y": 480 }],
+      "waypoints": [{ "x": 505, "y": 462 }, { "x": 120, "y": 462 }],
       "labelOffset": { "x": 0, "y": -10 }
     },
     {
@@ -284,7 +285,7 @@
       "exitY": 1,
       "entryX": 0.75,
       "entryY": 0,
-      "waypoints": [{ "x": 685, "y": 480 }],
+      "waypoints": [{ "x": 675, "y": 452 }, { "x": 165, "y": 452 }],
       "labelOffset": { "x": 0, "y": -10 }
     },
     {
@@ -296,7 +297,7 @@
       "exitY": 1,
       "entryX": 0.75,
       "entryY": 0,
-      "waypoints": [{ "x": 840, "y": 480 }],
+      "waypoints": [{ "x": 840, "y": 488 }, { "x": 377, "y": 488 }],
       "labelOffset": { "x": 0, "y": -10 }
     },
     {
@@ -317,10 +318,10 @@
       "label": "ingestion",
       "parent": "boundary",
       "exitX": 0.5,
-      "exitY": 0,
-      "entryX": 1,
+      "exitY": 1,
+      "entryX": 0,
       "entryY": 0.75,
-      "waypoints": [{ "x": 555, "y": 470 }, { "x": 390, "y": 470 }],
+      "waypoints": [{ "x": 555, "y": 605 }, { "x": 120, "y": 605 }],
       "labelOffset": { "x": 0, "y": -10 }
     },
     {
@@ -330,8 +331,9 @@
       "parent": "boundary",
       "exitX": 0,
       "exitY": 0.5,
-      "entryX": 1,
-      "entryY": 0.5,
+      "entryX": 0,
+      "entryY": 0.65,
+      "waypoints": [{ "x": 745, "y": 535 }, { "x": 745, "y": 620 }, { "x": 120, "y": 620 }],
       "labelOffset": { "x": 0, "y": -10 }
     },
     {

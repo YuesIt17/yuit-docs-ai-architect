@@ -7,9 +7,11 @@
 | Корпус | Содержимое | Хранение | Потребитель |
 |--------|------------|----------|-------------|
 | **Product KB** | Название, состав, категория, атрибуты SKU | Vector DB, коллекция `products` | Catalog Searcher |
-| **Policy KB** | Аллергены, правила акций, GDPR-тексты, guideline «что нельзя рекомендовать» | Vector DB, коллекция `policies` | Policy Analyst, Promo Analyst |
+| **Policy KB** | Аллергены, правила акций, GDPR-тексты, guideline «что нельзя рекомендовать» | Vector DB, коллекция `policies` | Policy Analyst; Promo Analyst (RAG-фрагменты — v2) |
 
 Policy KB закрывает риски **R4, R6, R8** из [hw-1](../../hw-1/RetailPartnerX_AI_Strategy.md).
+
+На MVP **Promo Analyst** читает цены и акции из SQL DB; RAG-фрагменты из `policies` (например, правила промо) — optional v2.
 
 ## 3.2 Ingestion pipeline (offline)
 

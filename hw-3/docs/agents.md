@@ -54,3 +54,5 @@ User message
   → Orchestrator (synthesize)
   → User response
 ```
+
+Parallel Catalog|Policy — целевая модель деплоя; прототип в [`code/`](../code/) следует sequence happy path (stub без API-ключей).

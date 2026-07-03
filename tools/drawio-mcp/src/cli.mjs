@@ -46,7 +46,7 @@ if (args.exportPng) {
     outputPath: args.output,
     specPath: args.specPath,
   });
-  console.log(`Wrote ${result.outputPath} (${result.bytes} bytes)`);
+  console.log(`Wrote ${result.outputPath} (${result.bytes} bytes, ${result.method})`);
   process.exit(0);
 }
 

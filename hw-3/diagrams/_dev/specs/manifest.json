@@ -2,7 +2,7 @@
   "hwId": "hw-3",
   "description": "RetailPartnerX Shopping Assistant — multi-agent architecture",
   "defaultOutputDir": "hw-3/diagrams",
-  "frozen": [],
+  "frozen": ["multi-agent-architecture.drawio"],
   "diagrams": [
     {
       "spec": "multi-agent-architecture.json",
