@@ -1,20 +1,23 @@
 #!/usr/bin/env node
 import { generateFromManifest, generateFromSpec } from "./generate.mjs";
+import { exportDrawioPng } from "./export-png.mjs";
 
 function usage() {
   console.log(`Usage:
   node src/cli.mjs --hw <hwId> [--output <dir>]
   node src/cli.mjs --spec <specPath> --output <file.drawio>
+  node src/cli.mjs --export-png <file.drawio> [--output <file.png>]
 
 Examples:
   npm run generate:hw-2
-  node src/cli.mjs --hw hw-2
+  node src/cli.mjs --hw hw-3
+  node src/cli.mjs --export-png hw-3/diagrams/multi-agent-architecture.drawio
   node src/cli.mjs --spec hw-2/diagrams/_dev/specs/c1-context.json --output hw-2/diagrams/drawio/c1-context.drawio
 `);
 }
 
 function parseArgs(argv) {
-  const args = { hw: null, output: null, spec: null };
+  const args = { hw: null, output: null, spec: null, exportPng: null, specPath: null };
   for (let i = 0; i < argv.length; i += 1) {
     const arg = argv[i];
     if (arg === "--hw") {
@@ -23,6 +26,10 @@ function parseArgs(argv) {
       args.output = argv[++i];
     } else if (arg === "--spec") {
       args.spec = argv[++i];
+    } else if (arg === "--export-png") {
+      args.exportPng = argv[++i];
+    } else if (arg === "--spec-path") {
+      args.specPath = argv[++i];
     } else if (arg === "--help" || arg === "-h") {
       usage();
       process.exit(0);
@@ -32,6 +39,16 @@ function parseArgs(argv) {
 }
 
 const args = parseArgs(process.argv.slice(2));
+
+if (args.exportPng) {
+  const result = await exportDrawioPng({
+    drawioPath: args.exportPng,
+    outputPath: args.output,
+    specPath: args.specPath,
+  });
+  console.log(`Wrote ${result.outputPath} (${result.bytes} bytes)`);
+  process.exit(0);
+}
 
 if (args.hw) {
   const result = generateFromManifest({ hwId: args.hw, outputDir: args.output });

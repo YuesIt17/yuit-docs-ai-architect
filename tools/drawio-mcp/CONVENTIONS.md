@@ -165,7 +165,7 @@ node src/cli.mjs --spec hw-2/diagrams/_dev/specs/c1-context.json \
 node src/cli.mjs --hw hw-2
 ```
 
-MCP tools: `generate_drawio`, `generate_hw_diagrams`, `list_hw_diagram_bundles`, `get_drawio_spec_schema`.
+MCP tools: `generate_drawio`, `generate_hw_diagrams`, `export_drawio_png`, `list_hw_diagram_bundles`, `get_drawio_spec_schema`.
 
 ## Именование файлов
 

@@ -29,6 +29,7 @@ hw-2: `.drawio` для сдачи в `diagrams/drawio/`; specs в `diagrams/_dev
 |------|------------|
 | `generate_drawio` | Один файл из inline spec или `specPath` |
 | `generate_hw_diagrams` | Пакет по manifest (пропускает `frozen`) |
+| `export_drawio_png` | Экспорт `.drawio` → PNG (cloud API + fallback из JSON spec) |
 | `list_hw_diagram_bundles` | Список hw-пакетов |
 | `get_drawio_spec_schema` | Справка по JSON spec |
 
@@ -36,6 +37,7 @@ hw-2: `.drawio` для сдачи в `diagrams/drawio/`; specs в `diagrams/_dev
 
 1. `hw-3/diagrams/_dev/specs/manifest.json` + JSON-спеки.
 2. Черновик: `node src/cli.mjs --hw hw-3`
-3. Финал в diagrams.net → добавить в `frozen`.
+3. PNG для сдачи: `node src/cli.mjs --export-png hw-3/diagrams/multi-agent-architecture.drawio`
+4. Финал в diagrams.net → добавить в `frozen`.
 
 Подробности — [CONVENTIONS.md](CONVENTIONS.md).
