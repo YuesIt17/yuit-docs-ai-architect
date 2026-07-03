@@ -8,7 +8,8 @@
 |----------|------|------------|
 | Multi-Agent Architecture | [multi-agent-architecture.png](multi-agent-architecture.png) | **Основная схема сдачи** — агенты, RAG, Vector DB |
 | Multi-Agent (редактируемый) | [multi-agent-architecture.drawio](multi-agent-architecture.drawio) | Исходник Draw.io |
-| Sequence | [sequence-shopping-assistant.drawio](sequence-shopping-assistant.drawio) | Happy path: запрос → корзина |
+| Sequence | [sequence-shopping-assistant.png](sequence-shopping-assistant.png) | Happy path: запрос → корзина |
+| Sequence (редактируемый) | [sequence-shopping-assistant.drawio](sequence-shopping-assistant.drawio) | Исходник Draw.io |
 
 ## Ключевые элементы на схеме
 

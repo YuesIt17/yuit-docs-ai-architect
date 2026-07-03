@@ -102,6 +102,142 @@ function labelPosition(points, offset = {}) {
   };
 }
 
+function resolveParticipantIndex(participants, ref) {
+  if (typeof ref === "number") {
+    return ref;
+  }
+  const idx = participants.findIndex((p) => p.id === ref);
+  if (idx < 0) {
+    throw new Error(`Unknown sequence participant: ${ref}`);
+  }
+  return idx;
+}
+
+/** SVG preview for Sequence JSON spec (fallback when cloud export is empty). */
+export function renderSequenceSvg(spec) {
+  const sequence = spec.sequence;
+  if (!sequence) {
+    throw new Error("Spec has no sequence block");
+  }
+
+  const {
+    colWidth = 130,
+    boxWidth = 108,
+    startX = 50,
+    headerY = 30,
+    headerH = 44,
+    msgY0 = 130,
+    msgStep = 48,
+    lifelineHeight = 780,
+    participants,
+    messages,
+    notes = [],
+  } = sequence;
+
+  const center = (col) => startX + col * colWidth + boxWidth / 2;
+  const lifelineTop = headerY + headerH + 8;
+
+  let stepCount = 0;
+  for (const message of messages) {
+    stepCount += 1;
+    for (const note of notes) {
+      if (note.afterMessage === stepCount - 1) {
+        stepCount += 1;
+      }
+    }
+  }
+
+  const pageWidth = spec.pageWidth ?? startX + participants.length * colWidth + 80;
+  const pageHeight = spec.pageHeight ?? msgY0 + (stepCount + 1) * msgStep + 80;
+
+  const parts = [
+    `<?xml version="1.0" encoding="UTF-8"?>`,
+    `<svg xmlns="http://www.w3.org/2000/svg" width="${pageWidth}" height="${pageHeight}" font-family="Segoe UI, Arial, sans-serif">`,
+    `<defs>`,
+    `<marker id="arrow" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0, 10 3.5, 0 7" fill="#333"/></marker>`,
+    `<marker id="arrow-open" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polyline points="0 0, 10 3.5, 0 7" fill="none" stroke="#333" stroke-width="1.5"/></marker>`,
+    `</defs>`,
+    `<rect width="100%" height="100%" fill="#ffffff"/>`,
+    `<text x="${pageWidth / 2}" y="28" fill="#333" font-size="16" font-weight="bold" text-anchor="middle">${escapeXml(spec.title)}</text>`,
+  ];
+
+  for (let i = 0; i < participants.length; i += 1) {
+    const participant = participants[i];
+    const x = startX + i * colWidth;
+    const type = participant.type ?? (i === 0 ? "person" : "lifeline");
+    const cx = center(i);
+
+    if (type === "person") {
+      const y = headerY - 8;
+      parts.push(`<circle cx="${cx}" cy="${y + 28}" r="22" fill="#08427B"/>`);
+      parts.push(
+        `<text x="${cx}" y="${y + 68}" fill="#333" font-size="11" text-anchor="middle">${formatLabel(participant.label)}</text>`,
+      );
+    } else {
+      const y = headerY;
+      parts.push(
+        `<rect x="${x}" y="${y}" width="${boxWidth}" height="${headerH}" rx="2" fill="#dae8fc" stroke="#6c8ebf" stroke-width="1.5"/>`,
+      );
+      participant.label.split("\n").forEach((line, li) => {
+        parts.push(
+          `<text x="${cx}" y="${y + 18 + li * 14}" fill="#333" font-size="11" font-weight="bold" text-anchor="middle">${escapeXml(line)}</text>`,
+        );
+      });
+    }
+
+    parts.push(
+      `<line x1="${cx}" y1="${lifelineTop}" x2="${cx}" y2="${lifelineTop + lifelineHeight}" stroke="#6c8ebf" stroke-width="1" stroke-dasharray="4 4"/>`,
+    );
+  }
+
+  let step = 0;
+  for (const message of messages) {
+    const from = resolveParticipantIndex(participants, message.from);
+    const to = resolveParticipantIndex(participants, message.to);
+    const y = msgY0 + step * msgStep;
+    const x1 = center(from);
+    const x2 = center(to);
+    const isReturn = message.return ?? false;
+    const dash = isReturn ? ' stroke-dasharray="8 8"' : "";
+    const marker = isReturn ? "url(#arrow-open)" : "url(#arrow)";
+
+    parts.push(
+      `<line x1="${x1}" y1="${y}" x2="${x2}" y2="${y}" stroke="#333" stroke-width="1.5"${dash} marker-end="${marker}"/>`,
+    );
+
+    const labelX = (x1 + x2) / 2;
+    const labelWidth = Math.max(48, message.label.length * 6);
+    parts.push(
+      `<rect x="${labelX - labelWidth / 2}" y="${y - 18}" width="${labelWidth}" height="14" fill="#ffffff"/>`,
+    );
+    parts.push(
+      `<text x="${labelX}" y="${y - 6}" fill="#333" font-size="10" text-anchor="middle">${escapeXml(message.label)}</text>`,
+    );
+
+    step += 1;
+    for (const note of notes) {
+      if (note.afterMessage === step - 1) {
+        const nw = note.w ?? 200;
+        const nh = note.h ?? 50;
+        const nx = center(from) + 10;
+        const ny = msgY0 + step * msgStep - 12;
+        parts.push(
+          `<polygon points="${nx},${ny} ${nx + nw},${ny} ${nx + nw},${ny + nh} ${nx + 12},${ny + nh} ${nx},${ny + nh - 12}" fill="#fff2cc" stroke="#d6b656"/>`,
+        );
+        note.label.split("\n").forEach((line, li) => {
+          parts.push(
+            `<text x="${nx + 8}" y="${ny + 16 + li * 14}" fill="#333" font-size="10">${escapeXml(line)}</text>`,
+          );
+        });
+        step += 1;
+      }
+    }
+  }
+
+  parts.push("</svg>");
+  return parts.join("\n");
+}
+
 /** Simple SVG preview from C4 JSON spec (fallback when cloud export is empty). */
 export function renderSpecSvg(spec) {
   const nodes = spec.nodes ?? [];
@@ -199,7 +335,7 @@ async function tryCloudExport(xml, format) {
 
 async function exportViaSpecSvg(specPath, outputPath, format) {
   const spec = loadDiagramSpec(specPath);
-  const svg = renderSpecSvg(spec);
+  const svg = spec.sequence ? renderSequenceSvg(spec) : renderSpecSvg(spec);
   if (format !== "png") {
     writeFileSync(outputPath, svg, "utf8");
     return { bytes: Buffer.byteLength(svg), method: "spec-svg" };
