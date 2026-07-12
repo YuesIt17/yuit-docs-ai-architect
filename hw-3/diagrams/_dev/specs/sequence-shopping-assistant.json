@@ -1,0 +1,55 @@
+{
+  "title": "Sequence shopping assistant",
+  "pageWidth": 1600,
+  "pageHeight": 1100,
+  "sequence": {
+    "colWidth": 110,
+    "boxWidth": 95,
+    "startX": 30,
+    "headerY": 30,
+    "headerH": 44,
+    "msgY0": 120,
+    "msgStep": 44,
+    "lifelineHeight": 820,
+    "participants": [
+      { "id": "shopper", "label": "Покупатель", "type": "person" },
+      { "id": "backend", "label": "Backend", "type": "lifeline" },
+      { "id": "orch", "label": "Orchestrator", "type": "lifeline" },
+      { "id": "parser", "label": "Intent\nParser", "type": "lifeline" },
+      { "id": "search", "label": "Catalog\nSearcher", "type": "lifeline" },
+      { "id": "policy", "label": "Policy\nAnalyst", "type": "lifeline" },
+      { "id": "promo", "label": "Promo\nAnalyst", "type": "lifeline" },
+      { "id": "basket", "label": "Basket\nAssembler", "type": "lifeline" },
+      { "id": "vec", "label": "Vector DB", "type": "lifeline" },
+      { "id": "polkb", "label": "Policy KB", "type": "lifeline" }
+    ],
+    "messages": [
+      { "from": 0, "to": 1, "label": "Ужин без глютена до 2000" },
+      { "from": 1, "to": 2, "label": "POST /chat/assist" },
+      { "from": 2, "to": 3, "label": "extract constraints" },
+      { "from": 3, "to": 2, "label": "entities", "return": true },
+      { "from": 2, "to": 4, "label": "find SKUs" },
+      { "from": 4, "to": 8, "label": "semantic search products" },
+      { "from": 8, "to": 4, "label": "candidates[]", "return": true },
+      { "from": 2, "to": 5, "label": "validate diet rules" },
+      { "from": 5, "to": 8, "label": "RAG retrieve policies" },
+      { "from": 8, "to": 5, "label": "chunks[]", "return": true },
+      { "from": 5, "to": 9, "label": "policy source", "return": true },
+      { "from": 5, "to": 2, "label": "verdict=allow", "return": true },
+      { "from": 2, "to": 6, "label": "fit budget + promos" },
+      { "from": 6, "to": 2, "label": "priced set", "return": true },
+      { "from": 2, "to": 7, "label": "assemble cart" },
+      { "from": 7, "to": 2, "label": "cart draft", "return": true },
+      { "from": 2, "to": 1, "label": "answer + SKUs", "return": true },
+      { "from": 1, "to": 0, "label": "корзина в чате", "return": true }
+    ],
+    "notes": [
+      {
+        "afterMessage": 1,
+        "label": "dinner, 4 persons\ngluten-free, budget 2000",
+        "w": 190,
+        "h": 48
+      }
+    ]
+  }
+}

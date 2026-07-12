@@ -10,6 +10,7 @@ import {
   loadManifest,
 } from "./generate.mjs";
 import { SPEC_SCHEMA_HELP } from "./render-spec.mjs";
+import { exportDrawioPng } from "./export-png.mjs";
 
 const server = new McpServer({
   name: "drawio-generator",
@@ -109,6 +110,39 @@ server.tool(
         {
           type: "text",
           text: JSON.stringify(SPEC_SCHEMA_HELP, null, 2),
+        },
+      ],
+    };
+  },
+);
+
+server.tool(
+  "export_drawio_png",
+  "Export a .drawio file to PNG via diagrams.net convert API (for homework submission)",
+  {
+    drawioPath: z
+      .string()
+      .describe("Path to .drawio file relative to repo root"),
+    outputPath: z
+      .string()
+      .optional()
+      .describe("Output .png path (default: same name with .png extension)"),
+    format: z
+      .string()
+      .optional()
+      .describe("Export format: png (default), svg, pdf"),
+    specPath: z
+      .string()
+      .optional()
+      .describe("JSON spec for local SVG fallback when cloud export is empty"),
+  },
+  async ({ drawioPath, outputPath, format, specPath }) => {
+    const result = await exportDrawioPng({ drawioPath, outputPath, format, specPath });
+    return {
+      content: [
+        {
+          type: "text",
+          text: JSON.stringify(result, null, 2),
         },
       ],
     };

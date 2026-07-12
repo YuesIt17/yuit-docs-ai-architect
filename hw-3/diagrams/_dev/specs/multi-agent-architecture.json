@@ -1,0 +1,351 @@
+{
+  "title": "Multi-Agent Architecture",
+  "pageWidth": 1400,
+  "pageHeight": 780,
+  "nodes": [
+    {
+      "id": "shopper",
+      "label": "Покупатель",
+      "style": "person",
+      "x": 30,
+      "y": 320,
+      "w": 90,
+      "h": 120
+    },
+    {
+      "id": "boundary",
+      "label": "RetailPartnerX E-commerce",
+      "style": "boundary",
+      "x": 180,
+      "y": 60,
+      "w": 1180,
+      "h": 680
+    },
+    {
+      "id": "fe",
+      "label": "Frontend\nЧат в приложении",
+      "style": "container",
+      "x": 30,
+      "y": 50,
+      "w": 150,
+      "h": 75,
+      "parent": "boundary"
+    },
+    {
+      "id": "be",
+      "label": "Backend\nBFF, сессия чата",
+      "style": "container",
+      "x": 220,
+      "y": 50,
+      "w": 150,
+      "h": 75,
+      "parent": "boundary"
+    },
+    {
+      "id": "ai_boundary",
+      "label": "AI Service — Shopping Assistant",
+      "style": "boundary",
+      "x": 400,
+      "y": 30,
+      "w": 750,
+      "h": 420,
+      "parent": "boundary"
+    },
+    {
+      "id": "orch",
+      "label": "Orchestrator\n(Менеджер)",
+      "style": "component",
+      "x": 30,
+      "y": 45,
+      "w": 150,
+      "h": 70,
+      "parent": "ai_boundary"
+    },
+    {
+      "id": "parser",
+      "label": "Intent Parser",
+      "style": "component",
+      "x": 210,
+      "y": 45,
+      "w": 130,
+      "h": 70,
+      "parent": "ai_boundary"
+    },
+    {
+      "id": "search",
+      "label": "Catalog Searcher\n(Поисковик)",
+      "style": "component",
+      "x": 30,
+      "y": 150,
+      "w": 150,
+      "h": 70,
+      "parent": "ai_boundary"
+    },
+    {
+      "id": "policy",
+      "label": "Policy Analyst\n(RAG)",
+      "style": "component",
+      "x": 210,
+      "y": 150,
+      "w": 130,
+      "h": 70,
+      "parent": "ai_boundary"
+    },
+    {
+      "id": "promo",
+      "label": "Promo and Budget\nAnalyst",
+      "style": "component",
+      "x": 370,
+      "y": 150,
+      "w": 140,
+      "h": 70,
+      "parent": "ai_boundary"
+    },
+    {
+      "id": "basket",
+      "label": "Basket Assembler\n(Сборщик)",
+      "style": "component",
+      "x": 540,
+      "y": 150,
+      "w": 140,
+      "h": 70,
+      "parent": "ai_boundary"
+    },
+    {
+      "id": "rec_api",
+      "label": "Rec API\nget_recommendation",
+      "style": "component",
+      "x": 540,
+      "y": 280,
+      "w": 140,
+      "h": 60,
+      "parent": "ai_boundary"
+    },
+    {
+      "id": "vec",
+      "label": "Vector DB\nproducts, policies",
+      "style": "db",
+      "x": 30,
+      "y": 500,
+      "w": 180,
+      "h": 85,
+      "parent": "boundary"
+    },
+    {
+      "id": "sql",
+      "label": "SQL DB\nцены, акции, наличие",
+      "style": "db",
+      "x": 250,
+      "y": 500,
+      "w": 170,
+      "h": 85,
+      "parent": "boundary"
+    },
+    {
+      "id": "policy_kb",
+      "label": "Policy KB\nCMS, Legal",
+      "style": "external",
+      "x": 480,
+      "y": 500,
+      "w": 150,
+      "h": 70,
+      "parent": "boundary"
+    },
+    {
+      "id": "pim",
+      "label": "PIM\nКаталог",
+      "style": "external",
+      "x": 680,
+      "y": 500,
+      "w": 130,
+      "h": 70,
+      "parent": "boundary"
+    },
+    {
+      "id": "ingest_note",
+      "label": "Offline ingestion\nchunk, embed, index",
+      "style": "note",
+      "x": 850,
+      "y": 490,
+      "w": 180,
+      "h": 60,
+      "parent": "boundary"
+    }
+  ],
+  "edges": [
+    {
+      "from": "shopper",
+      "to": "fe",
+      "label": "HTTPS",
+      "entryX": 0.5,
+      "entryY": 0,
+      "waypoints": [{ "x": 155, "y": 380 }, { "x": 155, "y": 95 }],
+      "labelOffset": { "x": 0, "y": -12 }
+    },
+    {
+      "from": "fe",
+      "to": "be",
+      "label": "REST",
+      "parent": "boundary",
+      "exitX": 1,
+      "exitY": 0.5,
+      "entryX": 0,
+      "entryY": 0.5,
+      "labelOffset": { "x": 0, "y": -12 }
+    },
+    {
+      "from": "be",
+      "to": "orch",
+      "label": "chat message",
+      "parent": "boundary",
+      "exitX": 1,
+      "exitY": 0.5,
+      "entryX": 0,
+      "entryY": 0.5,
+      "waypoints": [{ "x": 430, "y": 122 }],
+      "labelOffset": { "x": 0, "y": -12 }
+    },
+    {
+      "from": "orch",
+      "to": "parser",
+      "label": "delegate",
+      "parent": "ai_boundary",
+      "exitX": 1,
+      "exitY": 0.5,
+      "entryX": 0,
+      "entryY": 0.5,
+      "labelOffset": { "x": 0, "y": -10 }
+    },
+    {
+      "from": "parser",
+      "to": "search",
+      "label": "delegate",
+      "parent": "ai_boundary",
+      "exitX": 0.5,
+      "exitY": 1,
+      "entryX": 0.5,
+      "entryY": 0,
+      "waypoints": [{ "x": 275, "y": 125 }, { "x": 105, "y": 125 }],
+      "labelOffset": { "x": -18, "y": 0 }
+    },
+    {
+      "from": "parser",
+      "to": "policy",
+      "label": "delegate",
+      "parent": "ai_boundary",
+      "exitX": 0.5,
+      "exitY": 1,
+      "entryX": 0.5,
+      "entryY": 0,
+      "waypoints": [{ "x": 275, "y": 125 }],
+      "labelOffset": { "x": 12, "y": -8 }
+    },
+    {
+      "from": "parser",
+      "to": "promo",
+      "label": "delegate",
+      "parent": "ai_boundary",
+      "exitX": 0.5,
+      "exitY": 1,
+      "entryX": 0.5,
+      "entryY": 0,
+      "waypoints": [{ "x": 275, "y": 125 }, { "x": 440, "y": 125 }],
+      "labelOffset": { "x": 0, "y": -10 }
+    },
+    {
+      "from": "parser",
+      "to": "basket",
+      "label": "delegate",
+      "parent": "ai_boundary",
+      "exitX": 0.5,
+      "exitY": 1,
+      "entryX": 0.5,
+      "entryY": 0,
+      "waypoints": [{ "x": 275, "y": 125 }, { "x": 610, "y": 125 }],
+      "labelOffset": { "x": 0, "y": -10 }
+    },
+    {
+      "from": "search",
+      "to": "vec",
+      "label": "semantic search",
+      "parent": "boundary",
+      "exitX": 0.5,
+      "exitY": 1,
+      "entryX": 0.5,
+      "entryY": 0,
+      "waypoints": [{ "x": 505, "y": 462 }, { "x": 120, "y": 462 }],
+      "labelOffset": { "x": 0, "y": -10 }
+    },
+    {
+      "from": "policy",
+      "to": "vec",
+      "label": "RAG retrieve",
+      "parent": "boundary",
+      "exitX": 0.5,
+      "exitY": 1,
+      "entryX": 0.75,
+      "entryY": 0,
+      "waypoints": [{ "x": 675, "y": 452 }, { "x": 165, "y": 452 }],
+      "labelOffset": { "x": 0, "y": -10 }
+    },
+    {
+      "from": "promo",
+      "to": "sql",
+      "label": "prices, promos",
+      "parent": "boundary",
+      "exitX": 0.5,
+      "exitY": 1,
+      "entryX": 0.75,
+      "entryY": 0,
+      "waypoints": [{ "x": 840, "y": 488 }, { "x": 377, "y": 488 }],
+      "labelOffset": { "x": 0, "y": -10 }
+    },
+    {
+      "from": "basket",
+      "to": "rec_api",
+      "label": "tool call",
+      "parent": "ai_boundary",
+      "exitX": 0.5,
+      "exitY": 1,
+      "entryX": 0.5,
+      "entryY": 0,
+      "dashed": true,
+      "labelOffset": { "x": 0, "y": -10 }
+    },
+    {
+      "from": "policy_kb",
+      "to": "vec",
+      "label": "ingestion",
+      "parent": "boundary",
+      "exitX": 0.5,
+      "exitY": 1,
+      "entryX": 0,
+      "entryY": 0.75,
+      "waypoints": [{ "x": 555, "y": 605 }, { "x": 120, "y": 605 }],
+      "labelOffset": { "x": 0, "y": -10 }
+    },
+    {
+      "from": "pim",
+      "to": "vec",
+      "label": "ingestion",
+      "parent": "boundary",
+      "exitX": 0,
+      "exitY": 0.5,
+      "entryX": 0,
+      "entryY": 0.65,
+      "waypoints": [{ "x": 745, "y": 535 }, { "x": 745, "y": 620 }, { "x": 120, "y": 620 }],
+      "labelOffset": { "x": 0, "y": -10 }
+    },
+    {
+      "from": "policy_kb",
+      "to": "ingest_note",
+      "label": "",
+      "parent": "boundary",
+      "exitX": 1,
+      "exitY": 0.5,
+      "entryX": 0,
+      "entryY": 0.5,
+      "dashed": true
+    }
+  ]
+}
