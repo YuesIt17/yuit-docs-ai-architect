@@ -1,0 +1,278 @@
+{
+  "title": "Data Pipeline RetailPartnerX",
+  "pageWidth": 1480,
+  "pageHeight": 720,
+  "nodes": [
+    {
+      "id": "cdp",
+      "label": "App / CDP\nКлики, просмотры",
+      "style": "external",
+      "x": 40,
+      "y": 120,
+      "w": 150,
+      "h": 80
+    },
+    {
+      "id": "pim",
+      "label": "PIM / ERP\nКаталог SKU",
+      "style": "external",
+      "x": 40,
+      "y": 420,
+      "w": 150,
+      "h": 80
+    },
+    {
+      "id": "boundary",
+      "label": "Data Platform — RetailPartnerX",
+      "style": "boundary",
+      "x": 230,
+      "y": 40,
+      "w": 1000,
+      "h": 620
+    },
+    {
+      "id": "kafka",
+      "label": "Kafka\nEvents stream",
+      "style": "container",
+      "x": 40,
+      "y": 80,
+      "w": 140,
+      "h": 70,
+      "parent": "boundary"
+    },
+    {
+      "id": "spark_s",
+      "label": "Spark Streaming\nClean + aggregates",
+      "style": "component",
+      "x": 230,
+      "y": 80,
+      "w": 160,
+      "h": 70,
+      "parent": "boundary"
+    },
+    {
+      "id": "spark_b",
+      "label": "Spark Batch\nClean + curated",
+      "style": "component",
+      "x": 230,
+      "y": 380,
+      "w": 160,
+      "h": 70,
+      "parent": "boundary"
+    },
+    {
+      "id": "lake",
+      "label": "S3 Data Lake\nraw + curated",
+      "style": "db",
+      "x": 460,
+      "y": 220,
+      "w": 150,
+      "h": 90,
+      "parent": "boundary"
+    },
+    {
+      "id": "embed",
+      "label": "Embedding job\n(batch)",
+      "style": "component",
+      "x": 460,
+      "y": 400,
+      "w": 150,
+      "h": 70,
+      "parent": "boundary"
+    },
+    {
+      "id": "fs",
+      "label": "Feature Store\noffline + Redis online",
+      "style": "db",
+      "x": 680,
+      "y": 80,
+      "w": 170,
+      "h": 90,
+      "parent": "boundary"
+    },
+    {
+      "id": "vdb",
+      "label": "Vector DB\nProduct KB",
+      "style": "db",
+      "x": 680,
+      "y": 380,
+      "w": 170,
+      "h": 90,
+      "parent": "boundary"
+    },
+    {
+      "id": "train",
+      "label": "Offline train\nRanker",
+      "style": "component",
+      "x": 680,
+      "y": 220,
+      "w": 170,
+      "h": 70,
+      "parent": "boundary"
+    },
+    {
+      "id": "note_clean",
+      "label": "Очистка: Spark\n(schema, дедуп, customer_id)",
+      "style": "note",
+      "x": 40,
+      "y": 500,
+      "w": 200,
+      "h": 70,
+      "parent": "boundary"
+    },
+    {
+      "id": "ai",
+      "label": "AI Service\nRanker + RAG",
+      "style": "container",
+      "x": 1280,
+      "y": 260,
+      "w": 150,
+      "h": 90
+    }
+  ],
+  "edges": [
+    {
+      "from": "cdp",
+      "to": "kafka",
+      "label": "stream events",
+      "exitX": 1,
+      "exitY": 0.5,
+      "entryX": 0,
+      "entryY": 0.5,
+      "labelOffset": { "x": 0, "y": -12 }
+    },
+    {
+      "from": "pim",
+      "to": "spark_b",
+      "label": "batch / CDC",
+      "exitX": 1,
+      "exitY": 0.5,
+      "entryX": 0,
+      "entryY": 0.5,
+      "labelOffset": { "x": 0, "y": -12 }
+    },
+    {
+      "from": "kafka",
+      "to": "spark_s",
+      "label": "consume",
+      "exitX": 1,
+      "exitY": 0.5,
+      "entryX": 0,
+      "entryY": 0.5,
+      "parent": "boundary",
+      "labelOffset": { "x": 0, "y": -12 }
+    },
+    {
+      "from": "spark_s",
+      "to": "lake",
+      "label": "aggregates",
+      "exitX": 1,
+      "exitY": 0.5,
+      "entryX": 0,
+      "entryY": 0.25,
+      "parent": "boundary",
+      "waypoints": [{ "x": 420, "y": 115 }, { "x": 420, "y": 243 }],
+      "labelOffset": { "x": 0, "y": -12 }
+    },
+    {
+      "from": "spark_b",
+      "to": "lake",
+      "label": "curated catalog",
+      "exitX": 1,
+      "exitY": 0.5,
+      "entryX": 0,
+      "entryY": 0.75,
+      "parent": "boundary",
+      "waypoints": [{ "x": 420, "y": 415 }, { "x": 420, "y": 287 }],
+      "labelOffset": { "x": 0, "y": -12 }
+    },
+    {
+      "from": "lake",
+      "to": "fs",
+      "label": "materialize features",
+      "exitX": 1,
+      "exitY": 0.25,
+      "entryX": 0,
+      "entryY": 0.5,
+      "parent": "boundary",
+      "waypoints": [{ "x": 640, "y": 243 }, { "x": 640, "y": 125 }],
+      "labelOffset": { "x": 10, "y": 0 }
+    },
+    {
+      "from": "lake",
+      "to": "train",
+      "label": "train set",
+      "exitX": 1,
+      "exitY": 0.5,
+      "entryX": 0,
+      "entryY": 0.5,
+      "parent": "boundary",
+      "labelOffset": { "x": 0, "y": -12 }
+    },
+    {
+      "from": "lake",
+      "to": "embed",
+      "label": "SKU text",
+      "exitX": 0.5,
+      "exitY": 1,
+      "entryX": 0.5,
+      "entryY": 0,
+      "parent": "boundary",
+      "labelOffset": { "x": 12, "y": 0 }
+    },
+    {
+      "from": "embed",
+      "to": "vdb",
+      "label": "index embeddings",
+      "exitX": 1,
+      "exitY": 0.5,
+      "entryX": 0,
+      "entryY": 0.5,
+      "parent": "boundary",
+      "labelOffset": { "x": 0, "y": -12 }
+    },
+    {
+      "from": "fs",
+      "to": "train",
+      "label": "offline features",
+      "exitX": 0.5,
+      "exitY": 1,
+      "entryX": 0.5,
+      "entryY": 0,
+      "parent": "boundary",
+      "labelOffset": { "x": 12, "y": 0 }
+    },
+    {
+      "from": "fs",
+      "to": "ai",
+      "label": "online features",
+      "exitX": 1,
+      "exitY": 0.5,
+      "entryX": 0,
+      "entryY": 0.3,
+      "waypoints": [{ "x": 1260, "y": 125 }, { "x": 1260, "y": 287 }],
+      "labelOffset": { "x": 0, "y": -12 }
+    },
+    {
+      "from": "vdb",
+      "to": "ai",
+      "label": "ANN / RAG",
+      "exitX": 1,
+      "exitY": 0.5,
+      "entryX": 0,
+      "entryY": 0.7,
+      "waypoints": [{ "x": 1260, "y": 425 }, { "x": 1260, "y": 323 }],
+      "labelOffset": { "x": 0, "y": -12 }
+    },
+    {
+      "from": "train",
+      "to": "ai",
+      "label": "model artifact",
+      "exitX": 1,
+      "exitY": 0.5,
+      "entryX": 0,
+      "entryY": 0.5,
+      "labelOffset": { "x": 0, "y": -12 }
+    }
+  ]
+}

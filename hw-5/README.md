@@ -2,7 +2,7 @@
 
 **Проектирование Data Pipelines и интеграционных шлюзов**
 
-> **Артефакты:** [docs/](docs/) · [diagrams/](diagrams/)
+> **Сокращения:** [Глоссарий](Glossary.md) · **Артефакты:** [docs/](docs/) · [diagrams/](diagrams/)
 
 ## Цель
 
@@ -23,27 +23,27 @@
 
 ## Шаги выполнения (артефакты решения)
 
-| Шаг ДЗ               | Что сделать                                                                                                                                 |
-| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1. Data Sources      | Определить источники: клики/просмотры в приложении — **стриминг** (CDP/события); каталог SKU и атрибуты — **батч** из PIM/ERP                 |
-| 2. Pipeline Design   | Нарисовать схему ETL/ELT: где очистка, где генерация эмбеддингов для Vector DB / Product KB                                                 |
-| 3. Storage Selection | Выбрать хранилища по этапам (Data Lake, Feature Store, Vector DB); обосновать стек (напр. Kafka → Spark → S3 → Feature Store / Pinecone)   |
-| 4. Data Governance   | Описать консистентность между Feature Store (обучение) и онлайн-инференсом — митигация **Training-Serving Skew**                            |
+| Шаг ДЗ               | Документ / файл                                                                 |
+| -------------------- | ------------------------------------------------------------------------------- |
+| 1. Data Sources      | [docs/data-pipeline.md](docs/data-pipeline.md) — §1 источники (stream / batch)  |
+| 2. Pipeline Design   | [diagrams/data-pipeline.png](diagrams/data-pipeline.png) · [docs §2](docs/data-pipeline.md) |
+| 3. Storage Selection | [docs/data-pipeline.md](docs/data-pipeline.md) — §3 стек Kafka → Spark → S3 → FS / Vector DB |
+| 4. Data Governance   | [docs/data-pipeline.md](docs/data-pipeline.md) — §4 Training-Serving Skew        |
 
 ## Формат сдачи
 
-| Артефакт                         | Путь / формат                                              |
-| -------------------------------- | ---------------------------------------------------------- |
-| Схема архитектуры данных         | [diagrams/](diagrams/) — Draw.io / PNG                     |
-| Текстовое описание (1–2 стр.)    | [docs/](docs/) — источники, пайплайн, хранилища, governance |
+| Артефакт                      | Путь                                                                   |
+| ----------------------------- | ---------------------------------------------------------------------- |
+| Схема архитектуры данных      | [diagrams/data-pipeline.drawio](diagrams/data-pipeline.drawio) · [PNG](diagrams/data-pipeline.png) |
+| Текстовое описание (1–2 стр.) | [docs/data-pipeline.md](docs/data-pipeline.md)                         |
 
 ## Критерии самопроверки
 
-| Критерий           | Что проверить                                                                          |
-| ------------------ | -------------------------------------------------------------------------------------- |
-| Выбор технологий   | Инструменты соответствуют задачам (Stream vs Batch)                                    |
-| Полнота потока     | Данные прослеживаются от источника (PIM / CDP) до модели и Vector DB                   |
-| Feature Store      | Понятна роль Feature Store для предотвращения Training-Serving Skew                    |
+| Критерий         | Как закрыто                                                                                          |
+| ---------------- | ---------------------------------------------------------------------------------------------------- |
+| Выбор технологий | Stream (Kafka + Spark Streaming) vs Batch (PIM → Spark) — [docs](docs/data-pipeline.md) §1–3         |
+| Полнота потока   | PIM/CDP → Lake → Feature Store / Vector DB → AI Service — [схема](diagrams/data-pipeline.png)        |
+| Feature Store    | Offline + Redis online, единые definitions, anti-skew — [docs](docs/data-pipeline.md) §4             |
 
 Статус «Принято», если все три критерия выполнены.
 
