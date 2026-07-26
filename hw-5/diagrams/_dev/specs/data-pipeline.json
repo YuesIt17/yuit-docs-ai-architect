@@ -1,7 +1,7 @@
 {
   "title": "Data Pipeline RetailPartnerX",
   "pageWidth": 1480,
-  "pageHeight": 720,
+  "pageHeight": 820,
   "nodes": [
     {
       "id": "cdp",
@@ -23,12 +23,12 @@
     },
     {
       "id": "boundary",
-      "label": "Data Platform — RetailPartnerX",
+      "label": "Data Platform — RetailPartnerX\nLambda: stream (поведение) + batch (каталог) → общий Lake / serving",
       "style": "boundary",
       "x": 230,
       "y": 40,
       "w": 1000,
-      "h": 620
+      "h": 720
     },
     {
       "id": "kafka",
@@ -75,7 +75,7 @@
       "label": "Embedding job\n(batch)",
       "style": "component",
       "x": 460,
-      "y": 400,
+      "y": 470,
       "w": 150,
       "h": 70,
       "parent": "boundary"
@@ -94,8 +94,8 @@
       "id": "vdb",
       "label": "Vector DB\nProduct KB",
       "style": "db",
-      "x": 680,
-      "y": 380,
+      "x": 710,
+      "y": 460,
       "w": 170,
       "h": 90,
       "parent": "boundary"
@@ -105,26 +105,46 @@
       "label": "Offline train\nRanker",
       "style": "component",
       "x": 680,
-      "y": 220,
+      "y": 230,
       "w": 170,
       "h": 70,
       "parent": "boundary"
     },
     {
       "id": "note_clean",
-      "label": "Очистка: Spark\n(schema, дедуп, customer_id)",
+      "label": "Очистка — в Spark (stream + batch)\n• schema: валидация контракта\n• дедуп / отсев ботов\n• нормализация customer_id, sku_id",
       "style": "note",
       "x": 40,
-      "y": 500,
-      "w": 200,
-      "h": 70,
+      "y": 560,
+      "w": 260,
+      "h": 100,
+      "parent": "boundary"
+    },
+    {
+      "id": "note_embed",
+      "label": "Эмбеддинги — offline batch\nпосле curated catalog → Vector DB\nне в online path Ranker / RAG\n(p95 latency, hw-2)",
+      "style": "note",
+      "x": 330,
+      "y": 560,
+      "w": 280,
+      "h": 100,
+      "parent": "boundary"
+    },
+    {
+      "id": "note_skew",
+      "label": "Anti-skew (Feature Store)\nодни feature definitions\noffline train = online serve (Redis)\npoint-in-time joins при обучении",
+      "style": "note",
+      "x": 640,
+      "y": 560,
+      "w": 300,
+      "h": 100,
       "parent": "boundary"
     },
     {
       "id": "ai",
       "label": "AI Service\nRanker + RAG",
       "style": "container",
-      "x": 1280,
+      "x": 1290,
       "y": 260,
       "w": 150,
       "h": 90
@@ -250,8 +270,8 @@
       "exitY": 0.5,
       "entryX": 0,
       "entryY": 0.3,
-      "waypoints": [{ "x": 1260, "y": 125 }, { "x": 1260, "y": 287 }],
-      "labelOffset": { "x": 0, "y": -12 }
+      "waypoints": [{ "x": 1260, "y": 165 }, { "x": 1260, "y": 287 }],
+      "labelOffset": { "x": 1, "y": 0 }
     },
     {
       "from": "vdb",
@@ -261,8 +281,13 @@
       "exitY": 0.5,
       "entryX": 0,
       "entryY": 0.7,
-      "waypoints": [{ "x": 1260, "y": 425 }, { "x": 1260, "y": 323 }],
-      "labelOffset": { "x": 0, "y": -12 }
+      "waypoints": [
+        { "x": 1130, "y": 545 },
+        { "x": 1130, "y": 425 },
+        { "x": 1260, "y": 425 },
+        { "x": 1260, "y": 323 }
+      ],
+      "labelOffset": { "x": 0, "y": 0 }
     },
     {
       "from": "train",

@@ -25,10 +25,10 @@
 
 | Шаг ДЗ               | Документ / файл                                                                 |
 | -------------------- | ------------------------------------------------------------------------------- |
-| 1. Data Sources      | [docs/data-pipeline.md](docs/data-pipeline.md) — §1 источники (stream / batch)  |
-| 2. Pipeline Design   | [diagrams/data-pipeline.png](diagrams/data-pipeline.png) · [docs §2](docs/data-pipeline.md) |
-| 3. Storage Selection | [docs/data-pipeline.md](docs/data-pipeline.md) — §3 стек Kafka → Spark → S3 → FS / Vector DB |
-| 4. Data Governance   | [docs/data-pipeline.md](docs/data-pipeline.md) — §4 Training-Serving Skew        |
+| 1. Data Sources      | [docs/data-pipeline.md](docs/data-pipeline.md) — источники (stream / batch) |
+| 2. Pipeline Design   | [diagrams/data-pipeline.png](diagrams/data-pipeline.png) · [docs/data-pipeline.md](docs/data-pipeline.md) — ETL/ELT поток |
+| 3. Storage Selection | [docs/data-pipeline.md](docs/data-pipeline.md) — стек Kafka → Spark → S3 → FS / Vector DB |
+| 4. Data Governance   | [docs/data-pipeline.md](docs/data-pipeline.md) — Training-Serving Skew |
 
 ## Формат сдачи
 
@@ -41,9 +41,9 @@
 
 | Критерий         | Как закрыто                                                                                          |
 | ---------------- | ---------------------------------------------------------------------------------------------------- |
-| Выбор технологий | Stream (Kafka + Spark Streaming) vs Batch (PIM → Spark) — [docs](docs/data-pipeline.md) §1–3         |
+| Выбор технологий | Stream (Kafka + Spark Streaming) vs Batch (PIM → Spark) — [docs/data-pipeline.md](docs/data-pipeline.md) |
 | Полнота потока   | PIM/CDP → Lake → Feature Store / Vector DB → AI Service — [схема](diagrams/data-pipeline.png)        |
-| Feature Store    | Offline + Redis online, единые definitions, anti-skew — [docs](docs/data-pipeline.md) §4             |
+| Feature Store    | Offline + Redis online, единые definitions, anti-skew — [docs/data-pipeline.md](docs/data-pipeline.md) |
 
 Статус «Принято», если все три критерия выполнены.
 
