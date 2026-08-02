@@ -1,0 +1,12 @@
+{
+  "hwId": "hw-5",
+  "description": "RetailPartnerX — data pipeline (batch catalog + stream behavior)",
+  "defaultOutputDir": "hw-5/diagrams",
+  "frozen": ["data-pipeline.drawio"],
+  "diagrams": [
+    {
+      "spec": "data-pipeline.json",
+      "output": "data-pipeline.drawio"
+    }
+  ]
+}
