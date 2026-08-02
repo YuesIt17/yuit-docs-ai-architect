@@ -322,14 +322,42 @@ export function renderSpecSvg(spec) {
 }
 
 async function tryCloudExport(xml, format) {
-  const form = new FormData();
-  form.append("format", format);
-  form.append("xml", new Blob([xml], { type: "application/xml" }), "diagram.drawio");
-  const response = await fetch(EXPORT_URL, { method: "POST", body: form });
+  // convert.diagrams.net expects application/x-www-form-urlencoded.
+  // multipart FormData+Blob returns 400/403 and must not be used.
+  const body = new URLSearchParams({
+    format,
+    xml,
+    bg: "#ffffff",
+    embedXml: "0",
+  });
+  const response = await fetch(EXPORT_URL, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      Referer: "https://app.diagrams.net/",
+    },
+    body,
+  });
   if (!response.ok) {
     return null;
   }
   const buffer = Buffer.from(await response.arrayBuffer());
+  const looksPng = buffer.length > 8 && buffer[0] === 0x89 && buffer[1] === 0x50;
+  const looksSvg =
+    buffer.length > 20 &&
+    (buffer.subarray(0, 5).toString() === "<?xml" ||
+      buffer.subarray(0, 4).toString() === "<svg");
+  if (!looksPng && !looksSvg && format === "png") {
+    // Some responses return base64 text — decode if it looks like PNG base64
+    const text = buffer.toString("utf8").trim();
+    if (/^[A-Za-z0-9+/=\r\n]+$/.test(text) && text.length > 100) {
+      const decoded = Buffer.from(text, "base64");
+      if (decoded[0] === 0x89 && decoded[1] === 0x50) {
+        return decoded;
+      }
+    }
+    return null;
+  }
   return buffer.length > 0 ? buffer : null;
 }
 
