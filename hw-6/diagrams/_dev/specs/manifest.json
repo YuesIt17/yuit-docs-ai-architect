@@ -1,0 +1,12 @@
+{
+  "hwId": "hw-6",
+  "description": "RetailPartnerX — security layer (PII Sanitizer + Guardrails) on shopping assistant / recsys path",
+  "defaultOutputDir": "hw-6/diagrams",
+  "frozen": ["security-layer.drawio"],
+  "diagrams": [
+    {
+      "spec": "security-layer.json",
+      "output": "security-layer.drawio"
+    }
+  ]
+}
