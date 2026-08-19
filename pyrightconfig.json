@@ -1,0 +1,7 @@
+{
+  "venvPath": ".",
+  "venv": ".venv",
+  "pythonVersion": "3.10",
+  "include": ["hw-3/code/shopping_assistant", "hw-3/code/tests"],
+  "extraPaths": ["hw-3/code"]
+}

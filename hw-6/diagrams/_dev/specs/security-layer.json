@@ -1,0 +1,242 @@
+{
+  "title": "Security Layer RetailPartnerX",
+  "pageWidth": 1420,
+  "pageHeight": 780,
+  "nodes": [
+    {
+      "id": "user",
+      "label": "Покупатель\nчат / карточка",
+      "style": "person",
+      "x": 40,
+      "y": 300,
+      "w": 120,
+      "h": 90
+    },
+    {
+      "id": "boundary",
+      "label": "AI Service — RetailPartnerX\nSecurity: PII Sanitizer + Guardrails (OWASP LLM Top 10)",
+      "style": "boundary",
+      "x": 200,
+      "y": 40,
+      "w": 980,
+      "h": 680
+    },
+    {
+      "id": "gw",
+      "label": "API Gateway\nAuthN / rate limit",
+      "style": "container",
+      "x": 40,
+      "y": 280,
+      "w": 150,
+      "h": 80,
+      "parent": "boundary"
+    },
+    {
+      "id": "pii",
+      "label": "PII Sanitizer\nмаскирование ПДн\nдо LLM (R6)",
+      "style": "component",
+      "x": 240,
+      "y": 270,
+      "w": 160,
+      "h": 100,
+      "parent": "boundary"
+    },
+    {
+      "id": "inj",
+      "label": "Input Guard\nPrompt Injection\nfilter (OWASP)",
+      "style": "component",
+      "x": 240,
+      "y": 100,
+      "w": 160,
+      "h": 100,
+      "parent": "boundary"
+    },
+    {
+      "id": "orch",
+      "label": "Orchestrator\n+ агенты hw-3\n/ Ranker hw-2",
+      "style": "container",
+      "x": 460,
+      "y": 270,
+      "w": 170,
+      "h": 100,
+      "parent": "boundary"
+    },
+    {
+      "id": "rag",
+      "label": "RAG / Vector DB\nProduct + Policy KB",
+      "style": "db",
+      "x": 460,
+      "y": 450,
+      "w": 170,
+      "h": 90,
+      "parent": "boundary"
+    },
+    {
+      "id": "llm",
+      "label": "LLM Provider\n(SaaS / self-host)",
+      "style": "external",
+      "x": 700,
+      "y": 280,
+      "w": 150,
+      "h": 80,
+      "parent": "boundary"
+    },
+    {
+      "id": "out",
+      "label": "Output Guardrails\nвалидация ответа\ncitations / blocklist (R4,R8)",
+      "style": "component",
+      "x": 700,
+      "y": 100,
+      "w": 180,
+      "h": 110,
+      "parent": "boundary"
+    },
+    {
+      "id": "sec",
+      "label": "Secret Manager\nAPI keys / tokens",
+      "style": "db",
+      "x": 700,
+      "y": 450,
+      "w": 160,
+      "h": 90,
+      "parent": "boundary"
+    },
+    {
+      "id": "obs",
+      "label": "Observability\nLangfuse + Prometheus\n(без сырых ПДн в логах)",
+      "style": "container",
+      "x": 40,
+      "y": 520,
+      "w": 180,
+      "h": 100,
+      "parent": "boundary"
+    },
+    {
+      "id": "note",
+      "label": "Цель: не отдавать ПДн во внешний LLM;\nблокировать injection и токсичные/галлюцинированные ответы\nдо пользователя (R4, R6, R8).",
+      "style": "note",
+      "x": 1210,
+      "y": 280,
+      "w": 180,
+      "h": 120
+    }
+  ],
+  "edges": [
+    {
+      "from": "user",
+      "to": "gw",
+      "label": "HTTPS",
+      "exitX": 1,
+      "exitY": 0.5,
+      "entryX": 0,
+      "entryY": 0.5,
+      "labelOffset": { "x": 0, "y": -12 }
+    },
+    {
+      "from": "gw",
+      "to": "pii",
+      "label": "request",
+      "parent": "boundary",
+      "exitX": 1,
+      "exitY": 0.5,
+      "entryX": 0,
+      "entryY": 0.5,
+      "labelOffset": { "x": 0, "y": -12 }
+    },
+    {
+      "from": "pii",
+      "to": "inj",
+      "label": "sanitized",
+      "parent": "boundary",
+      "exitX": 0.5,
+      "exitY": 0,
+      "entryX": 0.5,
+      "entryY": 1,
+      "labelOffset": { "x": 14, "y": 0 }
+    },
+    {
+      "from": "inj",
+      "to": "orch",
+      "label": "safe prompt",
+      "parent": "boundary",
+      "exitX": 1,
+      "exitY": 0.5,
+      "entryX": 0.5,
+      "entryY": 0,
+      "waypoints": [{ "x": 545, "y": 150 }],
+      "labelOffset": { "x": 0, "y": -12 }
+    },
+    {
+      "from": "orch",
+      "to": "rag",
+      "label": "retrieve",
+      "parent": "boundary",
+      "exitX": 0.5,
+      "exitY": 1,
+      "entryX": 0.5,
+      "entryY": 0,
+      "labelOffset": { "x": 14, "y": 0 }
+    },
+    {
+      "from": "orch",
+      "to": "llm",
+      "label": "completion",
+      "parent": "boundary",
+      "exitX": 1,
+      "exitY": 0.5,
+      "entryX": 0,
+      "entryY": 0.5,
+      "labelOffset": { "x": 0, "y": -12 }
+    },
+    {
+      "from": "llm",
+      "to": "out",
+      "label": "raw answer",
+      "parent": "boundary",
+      "exitX": 0.5,
+      "exitY": 0,
+      "entryX": 0.5,
+      "entryY": 1,
+      "labelOffset": { "x": 14, "y": 0 }
+    },
+    {
+      "from": "out",
+      "to": "gw",
+      "label": "validated response",
+      "parent": "boundary",
+      "exitX": 0,
+      "exitY": 0.5,
+      "entryX": 0.5,
+      "entryY": 0,
+      "waypoints": [
+        { "x": 115, "y": 155 },
+        { "x": 115, "y": 280 }
+      ],
+      "labelOffset": { "x": 0, "y": -12 }
+    },
+    {
+      "from": "orch",
+      "to": "sec",
+      "label": "fetch secrets",
+      "parent": "boundary",
+      "exitX": 1,
+      "exitY": 1,
+      "entryX": 0,
+      "entryY": 0.3,
+      "waypoints": [{ "x": 680, "y": 400 }],
+      "labelOffset": { "x": 0, "y": -12 }
+    },
+    {
+      "from": "pii",
+      "to": "obs",
+      "label": "redacted traces",
+      "parent": "boundary",
+      "exitX": 0,
+      "exitY": 1,
+      "entryX": 1,
+      "entryY": 0.3,
+      "waypoints": [{ "x": 240, "y": 550 }],
+      "labelOffset": { "x": 0, "y": -12 }
+    }
+  ]
+}

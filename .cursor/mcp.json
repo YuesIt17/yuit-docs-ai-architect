@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "drawio-generator": {
+      "command": "node",
+      "args": ["tools/drawio-mcp/src/index.mjs"],
+      "cwd": "${workspaceFolder}"
+    }
+  }
+}

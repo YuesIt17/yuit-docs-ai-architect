@@ -1,0 +1,224 @@
+openapi: 3.0.3
+info:
+  title: RetailPartnerX AI Recommendation Service API
+  description: |
+    Контракт интеграции Backend → AI Service для персональных рекомендаций.
+    Согласован с Sequence в diagrams/sequence-get-recommendation.drawio.
+  version: 1.0.0
+  contact:
+    name: RetailPartnerX Integration
+
+servers:
+  - url: https://ai-service.retailpartnerx.internal/v1
+    description: Production
+  - url: http://localhost:8081/v1
+    description: Local dev
+
+tags:
+  - name: recommendations
+    description: Персональные рекомендации SKU
+
+paths:
+  /get_recommendation:
+    post:
+      tags:
+        - recommendations
+      summary: Получить ранжированный список рекомендаций
+      description: |
+        Вызывается Backend при отображении блока рекомендаций
+        (карточка товара, чекаут). Синхронный запрос; целевая метрика
+        эксплуатации — p95 latency (см. NFR в стратегии hw-1); числовой
+        порог SLO согласуется с заказчиком после замеров MVP.
+      operationId: getRecommendation
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RecommendationRequest'
+            examples:
+              productPage:
+                summary: Карточка товара
+                value:
+                  user_id: "1002847"
+                  context: product_page
+                  product_id: "SKU-123"
+                  limit: 10
+              checkout:
+                summary: Чекаут
+                value:
+                  user_id: "1002847"
+                  context: checkout
+                  product_id: null
+                  limit: 12
+      responses:
+        '200':
+          description: Успешный ответ с рекомендациями
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecommendationResponse'
+              examples:
+                success:
+                  value:
+                    request_id: "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+                    recommendations:
+                      - sku_id: "SKU-456"
+                        score: 0.92
+                        title: "Картофель мытый 1 кг"
+                      - sku_id: "SKU-789"
+                        score: 0.87
+                        title: "Лук репчатый 500 г"
+        '400':
+          description: Невалидный запрос — некорректные или отсутствующие поля
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                invalidContext:
+                  value:
+                    code: INVALID_CONTEXT
+                    message: "Поле context должно быть product_page или checkout"
+                missingProductId:
+                  value:
+                    code: MISSING_PRODUCT_ID
+                    message: "Для context=product_page обязателен product_id"
+        '401':
+          description: Не авторизован — отсутствует или недействителен токен доступа
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                unauthorized:
+                  value:
+                    code: UNAUTHORIZED
+                    message: "Требуется действительный Bearer-токен или API-ключ"
+        '404':
+          description: Не найдено — пользователь или товар отсутствует в каталоге
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                userNotFound:
+                  value:
+                    code: USER_NOT_FOUND
+                    message: "Пользователь с указанным user_id не найден"
+                productNotFound:
+                  value:
+                    code: PRODUCT_NOT_FOUND
+                    message: "Товар с указанным product_id не найден"
+        '503':
+          description: Сервис недоступен — пайплайн ранжирования или LLM временно недоступен
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                serviceUnavailable:
+                  value:
+                    code: SERVICE_UNAVAILABLE
+                    message: "Пайплайн рекомендаций временно недоступен, повторите запрос позже"
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+              examples:
+                internal:
+                  value:
+                    code: INTERNAL_ERROR
+                    message: "Внутренняя ошибка AI Service"
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+      description: Токен сервис-сервис (Backend → AI Service)
+  schemas:
+    RecommendationContext:
+      type: string
+      enum:
+        - product_page
+        - checkout
+      description: Точка показа рекомендаций
+
+    RecommendationRequest:
+      type: object
+      required:
+        - user_id
+        - context
+        - limit
+      properties:
+        user_id:
+          type: string
+          description: Номер карты лояльности или guest-токен
+          example: "1002847"
+        context:
+          $ref: '#/components/schemas/RecommendationContext'
+        product_id:
+          type: string
+          nullable: true
+          description: SKU якорного товара; обязателен для product_page
+          example: "SKU-123"
+        limit:
+          type: integer
+          minimum: 1
+          maximum: 50
+          default: 10
+          description: Максимальное число рекомендаций в ответе
+
+    RecommendationItem:
+      type: object
+      required:
+        - sku_id
+        - score
+      properties:
+        sku_id:
+          type: string
+          example: "SKU-456"
+        score:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          description: Релевантность (чем выше, тем лучше)
+        title:
+          type: string
+          description: Отображаемое название (опционально, для UI)
+          example: "Картофель мытый 1 кг"
+
+    RecommendationResponse:
+      type: object
+      required:
+        - request_id
+        - recommendations
+      properties:
+        request_id:
+          type: string
+          description: UUID запроса для логов и трассировки
+          example: "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+        recommendations:
+          type: array
+          items:
+            $ref: '#/components/schemas/RecommendationItem'
+
+    ErrorResponse:
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          type: string
+          description: Машиночитаемый код ошибки
+        message:
+          type: string
+          description: Описание ошибки для логов и отображения оператору

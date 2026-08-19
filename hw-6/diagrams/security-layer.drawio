@@ -1,0 +1,112 @@
+<mxfile host="65bd71144e">
+    <diagram name="Security Layer RetailPartnerX" id="8a1e69a6-5fc5-4e4c-a628-15ca3fc34acd">
+        <mxGraphModel dx="1059" dy="445" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1420" pageHeight="780" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="2" value="Покупатель&amp;#10;чат / карточка" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#08427B;fontColor=#ffffff;" parent="1" vertex="1">
+                    <mxGeometry x="50" y="310" width="70" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="3" value="AI Service — RetailPartnerX&amp;#10;Security: PII Sanitizer + Guardrails (OWASP LLM Top 10)" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 8;fillColor=none;strokeColor=#666666;align=left;verticalAlign=top;fontStyle=1;fontColor=#333333;" parent="1" vertex="1">
+                    <mxGeometry x="200" y="40" width="980" height="680" as="geometry"/>
+                </mxCell>
+                <mxCell id="4" value="API Gateway&amp;#10;AuthN / rate limit" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#438DD5;strokeColor=#3C7FC0;fontColor=#ffffff;align=center;" parent="3" vertex="1">
+                    <mxGeometry x="40" y="280" width="150" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="PII Sanitizer&amp;#10;маскирование ПДн&amp;#10;до LLM (R6)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;strokeColor=#3C7FC0;fontColor=#000000;align=center;" parent="3" vertex="1">
+                    <mxGeometry x="240" y="270" width="160" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="6" value="Input Guard&amp;#10;Prompt Injection&amp;#10;filter (OWASP)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;strokeColor=#3C7FC0;fontColor=#000000;align=center;" parent="3" vertex="1">
+                    <mxGeometry x="240" y="100" width="160" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="7" value="Orchestrator&amp;#10;+ агенты hw-3&amp;#10;/ Ranker hw-2" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#438DD5;strokeColor=#3C7FC0;fontColor=#ffffff;align=center;" parent="3" vertex="1">
+                    <mxGeometry x="460" y="270" width="170" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="8" value="RAG / Vector DB&amp;#10;Product + Policy KB" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=12;fillColor=#438DD5;strokeColor=#3C7FC0;fontColor=#ffffff;" parent="3" vertex="1">
+                    <mxGeometry x="460" y="450" width="170" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="9" value="LLM Provider&amp;#10;(SaaS / self-host)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#999999;strokeColor=#666666;fontColor=#ffffff;align=center;" parent="3" vertex="1">
+                    <mxGeometry x="715" y="280" width="150" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="10" value="Output Guardrails&amp;#10;валидация ответа&amp;#10;citations / blocklist (R4,R8)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;strokeColor=#3C7FC0;fontColor=#000000;align=center;" parent="3" vertex="1">
+                    <mxGeometry x="700" y="100" width="180" height="110" as="geometry"/>
+                </mxCell>
+                <mxCell id="11" value="Secret Manager&amp;#10;API keys / tokens" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=12;fillColor=#438DD5;strokeColor=#3C7FC0;fontColor=#ffffff;" parent="3" vertex="1">
+                    <mxGeometry x="720" y="450" width="160" height="90" as="geometry"/>
+                </mxCell>
+                <mxCell id="12" value="Observability&amp;#10;Langfuse + Prometheus&amp;#10;(без сырых ПДн в логах)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#438DD5;strokeColor=#3C7FC0;fontColor=#ffffff;align=center;" parent="3" vertex="1">
+                    <mxGeometry x="30" y="460" width="180" height="100" as="geometry"/>
+                </mxCell>
+                <mxCell id="15" value="request" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#666666;fontColor=#333333;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="3" source="4" target="5" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint y="-12" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="16" value="sanitized" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#666666;fontColor=#333333;labelBackgroundColor=#ffffff;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="3" source="5" target="6" edge="1">
+                    <mxGeometry x="-0.1429" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="17" value="safe prompt" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#666666;fontColor=#333333;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="3" source="6" target="7" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="545" y="150"/>
+                        </Array>
+                        <mxPoint y="-12" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="18" value="retrieve" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#666666;fontColor=#333333;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="3" source="7" target="8" edge="1">
+                    <mxGeometry y="5" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="19" value="completion" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#666666;fontColor=#333333;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="3" source="7" target="9" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint y="-12" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="20" value="raw answer" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#666666;fontColor=#333333;labelBackgroundColor=#ffffff;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" parent="3" source="9" target="10" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="14" as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="21" value="validated response" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#666666;fontColor=#333333;labelBackgroundColor=#ffffff;entryX=0.5;entryY=0;entryDx=0;entryDy=0;" parent="3" target="4" edge="1">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="790" y="80"/>
+                            <mxPoint x="115" y="80"/>
+                        </Array>
+                        <mxPoint y="-12" as="offset"/>
+                        <mxPoint x="790" y="100" as="sourcePoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="22" value="fetch secrets" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#666666;fontColor=#333333;labelBackgroundColor=#ffffff;exitX=0.75;exitY=1;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;entryPerimeter=0;" parent="3" source="7" target="11" edge="1">
+                    <mxGeometry x="-0.1437" y="10" relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="588" y="410"/>
+                            <mxPoint x="690" y="410"/>
+                            <mxPoint x="690" y="495"/>
+                        </Array>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="23" value="redacted traces" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#666666;fontColor=#333333;labelBackgroundColor=#ffffff;exitX=0.5;exitY=1;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;" parent="3" source="5" target="12" edge="1">
+                    <mxGeometry x="-0.3603" relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="320" y="510"/>
+                        </Array>
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="13" value="Цель: не отдавать ПДн во внешний LLM;&amp;#10;блокировать injection и токсичные/галлюцинированные ответы&amp;#10;до пользователя (R4, R6, R8)." style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#fff2cc;strokeColor=#d6b656;size=14;align=left;" parent="1" vertex="1">
+                    <mxGeometry x="1210" y="280" width="180" height="120" as="geometry"/>
+                </mxCell>
+                <mxCell id="14" value="HTTPS" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#666666;fontColor=#333333;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="1" source="2" target="4" edge="1">
+                    <mxGeometry x="-0.1667" y="10" relative="1" as="geometry">
+                        <mxPoint as="offset"/>
+                    </mxGeometry>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>
