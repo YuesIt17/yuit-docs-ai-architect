@@ -128,7 +128,7 @@ Offline-метрики на hold-out ≥ baseline **или** явный no-go с
 | C4 + Sequence (Draw.io) | [hw-2/diagrams/](../hw-2/diagrams/) |
 | OpenAPI | [hw-2/openapi/recommendation-api.yaml](../hw-2/openapi/recommendation-api.yaml) |
 | Термины (C4, NFR, метрики) | [hw-2/Glossary.md](../hw-2/Glossary.md) |
-| HTML-презентация кейса | [portfolio/index.html](../../portfolio/index.html) |
+| HTML-презентация кейса | [GitHub Pages](https://yuesit17.github.io/yuit-docs-ai-architect/portfolio/) |
 
 ---
 

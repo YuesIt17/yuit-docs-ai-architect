@@ -2,7 +2,9 @@
 
 > Учебный архитектурный кейс: персонализированные рекомендации и shopping assistant для FMCG-ритейлера
 
-**HTML-презентация:** [portfolio/index.html](portfolio/index.html) · **GitHub:** [YuesIt17/yuit-docs-ai-architect](https://github.com/YuesIt17/yuit-docs-ai-architect)
+**HTML-презентация:** [GitHub Pages](https://yuesit17.github.io/yuit-docs-ai-architect/portfolio/) · **GitHub:** [YuesIt17/yuit-docs-ai-architect](https://github.com/YuesIt17/yuit-docs-ai-architect)
+
+> В браузере репозитория файл `portfolio/index.html` отображается как исходный код — это ограничение GitHub. Открывайте презентацию по ссылке **GitHub Pages** выше.
 
 ---
 
@@ -134,7 +136,7 @@ Engineering Manager с 13+ годами опыта в IT / software development.
 
 | Ресурс | Описание |
 |--------|----------|
-| [portfolio/index.html](portfolio/index.html) | HTML-презентация для architecture review |
+| [portfolio/index.html](https://yuesit17.github.io/yuit-docs-ai-architect/portfolio/) | HTML-презентация для architecture review (GitHub Pages) |
 | [hw-1 … hw-6](#архитектурный-путь) | Evidence по модулям |
 | [docs/interview/INTERVIEW-SUMMARY.md](docs/interview/INTERVIEW-SUMMARY.md) | Краткая шпаргалка для собеседований |
 | [docs/interview/ARCHITECTURE-INTERVIEW-CHEATSHEET.md](docs/interview/ARCHITECTURE-INTERVIEW-CHEATSHEET.md) | Общие темы Solution Architect |
