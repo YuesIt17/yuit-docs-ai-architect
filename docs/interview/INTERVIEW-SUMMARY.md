@@ -1,6 +1,6 @@
 # Саммари для собеседования — Solution Architect (AI / Retail)
 
-> Краткая шпаргалка по кейсу **RetailPartnerX** (ДЗ hw-1 + hw-2). Полные артефакты: [hw-1](hw-1/RetailPartnerX_AI_Strategy.md), [hw-2](hw-2/README.md).  
+> Краткая шпаргалка по кейсу **RetailPartnerX** (hw-1 + hw-2). Полные артефакты: [hw-1](../hw-1/RetailPartnerX_AI_Strategy.md), [hw-2](../hw-2/README.md).  
 > Общие темы архитектуры: [ARCHITECTURE-INTERVIEW-CHEATSHEET.md](ARCHITECTURE-INTERVIEW-CHEATSHEET.md).
 
 ---
@@ -124,11 +124,11 @@ Offline-метрики на hold-out ≥ baseline **или** явный no-go с
 
 | Что | Где |
 |-----|-----|
-| Стратегия, контракт, риски, roadmap | [hw-1/RetailPartnerX_AI_Strategy.md](hw-1/RetailPartnerX_AI_Strategy.md) |
-| C4 + Sequence (Mermaid) | [hw-2/diagrams/mermaid/](hw-2/diagrams/mermaid/) |
-| Диаграммы для сдачи (Draw.io) | [hw-2/diagrams/drawio/](hw-2/diagrams/drawio/) |
-| OpenAPI | [hw-2/openapi/recommendation-api.yaml](hw-2/openapi/recommendation-api.yaml) |
-| Термины (C4, NFR, метрики) | [hw-2/Glossary.md](hw-2/Glossary.md) |
+| Стратегия, контракт, риски, roadmap | [hw-1/RetailPartnerX_AI_Strategy.md](../hw-1/RetailPartnerX_AI_Strategy.md) |
+| C4 + Sequence (Draw.io) | [hw-2/diagrams/](../hw-2/diagrams/) |
+| OpenAPI | [hw-2/openapi/recommendation-api.yaml](../hw-2/openapi/recommendation-api.yaml) |
+| Термины (C4, NFR, метрики) | [hw-2/Glossary.md](../hw-2/Glossary.md) |
+| HTML-презентация кейса | [portfolio/index.html](../../portfolio/index.html) |
 
 ---
 
