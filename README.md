@@ -5,6 +5,8 @@
 **HTML-презентация:** [GitHub Pages](https://yuesit17.github.io/yuit-docs-ai-architect/portfolio/) · **GitHub:** [YuesIt17/yuit-docs-ai-architect](https://github.com/YuesIt17/yuit-docs-ai-architect)
 
 > В браузере репозитория файл `portfolio/index.html` отображается как исходный код — это ограничение GitHub. Открывайте презентацию по ссылке **GitHub Pages** выше.
+>
+> **Если Pages ещё не работает:** после push в `main` дождитесь workflow **Deploy GitHub Pages** → Settings → Pages → Source: **Deploy from a branch** → Branch: `gh-pages` → Folder: `/ (root)`.
 
 ---
 
