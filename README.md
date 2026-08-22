@@ -4,21 +4,13 @@
 
 **HTML-презентация:** [GitHub Pages](https://yuesit17.github.io/yuit-docs-ai-architect/portfolio/) · **GitHub:** [YuesIt17/yuit-docs-ai-architect](https://github.com/YuesIt17/yuit-docs-ai-architect)
 
-> В браузере репозитория файл `portfolio/index.html` отображается как исходный код — это ограничение GitHub. Открывайте презентацию по ссылке **GitHub Pages** выше.
->
-> **Если Pages показывает 404:** workflow уже публикует в ветку `gh-pages`. Осталось один раз включить сайт:
-> 1. Откройте [Settings → Pages](https://github.com/YuesIt17/yuit-docs-ai-architect/settings/pages)
-> 2. **Build and deployment → Source:** Deploy from a branch
-> 3. **Branch:** `gh-pages` · **Folder:** `/ (root)` → **Save**
-> 4. Подождите 1–3 минуты и обновите [презентацию](https://yuesit17.github.io/yuit-docs-ai-architect/portfolio/)
-
 ---
 
 ## Кратко о проекте
 
-**RetailPartnerX** — вымышленный FMCG-ритейлер с omnichannel-каналами. Заказчик формулирует цель как «персональные рекомендации как у Tesco / Carrefour», но без KPI, границ данных и каналов. Кейс прорабатывает архитектуру AI-native системы: от программы и рисков до C4, API, agentic RAG, data pipeline и production-readiness design.
+**RetailPartnerX** — вымышленный FMCG-ритейлер с omnichannel-каналами. Заказчик формулирует цель как «персональные рекомендации как у Tesco / Carrefour», но без KPI, границ данных и каналов. Кейс прорабатывает архитектуру AI-native системы: от программы и рисков до C4, API, agentic RAG, data pipeline, production-readiness и capacity / cost инференса.
 
-Репозиторий развивается последовательно через учебные модули (`hw-1` … `hw-6`) как единый architecture case study. Физические имена папок сохранены для процесса сдачи курса.
+Репозиторий развивается последовательно через учебные модули (`hw-1` … `hw-7`) как единый architecture case study. Физические имена папок сохранены для процесса сдачи курса.
 
 **Что здесь есть:** architecture design, прототип LangGraph (stub без API keys), эксперименты и coursework. **Что здесь нет:** production deployment, реальная нагрузка, работающий стек Kafka / Vector DB / observability.
 
@@ -35,6 +27,7 @@
 | **Architecture Decisions** | ADR-001: SaaS LLM for PoC/MVP via LLM Client abstraction |
 | **Data Architecture** | Kafka → Spark → S3 → Feature Store / Vector DB, anti-skew governance |
 | **Production Readiness** | Security layer, RAG evaluation strategy, observability dashboard design |
+| **Capacity & Cost** | VRAM/GPU sizing Llama-3-70B @ 1000 RPM; Yandex / Cloud.ru / AWS / GCP; INT4 + vLLM |
 
 ---
 
@@ -66,6 +59,7 @@ Shopping assistant в чате приложения: Orchestrator координ
 | [hw-4](hw-4/) | ADR: LLM hosting | [adr-001-llm-hosting.md](hw-4/docs/adr-001-llm-hosting.md) |
 | [hw-5](hw-5/) | Data pipeline, Feature Store | [data-pipeline.md](hw-5/docs/data-pipeline.md), [diagram](hw-5/diagrams/data-pipeline.png) |
 | [hw-6](hw-6/) | Security, Evaluation, Observability | [quality-assurance.md](hw-6/docs/quality-assurance.md), [security-layer.png](hw-6/diagrams/security-layer.png) |
+| [hw-7](hw-7/) | Inference sizing & cloud cost | [inference-sizing.md](hw-7/docs/inference-sizing.md), [recommendation.md](hw-7/docs/recommendation.md) |
 
 ---
 
@@ -80,6 +74,7 @@ Shopping assistant в чате приложения: Orchestrator координ
 | **Dual KB RAG (Product + Policy)** | Разные retrieval-стратегии vs смешение в одном индексе | [hw-3/docs/rag-pipeline.md](hw-3/docs/rag-pipeline.md) |
 | **Kafka → Spark → Feature Store** | Training-serving consistency vs сложность pipeline | [hw-5/docs/data-pipeline.md](hw-5/docs/data-pipeline.md) |
 | **Security Layer до LLM** | PII, prompt injection, output guardrails vs latency overhead | [hw-6/docs/quality-assurance.md](hw-6/docs/quality-assurance.md) §1 |
+| **Self-hosted INT4 + vLLM (2×A100)** | OpEx @ 1000 RPM vs FP16 / лишние реплики; RU-cloud vs AWS/GCP | [hw-7/docs/inference-sizing.md](hw-7/docs/inference-sizing.md) |
 
 ---
 
@@ -92,6 +87,7 @@ Shopping assistant в чате приложения: Orchestrator координ
 | **Evaluation** | Планируется | Faithfulness, Answer Relevancy; Ragas / DeepEval CI gates | [hw-6 §2](hw-6/docs/quality-assurance.md) |
 | **Observability** | Планируется | Prometheus, Tempo, Langfuse, Grafana dashboard spec | [hw-6 §3](hw-6/docs/quality-assurance.md) |
 | **Data** | Архитектурный дизайн | Ingestion, Feature Store, anti-skew, index versioning | [hw-5](hw-5/docs/data-pipeline.md) |
+| **Capacity / Cost** | Архитектурный дизайн | VRAM + KV, GPU fit, сравнение 4 облаков, INT4/vLLM | [hw-7](hw-7/docs/inference-sizing.md) |
 | **Platform** | Не реализовано | Deployment, K8s, CI/CD — не в scope репозитория | — |
 
 ---
@@ -104,6 +100,7 @@ Shopping assistant в чате приложения: Orchestrator координ
 - **Shopping assistant** — conversational commerce с constraint parsing (аллергены, бюджет, акции)
 - **Policy compliance** — RAG по internal policies (GDPR, 18+, аллергены) как semantic guard
 - **Knowledge freshness** — data pipeline для актуальности Product KB и embeddings
+- **Inference capacity** — sizing GPU и TCO self-hosted LLM при целевом RPM (триггер пересмотра SaaS ADR)
 
 Это учебный кейс; patterns описаны как архитектурный подход, а не как описание реальных внутренних систем.
 
@@ -115,7 +112,7 @@ RetailPartnerX — **учебный архитектурный кейс**, ра�
 
 Репозиторий содержит:
 
-- architecture design (C4, ADR, data pipeline, security/eval/observability)
+- architecture design (C4, ADR, data pipeline, security/eval/observability, inference sizing)
 - прототип LangGraph (stub, keyword RAG, 7 pytest, без LLM API keys)
 - coursework artifacts в `hw-*`
 
@@ -143,6 +140,6 @@ Engineering Manager с 13+ годами опыта в IT / software development.
 | Ресурс | Описание |
 |--------|----------|
 | [portfolio/index.html](https://yuesit17.github.io/yuit-docs-ai-architect/portfolio/) | HTML-презентация для architecture review (GitHub Pages) |
-| [hw-1 … hw-6](#архитектурный-путь) | Evidence по модулям |
+| [hw-1 … hw-7](#архитектурный-путь) | Evidence по модулям |
 | [docs/interview/INTERVIEW-SUMMARY.md](docs/interview/INTERVIEW-SUMMARY.md) | Краткая шпаргалка для собеседований |
 | [docs/interview/ARCHITECTURE-INTERVIEW-CHEATSHEET.md](docs/interview/ARCHITECTURE-INTERVIEW-CHEATSHEET.md) | Общие темы Solution Architect |
