@@ -1,22 +1,155 @@
 # Глоссарий hw-7
 
-Термины sizing и инференса LLM. Хостинг SaaS vs self-hosted — [hw-4/Glossary.md](../hw-4/Glossary.md).
+Термины **sizing** (расчёт ресурсов) и **инференса** LLM для RetailPartnerX.  
+SaaS vs self-hosted, TCO/OpEx в контексте ADR — [hw-4/Glossary.md](../hw-4/Glossary.md).  
+NFR / latency — [hw-2/Glossary.md](../hw-2/Glossary.md).
 
-| Термин             | Расшифровка                   | Кратко                                                   |
-| ------------------ | ----------------------------- | -------------------------------------------------------- |
-| **VRAM**           | Video RAM                     | Память GPU: веса модели + KV Cache + overhead            |
-| **FP16**           | Half precision                | 2 байта на параметр; Llama-3-70B ≈ 140 GB весов          |
-| **INT4**           | 4-bit quantization            | ~0.5 байта на параметр; веса ≈ 35 GB; дешевле по VRAM    |
-| **KV Cache**       | Key-Value Cache               | Кэш attention на токен; растёт с seq_len × concurrent    |
-| **GQA**            | Grouped-Query Attention       | У Llama-3-70B 8 KV heads → компактнее KV, чем full MHA   |
-| **TP**             | Tensor Parallelism            | Разрез модели по нескольким GPU                          |
-| **RPM**            | Requests Per Minute           | 1000 RPM ≈ 16.7 RPS                                      |
-| **RPS**            | Requests Per Second           | Instantaneous throughput                                 |
-| **Batching**       | Continuous / dynamic batching | Несколько запросов на одном forward-pass → выше GPU util |
-| **vLLM**           | —                             | Serving-движок: PagedAttention, continuous batching      |
-| **PagedAttention** | —                             | Меньше фрагментации KV → больше concurrent на ту же VRAM |
-| **AWQ / GPTQ**     | Weight-only quant             | Практичные форматы INT4 для vLLM/TGI                     |
-| **TCO**            | Total Cost of Ownership       | Полная стоимость (GPU-часы + MLOps), см. hw-4            |
-| **OpEx**           | Operating Expenditure         | Аренда GPU в облаке (помесячно)                          |
-| **A100 / L4 / T4** | NVIDIA GPU                    | 80/40 GB · 24 GB · 16 GB VRAM                            |
-| **Utilization**    | Утилизация                    | Доля занятого GPU; batching повышает её                  |
+Расчёты: [inference-sizing.md](docs/inference-sizing.md).
+
+---
+
+## Память и форматы чисел
+
+### VRAM (Video RAM)
+
+Память на видеокарте, в которой во время инференса лежат:
+
+1. **веса модели** (parameters);
+2. **KV Cache** по активным запросам;
+3. **overhead** — буферы CUDA, активации, фрагментация.
+
+Именно VRAM чаще всего ограничивает, «влезет ли» Llama-3-70B на A100 / L4 / T4. В hw-7:  
+`VRAM ≈ Weights + KV + overhead`.
+
+### FP16 (Half precision)
+
+Формат числа: **2 байта** на параметр (вдвое меньше FP32).  
+Для Llama-3-70B веса ≈ **70B × 2 ≈ 140 GB** — одна карта A100 80GB не вмещает модель без разрезания на несколько GPU.
+
+Плюс: выше качество / проще отладка. Минус: дорого по памяти и аренде GPU при высокой нагрузке.
+
+### INT4 (4-bit quantization)
+
+Сжатие весов до **~0.5 байта** на параметр (квантование).  
+Веса Llama-3-70B ≈ **35 GB** вместо 140 GB — модель чаще влезает в 1–2× A100.
+
+Плюс: меньше VRAM → меньше/дешевле GPU. Минус: небольшое падение качества; для serving обычно берут готовые схемы **AWQ / GPTQ**, а не «сырой» INT4.
+
+### KV Cache (Key–Value Cache)
+
+При генерации текста attention повторно использует уже посчитанные ключи (K) и значения (V) прошлых токенов. Их хранят в VRAM как **KV Cache**, чтобы не пересчитывать всё с нуля.
+
+Размер растёт почти линейно с:
+
+- длиной контекста (`seq_len`);
+- числом одновременных запросов (`concurrent`).
+
+В hw-7 при 2048 токенах и ~67 concurrent KV ≈ **43 GB** — иногда больше, чем веса INT4. Поэтому одного «модель влезла» мало: нужен запас под KV.
+
+### GQA (Grouped-Query Attention)
+
+Вариант attention, где несколько query-голов делят общие KV-головы. У Llama-3-70B **8 KV heads** вместо полного набора — KV Cache заметно компактнее, чем у старых моделей с Multi-Head Attention (MHA).
+
+Без GQA расчёт памяти под concurrent был бы ещё жёстче.
+
+### Overhead
+
+Запас VRAM сверх весов и KV: ядра CUDA, временные тензоры, выравнивание страниц. В расчёте hw-7 заложено **~5 GB** на реплику как упрощённый запас.
+
+---
+
+## Параллелизм и железо
+
+### TP (Tensor Parallelism)
+
+Разрез **одной** модели по нескольким GPU: слои/матрицы считаются совместно (нужна быстрая связь, напр. NVLink).  
+Пример: FP16 140 GB → минимум **2–3× A100**, потому что веса не помещаются на одну карту.
+
+Не путать с **репликами** (несколько копий модели для роста RPM) — в hw-7 сценарий B как раз «2 шарды × 2 GPU».
+
+### A100 / L4 / T4 (NVIDIA GPU)
+
+| Карта | Типичный VRAM | Для Llama-3-70B @ 1000 RPM |
+| ----- | ------------- | -------------------------- |
+| **A100** | 40 или **80 GB** | основной выбор (рекомендация: 2×80 GB INT4) |
+| **L4** | **24 GB** | только кластер (≥4 карт), слабее по memory bandwidth |
+| **T4** | **16 GB** | для 70B на целевой нагрузке **не рекомендуем** |
+
+Чем меньше VRAM и bandwidth, тем больше карт и сложнее уложиться в latency.
+
+### Utilization (утилизация)
+
+Доля времени/ресурса GPU, которая реально занята полезной работой.  
+Без batching GPU часто простаивает между одиночными запросами → платите за карту, а токены/сек низкие. Continuous batching и vLLM как раз поднимают utilization.
+
+---
+
+## Нагрузка и serving
+
+### RPM / RPS
+
+- **RPM** — Requests Per Minute (запросов в минуту). Задание: **1000 RPM**.
+- **RPS** — Requests Per Second ≈ RPM / 60 → **≈ 16.7 RPS**.
+
+Связка с concurrent (Little’s law):  
+`concurrent ≈ RPS × latency_сек`  
+(в hw-7: 16.7 × 4 ≈ **67** одновременных запросов в полёте).
+
+### Batching (continuous / dynamic)
+
+Сборка нескольких запросов пользователей в один (или непрерывный) проход по модели, вместо «один запрос — один idle GPU».
+
+Эффект: выше utilization и throughput (токены/сек), меньше GPU на тот же RPM. В оценке hw-7 — порядка **+1.5–3×** к throughput vs naive.
+
+### vLLM
+
+Open-source **serving-движок** для LLM (не сама модель). Даёт continuous batching и **PagedAttention**, удобен для prod-инференса (в т.ч. с AWQ/GPTQ).
+
+В рекомендации hw-7: **Llama-3-70B INT4 + vLLM** на 2× A100.
+
+### PagedAttention
+
+Техника управления KV Cache по аналогии с virtual memory / paging: меньше **фрагментации** памяти, на ту же VRAM помещается больше concurrent-запросов (ориентир **+20–40%**).
+
+Именно поэтому INT4 + vLLM позволяет обойтись **2× A100**, а не раздувать число реплик «на всякий случай».
+
+### AWQ / GPTQ
+
+Практичные схемы **weight-only** квантования в INT4 (веса сжаты, вычисления часто в более высокой точности). Хорошо поддерживаются vLLM / TGI — это то, что обычно имеют в виду под «INT4 в проде», а не абстрактный 4-bit.
+
+---
+
+## Стоимость
+
+### OpEx (Operating Expenditure)
+
+Операционные расходы: помесячная **аренда GPU** в облаке, трафик, сопровождение.  
+В hw-7 сравниваем в основном GPU·часы (Yandex, Cloud.ru, AWS, GCP).
+
+### TCO (Total Cost of Ownership)
+
+Полная стоимость владения: OpEx + люди (MLOps) + простой/квоты + риски (152-ФЗ, vendor lock-in).  
+См. также [hw-4](../hw-4/Glossary.md): TCO — аргумент, когда self-hosted начинает выигрывать у SaaS при росте RPM.
+
+### On-demand (в облаке)
+
+Оплата GPU **по факту использования** без долгосрочного reserved/CUD. Удобно для оценки в ДЗ; в проде часто дешевле Reserved / Spot / CUD при стабильной нагрузке.
+
+---
+
+## Быстрый указатель
+
+| Термин | Одной фразой |
+| ------ | ------------ |
+| VRAM | Память GPU: веса + KV + overhead |
+| FP16 | 2 B/param → ~140 GB весов у 70B |
+| INT4 | ~0.5 B/param → ~35 GB весов |
+| KV Cache | Кэш attention; растёт с длиной и concurrent |
+| GQA | Меньше KV heads → компактнее cache |
+| TP | Одна модель на нескольких GPU |
+| RPM / RPS | 1000/мин ≈ 16.7/сек |
+| Batching | Несколько запросов → выше util |
+| vLLM | Serving с PagedAttention |
+| AWQ/GPTQ | INT4 для продакшен-инференса |
+| OpEx / TCO | Аренда GPU / полная стоимость |
+| A100 / L4 / T4 | 80·40 / 24 / 16 GB VRAM |

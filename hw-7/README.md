@@ -19,7 +19,7 @@
 | [hw-5](../hw-5/docs/data-pipeline.md) | Data plane | Не входит в GPU-инференс; стоимость data plane отдельно |
 | [hw-6](../hw-6/docs/quality-assurance.md) | Observability | Метрики GPU util / queue depth для проверки sizing |
 
-**Задача:** для RetailPartnerX оценить self-hosted инференс **Llama-3-70B** (FP16 и INT4) при **1000 RPM** — сколько VRAM/GPU нужно, сколько стоит в Yandex Cloud и Cloud.ru, и как Batching / vLLM снижают OpEx.
+**Задача:** для RetailPartnerX оценить self-hosted инференс **Llama-3-70B** (FP16 и INT4) при **1000 RPM** — VRAM/GPU, стоимость в Yandex / Cloud.ru / AWS / GCP, эффект Batching и vLLM.
 
 Тема курса сохранена; расчёт привязан к shopping assistant и ADR-001 (self-hosted как опция при росте unit-cost).
 
@@ -27,30 +27,30 @@
 
 | Шаг ДЗ | Документ / файл |
 | ------ | --------------- |
-| 1. Hardware Sizing | [docs/inference-sizing.md](docs/inference-sizing.md) §1 · [docs/calculations.html](docs/calculations.html) |
-| 2. Cloud Selection | [docs/inference-sizing.md](docs/inference-sizing.md) §2 · HTML §4–5 |
-| 3. Optimization | [docs/inference-sizing.md](docs/inference-sizing.md) §3 · HTML §6 |
-| 4. Вывод | [docs/recommendation.md](docs/recommendation.md) · блок в HTML |
+| 1. Hardware Sizing | [docs/inference-sizing.md](docs/inference-sizing.md) §2–4 |
+| 2. Cloud Selection | [docs/inference-sizing.md](docs/inference-sizing.md) §5–6 |
+| 3. Optimization | [docs/inference-sizing.md](docs/inference-sizing.md) §7 |
+| 4. Вывод | [docs/recommendation.md](docs/recommendation.md) · TL;DR в sizing |
 
 ## Формат сдачи
 
 | Артефакт | Путь |
 | -------- | ---- |
-| Таблица с расчётами (HTML) | [docs/calculations.html](docs/calculations.html) |
+| Расчёты (Markdown) | [docs/inference-sizing.md](docs/inference-sizing.md) |
 | Краткий вывод | [docs/recommendation.md](docs/recommendation.md) |
 
-**Ссылка для сдачи (GitHub Pages, после пуша в `main`):**  
-https://yuesit17.github.io/yuit-docs-ai-architect/hw-7/docs/calculations.html
+**Ссылка для сдачи (после пуша в `main`):**  
+https://github.com/YuesIt17/yuit-docs-ai-architect/blob/main/hw-7/docs/inference-sizing.md
 
-Портфолио живёт по пути `/portfolio/` на том же сайте Pages — пути не пересекаются. Локально: открыть `calculations.html` в браузере.
+На GitHub Markdown рендерится с таблицами «из коробки». Отдельный HTML / Google Sheets не нужны. Портфолио на Pages (`/portfolio/`) не пересекается с этим путём.
 
 ## Критерии самопроверки
 
 | Критерий | Как закрыто |
 | -------- | ----------- |
-| Точность VRAM | Формула Weights + KV Cache (+ overhead) — [§1](docs/inference-sizing.md) |
-| Сравнение облаков | Yandex Cloud + Cloud.ru — [§2](docs/inference-sizing.md), [HTML](docs/calculations.html) |
-| Оптимизация | INT4 → меньше VRAM/дешевле GPU; Batching/vLLM → прогноз экономии — [§3](docs/inference-sizing.md) |
+| Точность VRAM | Weights + KV Cache + overhead — [§2](docs/inference-sizing.md) |
+| Сравнение облаков | Yandex, Cloud.ru, AWS, GCP — [§5–6](docs/inference-sizing.md) |
+| Оптимизация | INT4 + Batching/vLLM — [§7](docs/inference-sizing.md) |
 
 ## Полезные материалы
 
