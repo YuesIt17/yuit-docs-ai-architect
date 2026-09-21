@@ -1,0 +1,12 @@
+{
+  "hwId": "hw-8",
+  "description": "RetailPartnerX — CI/CD + MLOps delivery pipelines with Canary",
+  "defaultOutputDir": "hw-8/diagrams",
+  "frozen": [],
+  "diagrams": [
+    {
+      "spec": "cicd-mlops-pipeline.json",
+      "output": "cicd-mlops-pipeline.drawio"
+    }
+  ]
+}
