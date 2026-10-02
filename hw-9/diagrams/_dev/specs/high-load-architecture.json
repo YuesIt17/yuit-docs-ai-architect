@@ -1,0 +1,381 @@
+{
+  "title": "High-Load Architecture RetailPartnerX",
+  "pageWidth": 1680,
+  "pageHeight": 980,
+  "nodes": [
+    {
+      "id": "note",
+      "label": "NFR: 10k RPS, sync p95 < 200ms.\nLLM RPS << ingress via CDN/Gateway/Redis/Semantic Cache.\nHeavy assistant → Queue + KEDA Inference workers.",
+      "style": "note",
+      "x": 40,
+      "y": 20,
+      "w": 460,
+      "h": 90
+    },
+    {
+      "id": "user",
+      "label": "Покупатель\nкарточка / чат",
+      "style": "person",
+      "x": 40,
+      "y": 200,
+      "w": 130,
+      "h": 90
+    },
+    {
+      "id": "cdn",
+      "label": "CDN / Edge\nstatic + hot SKU cache\n(Geo-DNS optional)",
+      "style": "external",
+      "x": 220,
+      "y": 200,
+      "w": 170,
+      "h": 90
+    },
+    {
+      "id": "gw",
+      "label": "API Gateway\nrate limit\nresponse cache",
+      "style": "container",
+      "x": 440,
+      "y": 200,
+      "w": 160,
+      "h": 90
+    },
+    {
+      "id": "sync_b",
+      "label": "Sync hot path — /get_recommendation (p95 < 200ms)",
+      "style": "boundary",
+      "x": 660,
+      "y": 120,
+      "w": 560,
+      "h": 260
+    },
+    {
+      "id": "api",
+      "label": "AI API pods\nHPA (CPU/RPS)\nRanker + Top-K",
+      "style": "container",
+      "x": 40,
+      "y": 80,
+      "w": 180,
+      "h": 100,
+      "parent": "sync_b"
+    },
+    {
+      "id": "redis",
+      "label": "Redis\ncandidates\nfeatures",
+      "style": "db",
+      "x": 280,
+      "y": 70,
+      "w": 140,
+      "h": 90,
+      "parent": "sync_b"
+    },
+    {
+      "id": "degrade",
+      "label": "Soft degrade\nRanker-only\nif LLM timeout",
+      "style": "component",
+      "x": 280,
+      "y": 180,
+      "w": 160,
+      "h": 60,
+      "parent": "sync_b"
+    },
+    {
+      "id": "async_b",
+      "label": "Async heavy path — shopping assistant (EDA)",
+      "style": "boundary",
+      "x": 660,
+      "y": 420,
+      "w": 980,
+      "h": 500
+    },
+    {
+      "id": "jobs",
+      "label": "Jobs API\n202 + job_id",
+      "style": "container",
+      "x": 40,
+      "y": 80,
+      "w": 150,
+      "h": 80,
+      "parent": "async_b"
+    },
+    {
+      "id": "queue",
+      "label": "Request Queue\nRedis Streams\n/ Kafka / SB",
+      "style": "db",
+      "x": 240,
+      "y": 70,
+      "w": 160,
+      "h": 100,
+      "parent": "async_b"
+    },
+    {
+      "id": "keda",
+      "label": "KEDA\nScaledObject\nqueue length",
+      "style": "component",
+      "x": 460,
+      "y": 80,
+      "w": 150,
+      "h": 80,
+      "parent": "async_b"
+    },
+    {
+      "id": "workers",
+      "label": "Inference Workers\nvLLM / agents\nmin=2 warm GPU",
+      "style": "container",
+      "x": 660,
+      "y": 70,
+      "w": 180,
+      "h": 100,
+      "parent": "async_b"
+    },
+    {
+      "id": "semcache",
+      "label": "Semantic Cache\nvector keys\nθ + context window",
+      "style": "db",
+      "x": 240,
+      "y": 220,
+      "w": 180,
+      "h": 100,
+      "parent": "async_b"
+    },
+    {
+      "id": "rag",
+      "label": "RAG\nProduct+Policy KB\n(hw-3/5)",
+      "style": "db",
+      "x": 480,
+      "y": 220,
+      "w": 160,
+      "h": 100,
+      "parent": "async_b"
+    },
+    {
+      "id": "llm",
+      "label": "LLM\nSaaS / self-host\n(LLM Client)",
+      "style": "external",
+      "x": 700,
+      "y": 220,
+      "w": 150,
+      "h": 100,
+      "parent": "async_b"
+    },
+    {
+      "id": "results",
+      "label": "Result Store\n+ webhook / SSE",
+      "style": "db",
+      "x": 40,
+      "y": 340,
+      "w": 160,
+      "h": 90,
+      "parent": "async_b"
+    },
+    {
+      "id": "obs",
+      "label": "Observability\nhit-rate, queue depth,\np95 (hw-6)",
+      "style": "component",
+      "x": 1280,
+      "y": 200,
+      "w": 170,
+      "h": 90
+    },
+    {
+      "id": "sec",
+      "label": "Security Layer\nPII + Guardrails\n(hw-6) before cache write",
+      "style": "component",
+      "x": 1280,
+      "y": 320,
+      "w": 170,
+      "h": 90
+    }
+  ],
+  "edges": [
+    {
+      "from": "user",
+      "to": "cdn",
+      "label": "HTTPS",
+      "exitX": 1,
+      "exitY": 0.5,
+      "entryX": 0,
+      "entryY": 0.5
+    },
+    {
+      "from": "cdn",
+      "to": "gw",
+      "label": "miss",
+      "exitX": 1,
+      "exitY": 0.5,
+      "entryX": 0,
+      "entryY": 0.5
+    },
+    {
+      "from": "gw",
+      "to": "api",
+      "label": "recsys sync",
+      "exitX": 1,
+      "exitY": 0.35,
+      "entryX": 0,
+      "entryY": 0.5,
+      "parent": "sync_b"
+    },
+    {
+      "from": "gw",
+      "to": "jobs",
+      "label": "assistant",
+      "exitX": 1,
+      "exitY": 0.75,
+      "entryX": 0,
+      "entryY": 0.5,
+      "parent": "async_b"
+    },
+    {
+      "from": "api",
+      "to": "redis",
+      "label": "candidates",
+      "exitX": 1,
+      "exitY": 0.5,
+      "entryX": 0,
+      "entryY": 0.5,
+      "parent": "sync_b"
+    },
+    {
+      "from": "api",
+      "to": "degrade",
+      "label": "fallback",
+      "exitX": 0.5,
+      "exitY": 1,
+      "entryX": 0,
+      "entryY": 0.5,
+      "parent": "sync_b"
+    },
+    {
+      "from": "jobs",
+      "to": "queue",
+      "label": "enqueue",
+      "exitX": 1,
+      "exitY": 0.5,
+      "entryX": 0,
+      "entryY": 0.5,
+      "parent": "async_b"
+    },
+    {
+      "from": "queue",
+      "to": "keda",
+      "label": "depth metric",
+      "exitX": 1,
+      "exitY": 0.5,
+      "entryX": 0,
+      "entryY": 0.5,
+      "parent": "async_b"
+    },
+    {
+      "from": "keda",
+      "to": "workers",
+      "label": "scale pods",
+      "exitX": 1,
+      "exitY": 0.5,
+      "entryX": 0,
+      "entryY": 0.5,
+      "parent": "async_b"
+    },
+    {
+      "from": "queue",
+      "to": "workers",
+      "label": "consume",
+      "exitX": 0.5,
+      "exitY": 1,
+      "entryX": 0.2,
+      "entryY": 1,
+      "parent": "async_b",
+      "waypoints": [
+        { "x": 320, "y": 200 },
+        { "x": 700, "y": 200 }
+      ]
+    },
+    {
+      "from": "workers",
+      "to": "semcache",
+      "label": "lookup",
+      "exitX": 0.5,
+      "exitY": 1,
+      "entryX": 1,
+      "entryY": 0.3,
+      "parent": "async_b"
+    },
+    {
+      "from": "semcache",
+      "to": "rag",
+      "label": "miss",
+      "exitX": 1,
+      "exitY": 0.5,
+      "entryX": 0,
+      "entryY": 0.5,
+      "parent": "async_b"
+    },
+    {
+      "from": "rag",
+      "to": "llm",
+      "label": "prompt",
+      "exitX": 1,
+      "exitY": 0.5,
+      "entryX": 0,
+      "entryY": 0.5,
+      "parent": "async_b"
+    },
+    {
+      "from": "llm",
+      "to": "semcache",
+      "label": "store",
+      "exitX": 0.5,
+      "exitY": 1,
+      "entryX": 0.5,
+      "entryY": 1,
+      "parent": "async_b",
+      "waypoints": [
+        { "x": 775, "y": 360 },
+        { "x": 330, "y": 360 }
+      ]
+    },
+    {
+      "from": "workers",
+      "to": "results",
+      "label": "complete",
+      "exitX": 0,
+      "exitY": 0.8,
+      "entryX": 1,
+      "entryY": 0.5,
+      "parent": "async_b",
+      "waypoints": [
+        { "x": 640, "y": 385 }
+      ]
+    },
+    {
+      "from": "results",
+      "to": "user",
+      "label": "poll / push",
+      "exitX": 0,
+      "exitY": 0.5,
+      "entryX": 0.5,
+      "entryY": 1,
+      "waypoints": [
+        { "x": 100, "y": 805 },
+        { "x": 100, "y": 300 }
+      ]
+    },
+    {
+      "from": "workers",
+      "to": "obs",
+      "label": "metrics",
+      "exitX": 1,
+      "exitY": 0.3,
+      "entryX": 0,
+      "entryY": 0.5
+    },
+    {
+      "from": "semcache",
+      "to": "sec",
+      "label": "guarded write",
+      "exitX": 1,
+      "exitY": 0.8,
+      "entryX": 0,
+      "entryY": 0.5
+    }
+  ]
+}
