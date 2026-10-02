@@ -1,0 +1,416 @@
+{
+  "title": "CI/CD + MLOps Pipelines RetailPartnerX",
+  "pageWidth": 1680,
+  "pageHeight": 920,
+  "nodes": [
+    {
+      "id": "note",
+      "label": "RetailPartnerX delivery: app CI/CD (top) + MLOps (bottom).\nLink: Model Registry → GitOps values (model_uri + index_version) → Canary prod.",
+      "style": "note",
+      "x": 40,
+      "y": 20,
+      "w": 420,
+      "h": 80
+    },
+    {
+      "id": "cicd_b",
+      "label": "CI/CD — AI Service (code)\nCommit → Build → Unit → Staging → E2E/Eval → Canary Prod",
+      "style": "boundary",
+      "x": 40,
+      "y": 120,
+      "w": 1600,
+      "h": 280
+    },
+    {
+      "id": "commit",
+      "label": "Commit\nGit app repo",
+      "style": "external",
+      "x": 40,
+      "y": 100,
+      "w": 130,
+      "h": 70,
+      "parent": "cicd_b"
+    },
+    {
+      "id": "build",
+      "label": "Build Docker\nimage @ sha",
+      "style": "component",
+      "x": 220,
+      "y": 100,
+      "w": 140,
+      "h": 70,
+      "parent": "cicd_b"
+    },
+    {
+      "id": "unit",
+      "label": "Unit Tests\npytest / lint",
+      "style": "component",
+      "x": 410,
+      "y": 100,
+      "w": 140,
+      "h": 70,
+      "parent": "cicd_b"
+    },
+    {
+      "id": "registry_img",
+      "label": "Container\nRegistry",
+      "style": "db",
+      "x": 600,
+      "y": 90,
+      "w": 130,
+      "h": 90,
+      "parent": "cicd_b"
+    },
+    {
+      "id": "staging",
+      "label": "Deploy Staging\nArgo CD sync",
+      "style": "container",
+      "x": 780,
+      "y": 100,
+      "w": 150,
+      "h": 70,
+      "parent": "cicd_b"
+    },
+    {
+      "id": "e2e",
+      "label": "E2E + Eval gates\nRagas / DeepEval",
+      "style": "component",
+      "x": 980,
+      "y": 100,
+      "w": 160,
+      "h": 70,
+      "parent": "cicd_b"
+    },
+    {
+      "id": "gitops",
+      "label": "GitOps values\nimage + model_uri",
+      "style": "component",
+      "x": 1190,
+      "y": 100,
+      "w": 160,
+      "h": 70,
+      "parent": "cicd_b"
+    },
+    {
+      "id": "canary",
+      "label": "Canary Prod\n1% → 5% → 100%",
+      "style": "container",
+      "x": 1400,
+      "y": 90,
+      "w": 160,
+      "h": 90,
+      "parent": "cicd_b"
+    },
+    {
+      "id": "mlops_b",
+      "label": "MLOps — Ranker + Product KB (data → model → Vector DB)\nDataset → Airflow → Retrain → Model Registry → index_version → Trigger CD",
+      "style": "boundary",
+      "x": 40,
+      "y": 440,
+      "w": 1600,
+      "h": 420
+    },
+    {
+      "id": "dataset",
+      "label": "Curated dataset\nS3 Lake (hw-5)",
+      "style": "db",
+      "x": 40,
+      "y": 100,
+      "w": 150,
+      "h": 90,
+      "parent": "mlops_b"
+    },
+    {
+      "id": "airflow",
+      "label": "Airflow DAG\ntrigger retrain",
+      "style": "container",
+      "x": 240,
+      "y": 110,
+      "w": 150,
+      "h": 70,
+      "parent": "mlops_b"
+    },
+    {
+      "id": "retrain",
+      "label": "Retrain Ranker\n(+ re-embed catalog)",
+      "style": "component",
+      "x": 440,
+      "y": 110,
+      "w": 170,
+      "h": 70,
+      "parent": "mlops_b"
+    },
+    {
+      "id": "mreg",
+      "label": "Model Registry\nMLflow + S3 models",
+      "style": "db",
+      "x": 660,
+      "y": 100,
+      "w": 160,
+      "h": 90,
+      "parent": "mlops_b"
+    },
+    {
+      "id": "vdb",
+      "label": "Vector DB\nindex_version",
+      "style": "db",
+      "x": 880,
+      "y": 100,
+      "w": 150,
+      "h": 90,
+      "parent": "mlops_b"
+    },
+    {
+      "id": "trigger",
+      "label": "Trigger CD\nbump model_uri\n+ index_version",
+      "style": "component",
+      "x": 1080,
+      "y": 100,
+      "w": 170,
+      "h": 90,
+      "parent": "mlops_b"
+    },
+    {
+      "id": "ai_svc",
+      "label": "AI Service runtime\nloads MODEL_URI\n+ INDEX_VERSION",
+      "style": "container",
+      "x": 1320,
+      "y": 100,
+      "w": 180,
+      "h": 90,
+      "parent": "mlops_b"
+    },
+    {
+      "id": "metrics",
+      "label": "Rollback metrics (Prometheus / Langfuse / CDP)\n5xx ↑ · p95 latency ↑ · Faithfulness ↓ · CTR ↓  →  traffic back to stable",
+      "style": "note",
+      "x": 240,
+      "y": 280,
+      "w": 720,
+      "h": 80,
+      "parent": "mlops_b"
+    },
+    {
+      "id": "argo",
+      "label": "Argo CD\nAPI + Repo + Controller",
+      "style": "external",
+      "x": 1190,
+      "y": 280,
+      "w": 200,
+      "h": 80,
+      "parent": "mlops_b"
+    }
+  ],
+  "edges": [
+    {
+      "from": "commit",
+      "to": "build",
+      "label": "webhook",
+      "parent": "cicd_b",
+      "exitX": 1,
+      "exitY": 0.5,
+      "entryX": 0,
+      "entryY": 0.5,
+      "labelOffset": { "x": 0, "y": -12 }
+    },
+    {
+      "from": "build",
+      "to": "unit",
+      "label": "",
+      "parent": "cicd_b",
+      "exitX": 1,
+      "exitY": 0.5,
+      "entryX": 0,
+      "entryY": 0.5
+    },
+    {
+      "from": "unit",
+      "to": "registry_img",
+      "label": "push",
+      "parent": "cicd_b",
+      "exitX": 1,
+      "exitY": 0.5,
+      "entryX": 0,
+      "entryY": 0.5,
+      "labelOffset": { "x": 0, "y": -12 }
+    },
+    {
+      "from": "registry_img",
+      "to": "staging",
+      "label": "image tag",
+      "parent": "cicd_b",
+      "exitX": 1,
+      "exitY": 0.5,
+      "entryX": 0,
+      "entryY": 0.5,
+      "labelOffset": { "x": 0, "y": -12 }
+    },
+    {
+      "from": "staging",
+      "to": "e2e",
+      "label": "",
+      "parent": "cicd_b",
+      "exitX": 1,
+      "exitY": 0.5,
+      "entryX": 0,
+      "entryY": 0.5
+    },
+    {
+      "from": "e2e",
+      "to": "gitops",
+      "label": "green",
+      "parent": "cicd_b",
+      "exitX": 1,
+      "exitY": 0.5,
+      "entryX": 0,
+      "entryY": 0.5,
+      "labelOffset": { "x": 0, "y": -12 }
+    },
+    {
+      "from": "gitops",
+      "to": "canary",
+      "label": "sync",
+      "parent": "cicd_b",
+      "exitX": 1,
+      "exitY": 0.5,
+      "entryX": 0,
+      "entryY": 0.5,
+      "labelOffset": { "x": 0, "y": -12 }
+    },
+    {
+      "from": "dataset",
+      "to": "airflow",
+      "label": "event",
+      "parent": "mlops_b",
+      "exitX": 1,
+      "exitY": 0.5,
+      "entryX": 0,
+      "entryY": 0.5,
+      "labelOffset": { "x": 0, "y": -12 }
+    },
+    {
+      "from": "airflow",
+      "to": "retrain",
+      "label": "",
+      "parent": "mlops_b",
+      "exitX": 1,
+      "exitY": 0.5,
+      "entryX": 0,
+      "entryY": 0.5
+    },
+    {
+      "from": "retrain",
+      "to": "mreg",
+      "label": "register",
+      "parent": "mlops_b",
+      "exitX": 1,
+      "exitY": 0.5,
+      "entryX": 0,
+      "entryY": 0.5,
+      "labelOffset": { "x": 0, "y": -12 }
+    },
+    {
+      "from": "retrain",
+      "to": "vdb",
+      "label": "embeddings",
+      "parent": "mlops_b",
+      "exitX": 0.5,
+      "exitY": 1,
+      "entryX": 0.5,
+      "entryY": 1,
+      "waypoints": [
+        { "x": 525, "y": 240 },
+        { "x": 955, "y": 240 }
+      ],
+      "labelOffset": { "x": 0, "y": -12 }
+    },
+    {
+      "from": "mreg",
+      "to": "trigger",
+      "label": "Production stage",
+      "parent": "mlops_b",
+      "exitX": 1,
+      "exitY": 0.5,
+      "entryX": 0,
+      "entryY": 0.5,
+      "labelOffset": { "x": 0, "y": -12 }
+    },
+    {
+      "from": "vdb",
+      "to": "trigger",
+      "label": "alias ready",
+      "parent": "mlops_b",
+      "exitX": 1,
+      "exitY": 0.5,
+      "entryX": 0,
+      "entryY": 0.5,
+      "labelOffset": { "x": 0, "y": 12 }
+    },
+    {
+      "from": "trigger",
+      "to": "gitops",
+      "label": "bump values",
+      "dashed": true,
+      "exitX": 0.5,
+      "exitY": 0,
+      "entryX": 0.5,
+      "entryY": 1,
+      "waypoints": [
+        { "x": 1205, "y": 420 }
+      ],
+      "labelOffset": { "x": 40, "y": 0 }
+    },
+    {
+      "from": "mreg",
+      "to": "ai_svc",
+      "label": "MODEL_URI",
+      "parent": "mlops_b",
+      "exitX": 0.5,
+      "exitY": 0,
+      "entryX": 0.5,
+      "entryY": 0,
+      "waypoints": [
+        { "x": 740, "y": 60 },
+        { "x": 1410, "y": 60 }
+      ],
+      "labelOffset": { "x": 0, "y": -12 }
+    },
+    {
+      "from": "canary",
+      "to": "ai_svc",
+      "label": "serves traffic",
+      "dashed": true,
+      "exitX": 0.5,
+      "exitY": 1,
+      "entryX": 0.5,
+      "entryY": 0,
+      "labelOffset": { "x": 50, "y": 0 }
+    },
+    {
+      "from": "argo",
+      "to": "canary",
+      "label": "Application Controller",
+      "dashed": true,
+      "exitX": 0.5,
+      "exitY": 0,
+      "entryX": 0.5,
+      "entryY": 1,
+      "labelOffset": { "x": 0, "y": -12 }
+    },
+    {
+      "from": "metrics",
+      "to": "canary",
+      "label": "auto rollback",
+      "dashed": true,
+      "exitX": 1,
+      "exitY": 0.5,
+      "entryX": 0,
+      "entryY": 1,
+      "waypoints": [
+        { "x": 1100, "y": 760 },
+        { "x": 1480, "y": 760 }
+      ],
+      "labelOffset": { "x": 0, "y": -12 }
+    }
+  ]
+}
