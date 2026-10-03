@@ -1,0 +1,12 @@
+{
+  "hwId": "hw-9",
+  "description": "RetailPartnerX — High-Load architecture: multi-tier cache, KEDA inference, async queue",
+  "defaultOutputDir": "hw-9/diagrams",
+  "frozen": [],
+  "diagrams": [
+    {
+      "spec": "high-load-architecture.json",
+      "output": "high-load-architecture.drawio"
+    }
+  ]
+}
