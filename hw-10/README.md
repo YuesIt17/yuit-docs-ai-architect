@@ -24,16 +24,16 @@
 
 **Задача:** для RetailPartnerX (рекомендации + shopping assistant) закрыть контур **Governance (Model Card + audit)** и **FinOps (overrun + optimization)**, чтобы этика и unit economics были явными архитектурными артефактами, а не «устным договором».
 
-Тема курса сохранена; шаблоны [Hugging Face Model Cards](https://huggingface.co/docs/hub/model-cards) и [Mitchell et al., 2018](https://arxiv.org/abs/1810.03993) адаптированы под систему RetailPartnerX, а не под абстрактную модель на Hub.
+Тема курса сохранена; шаблоны Hugging Face Model Cards и Mitchell et al., 2018 адаптированы под систему RetailPartnerX, а не под абстрактную модель на Hub.
 
 ## Шаги выполнения (артефакты решения)
 
 | Шаг ДЗ | Документ / файл |
 | ------ | --------------- |
-| 1. Model Card (Intended Use, Bias, Fairness) | [docs/model-card-and-finops.md](docs/model-card-and-finops.md) §1 |
-| 2. Audit logging решений AI | [docs/model-card-and-finops.md](docs/model-card-and-finops.md) §1.6 |
-| 3. Анализ счёта (+50% к бюджету) | [docs/model-card-and-finops.md](docs/model-card-and-finops.md) §2.1–2.2 |
-| 4. План Cost Optimization | [docs/model-card-and-finops.md](docs/model-card-and-finops.md) §2.3–2.5 |
+| 1. Model Card (Intended Use, Bias, Fairness) | [docs/model-card-and-finops.md §1](docs/model-card-and-finops.md#L23) |
+| 2. Audit logging решений AI | [docs/model-card-and-finops.md §1.6](docs/model-card-and-finops.md#L178) |
+| 3. Анализ счёта (+50% к бюджету) | [docs/model-card-and-finops.md §2.1–2.2](docs/model-card-and-finops.md#L253) |
+| 4. План Cost Optimization | [docs/model-card-and-finops.md §2.3–2.5](docs/model-card-and-finops.md#L294) |
 
 ## Формат сдачи
 
@@ -47,9 +47,9 @@
 
 | Критерий | Как закрыто |
 | -------- | ----------- |
-| Этика | Model Card по структуре HF/Mitchell: use/limitations, данные, bias, fairness — [§1](docs/model-card-and-finops.md) |
-| Экономика | Конкретные техмеры (Spot, distillation, TTL, routing, cache) с оценкой ₽ — [§2.3](docs/model-card-and-finops.md) |
-| Зрелость | Явный баланс цена ↔ качество и когда *не* экономить — [§2.5](docs/model-card-and-finops.md) |
+| Этика | Model Card по структуре HF/Mitchell: use/limitations, данные, bias, fairness — [§1](docs/model-card-and-finops.md#L23) |
+| Экономика | Конкретные техмеры (Spot, distillation, TTL, routing, cache) с оценкой ₽ — [§2.3](docs/model-card-and-finops.md#L294) |
+| Зрелость | Явный баланс цена ↔ качество и когда *не* экономить — [§2.5](docs/model-card-and-finops.md#L346) |
 
 Статус «Принято», если все три критерия выполнены.
 

@@ -12,11 +12,13 @@
 
 ## Содержание
 
-1. [Часть 1. Model Card (Governance)](#1-часть-1-model-card-governance)
-2. [Часть 2. FinOps-отчёт (+50% к бюджету)](#2-часть-2-finops-отчёт-50-к-бюджету)
-3. [Сводка для сдачи](#3-сводка-для-сдачи)
+1. [Часть 1. Model Card (Governance)](#sec-1)
+2. [Часть 2. FinOps-отчёт (+50% к бюджету)](#sec-2)
+3. [Сводка для сдачи](#sec-3)
 
 ---
+
+<a id="sec-1" href="#sec-1"> </a>
 
 ## 1. Часть 1. Model Card (Governance)
 
@@ -51,6 +53,31 @@ tags:
   - finops
 ---
 ```
+
+**Расшифровка полей (как на Hub Metadata UI / YAML front matter):**
+
+| Поле | Значение у нас | Зачем на Hub / в governance |
+| ---- | -------------- | --------------------------- |
+| `system_name` | `RetailPartnerX-AI-Recsys-Assistant` | Учебный аналог имени репо/модели; у нас — имя **системы**, не одного checkpoint |
+| `version` | `1.0-mvp-design` | Версия карточки / design-freeze; в prod ↔ `model_uri` / registry (hw-8) |
+| `library_name` | `custom` | На Hub — библиотека инференса (`transformers`, `vllm`…); у нас стек не один HF-loader |
+| `pipeline_tag` | `recommendation`, `conversational` | Тип задачи для фильтров/виджетов Hub; у нас два продукта в одной системе |
+| `base_model` | Llama-3-70B + SaaS LLM | Базовая LLM (fine-tune / quant / adapter); dual-path по ADR-001 (hw-4) и sizing (hw-7) |
+| `datasets` | behavioral / PIM / policy-kb | Датасеты обучения и контекста; внутренние id, не публичные Hub datasets |
+| `license` / `license_name` | `other` + internal… | Лицензия весов/артефактов; учебный internal, не open-source SPDX |
+| `language` | `ru`, `en` | Языки интерфейса и контента каталога/ассистента |
+| `tags` | см. ниже | Свободные метки для поиска и классификации на Hub |
+
+**Теги:**
+
+| Tag | Смысл для RetailPartnerX |
+| --- | ------------------------ |
+| `retail` | Домен: ритейл / omnichannel |
+| `recommendations` | Сценарий Ranker → Top-K (± LLM re-rank) |
+| `rag` | Policy Analyst / KB поверх retrieval (hw-3) |
+| `multi-agent` | Orchestration shopping assistant (hw-3) |
+| `fairness` | Bias / fairness slices и метрики (§1.4–1.5) |
+| `finops` | Карточка связана с cost envelope и Optimize (§2) |
 
 Карточка описывает **систему** (Ranker + Top-K + optional LLM re-rank + multi-agent assistant), а не один файл весов: для ритейла критичны routing, policy filters и данные каталога.
 
@@ -146,6 +173,8 @@ tags:
 
 ---
 
+<a id="sec-1-6" href="#sec-1-6"> </a>
+
 ### 1.6. Архитектура аудита решений AI
 
 Компетенция курса: не только «карточка», но и **логирование решений** для разбора инцидентов и compliance.
@@ -196,6 +225,8 @@ PII в трейсы не попадает (PII Sanitizer → redacted Langfuse).
 
 ---
 
+<a id="sec-2" href="#sec-2"> </a>
+
 ## 2. Часть 2. FinOps-отчёт (+50% к бюджету)
 
 ### 2.0. Контекст бюджета (учебный сценарий)
@@ -216,6 +247,8 @@ PII в трейсы не попадает (PII Sanitizer → redacted Langfuse).
 Фазы FinOps ([Framework](https://www.finops.org/framework/)): сначала **Inform** (разбор счёта), затем **Optimize** (техплан), далее **Operate** (алерты, ownership, unit economics).
 
 ---
+
+<a id="sec-2-1" href="#sec-2-1"> </a>
 
 ### 2.1. Inform — разбор превышения
 
@@ -255,6 +288,8 @@ PII в трейсы не попадает (PII Sanitizer → redacted Langfuse).
 - Рост egress при выгрузке трейсов.
 
 ---
+
+<a id="sec-2-3" href="#sec-2-3"> </a>
 
 ### 2.3. Optimize — план Cost Optimization
 
@@ -306,6 +341,8 @@ PII в трейсы не попадает (PII Sanitizer → redacted Langfuse).
 
 ---
 
+<a id="sec-2-5" href="#sec-2-5"> </a>
+
 ### 2.5. Зрелость: баланс цена ↔ качество
 
 | Решение | Когда экономим | Когда **не** экономим |
@@ -319,6 +356,8 @@ PII в трейсы не попадает (PII Sanitizer → redacted Langfuse).
 **Принцип:** FinOps максимизирует **business value**, а не минимизирует счёт любой ценой ([FinOps principles](https://www.finops.org/framework/)). Для RetailPartnerX quality floor = age-gate 0 нарушений + allergen safety + NDCG/CTR в пределах Canary rollback (hw-8). Всё, что выше floor и жрёт GPU «на всякий случай», — кандидат на Optimize.
 
 ---
+
+<a id="sec-3" href="#sec-3"> </a>
 
 ## 3. Сводка для сдачи
 
