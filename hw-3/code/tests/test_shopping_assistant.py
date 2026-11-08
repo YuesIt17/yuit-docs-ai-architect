@@ -16,7 +16,7 @@ def test_parse_constraints():
     assert constraints["persons"] == 4
     assert constraints["budget"] == 2000
     assert constraints["gluten_free"] is True
-    assert constraints["dish"] == "паста"
+    assert constraints["dish"] == "pasta"
 
 
 def test_policy_rag_retrieve_gluten():
@@ -42,7 +42,7 @@ def test_catalog_dinner_within_budget():
 
 
 def test_promo_marks_tomato_sauce():
-    candidates = [{"sku": "SKU-102", "title": "Соус томатный классический", "price": 129}]
+    candidates = [{"sku": "SKU-102", "title": "Classic tomato sauce", "price": 129}]
     chunks = [item for item in POLICY_KB if item["policy_id"] == "POL-PROMO-01"]
     updated, notes = apply_promos(candidates, chunks)
     assert updated[0].get("promo") == "2+1"
