@@ -1,144 +1,144 @@
-# Глоссарий сокращений
+# Glossary of Abbreviations
 
-Справочник терминов и аббревиатур, используемых в материалах проекта AI-рекомендаций (домашнее задание, стратегия RetailPartnerX, риски, roadmap).
+Reference of terms and abbreviations used in the AI recommendations project materials (assignment, RetailPartnerX strategy, risks, roadmap).
 
 ---
 
-## Контракты и коммерция
+## Contracts and Commercials
 
-| Сокращение | Расшифровка | Кратко |
+| Abbreviation | Expansion | In short |
 |------------|-------------|--------|
-| **T&M** | Time & Materials (время и материалы) | Оплата по факту: часы × ставка (+ расходы при необходимости) |
-| **T&M with cap** | T&M с потолком | T&M с жёстким лимитом бюджета и/или срока |
-| **FP** | Fixed Price (фиксированная цена) | Фиксированная сумма за согласованный scope |
-| **FP + T&M** | Гибридная модель | FP на предсказуемую часть (интеграции, UI); T&M на итерации ML/данных |
-| **FP + SLA + ретейнер** | FP + SLA + retainer | Рамочный FP на платформу; SLA на уровень сервиса; ретейнер — регулярная оплата за сопровождение (retrain, MLOps) |
-| **SOW** | Statement of Work | Описание работ: scope, сроки, deliverables, критерии приёмки |
-| **CR** | Change Request | Запрос на изменение scope/сроков/бюджета вне исходного FP |
-| **cap** | ceiling / потолок | Верхняя граница бюджета или срока (в T&M with cap) |
+| **T&M** | Time & Materials | Payment for actual effort: hours × rate (+ expenses if needed) |
+| **T&M with cap** | T&M with a ceiling | T&M with a hard limit on budget and/or time |
+| **FP** | Fixed Price | A fixed amount for an agreed scope |
+| **FP + T&M** | Hybrid model | FP for the predictable part (integrations, UI); T&M for ML/data iterations |
+| **FP + SLA + retainer** | FP + SLA + retainer | Framework FP for the platform; SLA for the service level; the retainer is a regular payment for support (retrain, MLOps) |
+| **SOW** | Statement of Work | Description of work: scope, timing, deliverables, acceptance criteria |
+| **CR** | Change Request | A request to change scope/timing/budget outside the original FP |
+| **cap** | ceiling | Upper limit of budget or time (in T&M with cap) |
 
 ---
 
-## Этапы проекта и управление
+## Project Stages and Management
 
-| Сокращение | Расшифровка | Кратко |
+| Abbreviation | Expansion | In short |
 |------------|-------------|--------|
-| **PoC** | Proof of Concept | Проверка гипотезы на ограниченных данных/сценариях |
-| **MVP** | Minimum Viable Product | Минимальный продукт у реальных пользователей (часто 1 канал) |
-| **Prod / Production** | Production | Промышленная эксплуатация, масштаб, MLOps |
-| **DoD** | Definition of Done | Критерии готовности этапа (чеклист приёмки) |
-| **go/no-go** | go / no-go decision | Решение продолжать проект или остановить после PoC |
-| **Discovery** | — | Фаза снятия неопределённости (workshop, вопросы, charter) |
-| **baseline** | — | Эталон для сравнения (rule-based, старая модель, конкурент) |
-| **parity** | — | Паритет с baseline: не хуже, без статзначимого роста |
-| **lift** | — | Прирост метрики относительно контроля (A/B) |
-| **ISAR** | (шаблон курса) | Формат количественного реестра рисков (вероятность %, min/expected/max ущерб) |
+| **PoC** | Proof of Concept | Testing a hypothesis on limited data/scenarios |
+| **MVP** | Minimum Viable Product | A minimal product with real users (often 1 channel) |
+| **Prod / Production** | Production | Production operation, scale, MLOps |
+| **DoD** | Definition of Done | Stage completion criteria (acceptance checklist) |
+| **go/no-go** | go / no-go decision | The decision to continue or stop the project after the PoC |
+| **Discovery** | — | The uncertainty-removal phase (workshop, questions, charter) |
+| **baseline** | — | A reference for comparison (rule-based, old model, competitor) |
+| **parity** | — | Parity with the baseline: no worse, no statistically significant gain |
+| **lift** | — | Metric increase relative to control (A/B) |
+| **ISAR** | (course template) | Format of a quantitative risk register (probability %, min/expected/max damage) |
 
 ---
 
-## Метрики рекомендательных систем (offline / PoC)
+## Recommender System Metrics (Offline / PoC)
 
-| Сокращение | Расшифровка | Кратко |
+| Abbreviation | Expansion | In short |
 |------------|-------------|--------|
-| **NDCG@k** | Normalized Discounted Cumulative Gain @ k | Качество ранжирования топ-k; релевантные выше — лучше; нормализация 0…1 |
-| **NDCG@10** | NDCG для топ-10 | Стандартная метрика в DoD PoC для recsys |
-| **HitRate@k** | Hit Rate @ k | Доля случаев, когда ≥1 релевантный объект есть в топ-k |
-| **HitRate@10** | Hit Rate для топ-10 | Простой порог «модель хоть что-то угадывает» в топ-10 |
-| **coverage** | — | Доля пользователей/SKU, для которых выдаются персональные рекомендации |
-| **hold-out** | — | Отложенная выборка для offline-оценки без утечки из train |
-| **offline-метрики** | — | Оценка на исторических данных до/параллельно с продом |
-| **online-метрики** | — | Метрики в production (A/B, бизнес-KPI) |
-| **cold start** | — | Нет истории у пользователя или SKU — нужны fallback-стратегии |
-| **recsys** | Recommender System | Рекомендательная система |
+| **NDCG@k** | Normalized Discounted Cumulative Gain @ k | Top-k ranking quality; relevant items higher is better; normalized 0…1 |
+| **NDCG@10** | NDCG for the top 10 | A standard recsys metric in the PoC DoD |
+| **HitRate@k** | Hit Rate @ k | Share of cases with ≥1 relevant item in the top k |
+| **HitRate@10** | Hit Rate for the top 10 | A simple threshold of "the model guesses at least something" in the top 10 |
+| **coverage** | — | Share of users/SKUs that receive personal recommendations |
+| **hold-out** | — | A held-out sample for offline evaluation with no leakage from train |
+| **offline metrics** | — | Evaluation on historical data before/alongside production |
+| **online metrics** | — | Metrics in production (A/B, business KPIs) |
+| **cold start** | — | The user or SKU has no history — fallback strategies are needed |
+| **recsys** | Recommender System | A recommender system |
 
 ---
 
-## Бизнес-метрики и эксперименты
+## Business Metrics and Experiments
 
-| Сокращение | Расшифровка | Кратко |
+| Abbreviation | Expansion | In short |
 |------------|-------------|--------|
-| **KPI** | Key Performance Indicator | Ключевой показатель успеха для бизнеса |
-| **CTR** | Click-Through Rate | Доля кликов по блоку рекомендаций |
-| **AOV** | Average Order Value | Средний чек заказа |
-| **A/B** | A/B test | Сравнение варианта A и B на доле трафика |
-| **shadow mode** | — | Модель считает рекомендации, но не показывает пользователю (только логи) |
+| **KPI** | Key Performance Indicator | A key success indicator for the business |
+| **CTR** | Click-Through Rate | Share of clicks on the recommendation block |
+| **AOV** | Average Order Value | Average order value |
+| **A/B** | A/B test | Comparing variants A and B on a share of traffic |
+| **shadow mode** | — | The model computes recommendations but does not show them to the user (logs only) |
 
 ---
 
-## NFR, эксплуатация, MLOps
+## NFR, Operations, MLOps
 
-| Сокращение | Расшифровка | Кратко |
+| Abbreviation | Expansion | In short |
 |------------|-------------|--------|
-| **NFR** | Non-Functional Requirements | Нефункциональные требования: latency, SLA, безопасность |
-| **SLA** | Service Level Agreement | Договорённый уровень сервиса (uptime, latency, реакция на инциденты) |
-| **SLO** | Service Level Objective | Внутренние целевые метрики эксплуатации |
-| **p95 latency** | 95th percentile latency | 95% запросов быстрее порога (хвост задержек) |
-| **MLOps** | Machine Learning Operations | Retrain, мониторинг drift, версии моделей, алерты |
-| **retrain** | model retraining | Переобучение модели на новых данных |
-| **drift** | concept/data drift | Деградация модели из-за смены данных или поведения |
-| **API** | Application Programming Interface | Программный интерфейс (например, API рекомендаций) |
-| **UI** | User Interface | Пользовательский интерфейс |
-| **QA** | Quality Assurance | Тестирование, контроль качества |
+| **NFR** | Non-Functional Requirements | Non-functional requirements: latency, SLA, security |
+| **SLA** | Service Level Agreement | The agreed service level (uptime, latency, incident response) |
+| **SLO** | Service Level Objective | Internal operational target metrics |
+| **p95 latency** | 95th percentile latency | 95% of requests are faster than the threshold (latency tail) |
+| **MLOps** | Machine Learning Operations | Retrain, drift monitoring, model versions, alerts |
+| **retrain** | model retraining | Retraining the model on new data |
+| **drift** | concept/data drift | Model degradation due to changes in data or behavior |
+| **API** | Application Programming Interface | A programmatic interface (for example, the recommendations API) |
+| **UI** | User Interface | The user interface |
+| **QA** | Quality Assurance | Testing, quality control |
 
 ---
 
-## Роли, команда, домены
+## Roles, Team, Domains
 
-| Сокращение | Расшифровка | Кратко |
+| Abbreviation | Expansion | In short |
 |------------|-------------|--------|
-| **ML** | Machine Learning | Машинное обучение / ML-инженерия |
-| **AI** | Artificial Intelligence | Искусственный интеллект (в т.ч. recsys, genAI) |
-| **genAI** | Generative AI | Генеративный ИИ (LLM, описания, чат) |
-| **LLM** | Large Language Model | Большая языковая модель |
-| **PO** | Product Owner | Владелец продукта со стороны заказчика |
-| **FMCG** | Fast-Moving Consumer Goods | Товары повседночного спроса (продукты, ритейл) |
+| **ML** | Machine Learning | Machine learning / ML engineering |
+| **AI** | Artificial Intelligence | Artificial intelligence (including recsys, genAI) |
+| **genAI** | Generative AI | Generative AI (LLMs, descriptions, chat) |
+| **LLM** | Large Language Model | A large language model |
+| **PO** | Product Owner | The product owner on the client side |
+| **FMCG** | Fast-Moving Consumer Goods | Everyday consumer goods (groceries, retail) |
 
 ---
 
-## Системы и данные (ритейл / интеграции)
+## Systems and Data (Retail / Integrations)
 
-| Сокращение | Расшифровка | Кратко |
+| Abbreviation | Expansion | In short |
 |------------|-------------|--------|
-| **PIM** | Product Information Management | Управление каталогом и атрибутами товаров |
-| **CMS** | Content Management System | Управление контентом сайта/приложения |
-| **CDP** | Customer Data Platform | Платформа данных о клиентах |
-| **CRM** | Customer Relationship Management | CRM, история взаимодействий |
-| **SKU** | Stock Keeping Unit | Единица учёта товара в каталоге |
-| **feature store** | — | Хранилище признаков для ML в prod |
+| **PIM** | Product Information Management | Managing the catalog and product attributes |
+| **CMS** | Content Management System | Managing website/app content |
+| **CDP** | Customer Data Platform | A platform for customer data |
+| **CRM** | Customer Relationship Management | CRM, interaction history |
+| **SKU** | Stock Keeping Unit | A product accounting unit in the catalog |
+| **feature store** | — | A store of ML features in prod |
 
 ---
 
-## Compliance и безопасность
+## Compliance and Security
 
-| Сокращение | Расшифровка | Кратко |
+| Abbreviation | Expansion | In short |
 |------------|-------------|--------|
-| **GDPR** | General Data Protection Regulation | Регламент ЕС по защите персональных данных |
-| **152-ФЗ** | ФЗ-152 «О персональных данных» | Российское законодательство о ПДн |
-| **ПДн** | Персональные данные | Данные, позволяющие идентифицировать человека |
-| **DPIA** | Data Protection Impact Assessment | Оценка воздействия на защиту данных |
+| **GDPR** | General Data Protection Regulation | The EU regulation on personal data protection |
+| **152-FZ** | Federal Law No. 152-FZ "On Personal Data" | Russian legislation on personal data |
+| **Personal data** | — | Data that can identify a person |
+| **DPIA** | Data Protection Impact Assessment | Assessment of the impact on data protection |
 
 ---
 
-## Матрица рисков (качественная оценка)
+## Risk Matrix (Qualitative Assessment)
 
-| Сокращение | Расшифровка | Кратко |
+| Abbreviation | Expansion | In short |
 |------------|-------------|--------|
-| **P** | Probability | Вероятность наступления риска |
-| **I** | Impact | Серьёзность последствий при наступлении |
-| **Н** | Низкий | Низкая вероятность / низкое воздействие / низкий приоритет |
-| **С** | Средний | Средний уровень |
-| **В** | Высокий | Высокий приоритет, требует активной митигации |
-| **R1…R8** | Risk ID | Идентификаторы рисков в реестре стратегии |
+| **P** | Probability | Likelihood of the risk occurring |
+| **I** | Impact | Severity of the consequences if it occurs |
+| **L** | Low | Low probability / low impact / low priority |
+| **M** | Medium | Medium level |
+| **H** | High | High priority, requires active mitigation |
+| **R1…R8** | Risk ID | Risk identifiers in the strategy register |
 
 ---
 
-## Прочее
+## Other
 
-| Сокращение | Расшифровка | Кратко |
+| Abbreviation | Expansion | In short |
 |------------|-------------|--------|
-| **UX** | User Experience | Пользовательский опыт |
-| **impact** | — | Влияние изменения (чел/дни, риск, бюджет) — в контексте CR |
+| **UX** | User Experience | User experience |
+| **impact** | — | The effect of a change (person-days, risk, budget) — in the CR context |
 
 ---
 
-*Версия: 1.0 — синхронизировано с [RetailPartnerX_AI_Strategy.md](RetailPartnerX_AI_Strategy.md)*
+*Version: 1.0 — synchronized with [RetailPartnerX_AI_Strategy.md](RetailPartnerX_AI_Strategy.md)*

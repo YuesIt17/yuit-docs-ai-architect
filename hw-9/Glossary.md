@@ -1,83 +1,83 @@
-# Глоссарий hw-9
+# hw-9 Glossary
 
-Термины **high-load, кэширования, KEDA и async** для AI Service RetailPartnerX.  
-Latency-budget / Redis кандидатов — [hw-2/Glossary.md](../hw-2/Glossary.md).  
+Terms for **high-load, caching, KEDA and async** for the RetailPartnerX AI Service.  
+Latency budget / Redis candidates — [hw-2/Glossary.md](../hw-2/Glossary.md).  
 GPU sizing — [hw-7/Glossary.md](../hw-7/Glossary.md).  
 K8s / GitOps — [hw-8/Glossary.md](../hw-8/Glossary.md).
 
-Документ: [high-load-architecture.md](docs/high-load-architecture.md).
+Document: [high-load-architecture.md](docs/high-load-architecture.md).
 
 ---
 
-## Нагрузка и задержки
+## Load and Latency
 
 ### RPS (Requests Per Second)
 
-Число запросов в секунду ко входу сервиса. В hw-9 целевой порядок — **10 000 RPS** (суммарно по каналам; не равно LLM RPS).
+The number of requests per second at the service entry. The hw-9 target is on the order of **10 000 RPS** (total across channels; not equal to LLM RPS).
 
 ### p95 latency
 
-95-й перцентиль времени ответа: 95% запросов быстрее порога. Для sync-path RetailPartnerX в hw-9: **&lt; 200 ms**.
+The 95th percentile of response time: 95% of requests are faster than the threshold. For the RetailPartnerX sync path in hw-9: **&lt; 200 ms**.
 
 ### Sync hot path
 
-Синхронный путь карточки товара (`/get_recommendation`), обязанный укладываться в latency SLO.
+The synchronous product page path (`/get_recommendation`), which must meet the latency SLO.
 
 ### Async heavy path
 
-Очередная обработка тяжёлых запросов (shopping assistant, длинный RAG/LLM); клиент получает `job_id`, не ждёт completion в одном HTTP &lt;200 ms.
+Queued processing of heavy requests (shopping assistant, long RAG/LLM); the client gets a `job_id` and does not wait for completion within one HTTP &lt;200 ms call.
 
 ---
 
-## Кэширование
+## Caching
 
 ### Multi-tier cache
 
-Несколько уровней кэша подряд: CDN → API Gateway → Redis (candidates) → Semantic Cache → LLM.
+Several cache levels in a row: CDN → API Gateway → Redis (candidates) → Semantic Cache → LLM.
 
 ### Semantic Cache
 
-Кэш LLM-ответов по **векторному сходству** запроса (и context window), а не по точному строковому ключу. См. [Microsoft Learn](https://learn.microsoft.com/ru-ru/azure/cosmos-db/gen-ai/semantic-cache).
+A cache of LLM responses by the **vector similarity** of the query (and context window), not by an exact string key. See [Microsoft Learn](https://learn.microsoft.com/en-us/azure/cosmos-db/gen-ai/semantic-cache).
 
 ### Similarity score (θ)
 
-Оценка близости векторов [0..1]. Порог θ в WHERE векторного запроса: hit только если score ≥ θ.
+A vector similarity score in [0..1]. The threshold θ in the WHERE clause of the vector query: a hit only if score ≥ θ.
 
-### Context window (для кэша)
+### Context Window (for the Cache)
 
-Скользящая история реплик пользователя/ассистента, которую эмбеддят вместе с последним запросом, чтобы кэш был контекстно корректным.
+The sliding history of user/assistant messages embedded together with the latest query, so that the cache is contextually correct.
 
 ### Cache hit / miss
 
-Hit — ответ из кэша без (или с минимальным) LLM; miss — полный pipeline + запись в кэш.
+Hit — a response from the cache with no (or minimal) LLM; miss — the full pipeline + a cache write.
 
 ---
 
-## Масштабирование
+## Scaling
 
 ### Horizontal scaling
 
-Добавление реплик подов (AI API / Inference), а не вертикальное увеличение одной машины.
+Adding pod replicas (AI API / Inference) rather than vertically growing one machine.
 
 ### HPA (Horizontal Pod Autoscaler)
 
-Стандартный autoscaler Kubernetes по CPU/памяти/custom metrics — для sync API-слоя.
+The standard Kubernetes autoscaler by CPU/memory/custom metrics — for the sync API layer.
 
 ### KEDA
 
-Kubernetes Event-driven Autoscaler: масштабирует Deployment/Job по внешним событиям (длина очереди, lag и т.д.). Сайт: [keda.sh](https://keda.sh/).
+Kubernetes Event-driven Autoscaler: scales a Deployment/Job by external events (queue length, lag, etc.). Site: [keda.sh](https://keda.sh/).
 
 ### ScaledObject
 
-CRD KEDA: связывает Deployment с trigger’ом (Redis/Kafka/Service Bus…) и политикой min/max replicas.
+A KEDA CRD: links a Deployment to a trigger (Redis/Kafka/Service Bus…) and a min/max replicas policy.
 
 ### Inference worker
 
-Под, выполняющий LLM/vLLM или тяжёлый agent pipeline; масштабируется KEDA по очереди.
+A pod running LLM/vLLM or a heavy agent pipeline; scaled by KEDA based on the queue.
 
 ### Warm pool
 
-Минимум реплик GPU/inference (`minReplicaCount` &gt; 0), чтобы избежать cold start на пике.
+A minimum number of GPU/inference replicas (`minReplicaCount` &gt; 0) to avoid a cold start at peak.
 
 ---
 
@@ -85,23 +85,23 @@ CRD KEDA: связывает Deployment с trigger’ом (Redis/Kafka/Service B
 
 ### EDA (Event-Driven Architecture)
 
-Архитектура, где компоненты реагируют на события/сообщения в очереди, а не только на синхронный RPC.
+An architecture where components react to events/messages in a queue, not only to synchronous RPC.
 
 ### Request Queue
 
-Очередь заданий (Redis Streams / Kafka / Service Bus) между API и Inference workers.
+A job queue (Redis Streams / Kafka / Service Bus) between the API and the Inference workers.
 
 ### Competing Consumers
 
-Несколько worker-подов конкурируют за сообщения очереди; масштаб ≈ пропускная способность.
+Several worker pods compete for queue messages; scale ≈ throughput.
 
 ### Backpressure
 
-Защита при переполнении: 503 / retry-after / отказ принимать heavy jobs, чтобы не уронить sync path.
+Protection against overload: 503 / retry-after / refusing heavy jobs so as not to bring down the sync path.
 
 ### DLQ (Dead Letter Queue)
 
-Очередь «ядовитых» сообщений после исчерпания retry — для разбора без блокировки основной.
+A queue of "poison" messages after retries are exhausted — for analysis without blocking the main queue.
 
 ---
 
@@ -109,171 +109,171 @@ CRD KEDA: связывает Deployment с trigger’ом (Redis/Kafka/Service B
 
 ### Geo-DNS
 
-DNS-маршрутизация пользователя в ближайший/оптимальный регион по гео или latency.
+DNS routing of a user to the nearest/optimal region by geography or latency.
 
 ### Edge computing
 
-Лёгкая логика и кэш у края сети (CDN PoP): lookup, статика, сегментный ответ — без полного LLM на edge.
+Lightweight logic and cache at the network edge (CDN PoP): lookup, static content, segment responses — no full LLM at the edge.
 
 ### Origin
 
-Центральный (или региональный) backend / AI API, куда идёт cache miss с edge.
+The central (or regional) backend / AI API where a cache miss from the edge goes.
 
 ---
 
-## Сокращения и подписи со схемы
+## Abbreviations and Labels from the Diagram
 
-Термины с [high-load-architecture.drawio](diagrams/high-load-architecture.drawio) / PNG, которых не хватало выше.  
-RAG / Ranker / recsys / SKU подробнее — [hw-2/Glossary.md](../hw-2/Glossary.md); PII / Guardrails — [hw-6/Glossary.md](../hw-6/Glossary.md); vLLM — [hw-7/Glossary.md](../hw-7/Glossary.md).
+Terms from [high-load-architecture.drawio](diagrams/high-load-architecture.drawio) / PNG that were missing above.  
+More on RAG / Ranker / recsys / SKU — [hw-2/Glossary.md](../hw-2/Glossary.md); PII / Guardrails — [hw-6/Glossary.md](../hw-6/Glossary.md); vLLM — [hw-7/Glossary.md](../hw-7/Glossary.md).
 
 ### NFR (Non-Functional Requirements)
 
-Нефункциональные требования: RPS, latency, доступность и т.п. На схеме — блок с 10k RPS и p95 &lt; 200 ms.
+Non-functional requirements: RPS, latency, availability, etc. On the diagram — the block with 10k RPS and p95 &lt; 200 ms.
 
 ### CDN (Content Delivery Network)
 
-Сеть точек присутствия (PoP) у края: отдаёт статику и короткий кэш «горячих» ответов ближе к пользователю.
+A network of points of presence (PoPs) at the edge: serves static content and a short cache of "hot" responses closer to the user.
 
 ### SKU (Stock Keeping Unit)
 
-Единица товарного учёта (артикул). *Hot SKU cache* — кэш популярных карточек / рекомендаций по SKU.
+A product accounting unit (article). *Hot SKU cache* — a cache of popular product pages / recommendations by SKU.
 
 ### API Gateway
 
-Входной шлюз: auth/rate limit, опциональный response cache, маршрутизация в sync recsys или async assistant.
+The entry gateway: auth/rate limit, optional response cache, routing to sync recsys or async assistant.
 
 ### rate limit
 
-Ограничение числа запросов с клиента/ключа, чтобы пик не положил AI Service.
+Limiting the number of requests from a client/key so that a peak does not take down the AI Service.
 
 ### ingress
 
-Входящий трафик на край системы (CDN / Gateway), до внутренних подов.
+Incoming traffic at the system edge (CDN / Gateway), before internal pods.
 
 ### recsys (Recommender System)
 
-Рекомендательная система. На схеме ребро **recsys sync** = синхронный путь `/get_recommendation`.
+A recommender system. On the diagram, the **recsys sync** edge = the synchronous `/get_recommendation` path.
 
 ### Ranker + Top-K
 
-ML/правила сужают кандидатов до Top-K перед (дорогим) LLM/ответом. См. latency-budget A-001 в hw-2.
+ML/rules narrow the candidates to Top-K before the (expensive) LLM/response. See latency budget A-001 in hw-2.
 
 ### candidates / features
 
-Предвычисленные кандидаты и признаки в Redis для Ranker (не Semantic Cache).
+Precomputed candidates and features in Redis for the Ranker (not the Semantic Cache).
 
 ### Soft degrade / fallback
 
-Упрощённый ответ при сбое/timeout LLM: только Ranker, без полного LLM-пути — чтобы удержать SLO.
+A simplified response on LLM failure/timeout: Ranker only, without the full LLM path — to keep the SLO.
 
 ### Jobs API · job_id · HTTP 202
 
-Async-вход assistant: сразу **202 Accepted** + идентификатор задания; результат позже через poll/push.
+The async assistant entry: an immediate **202 Accepted** + a job identifier; the result comes later via poll/push.
 
 ### SB (Service Bus)
 
-Брокер сообщений (напр. Azure Service Bus) как вариант Request Queue рядом с Redis Streams / Kafka.
+A message broker (e.g. Azure Service Bus) as a Request Queue option alongside Redis Streams / Kafka.
 
 ### queue length / depth metric
 
-Глубина очереди (сколько сообщений ждёт обработки) — метрика-триггер для KEDA.
+Queue depth (how many messages await processing) — the trigger metric for KEDA.
 
 ### consume
 
-Worker забирает (потребляет) сообщение из очереди.
+A worker takes (consumes) a message from the queue.
 
 ### enqueue
 
-Jobs API кладёт задание в очередь.
+The Jobs API puts a job into the queue.
 
 ### lookup
 
-Поиск в Semantic Cache по вектору запроса (+ context window): проверка hit до RAG/LLM.
+Searching the Semantic Cache by the query vector (+ context window): checking for a hit before RAG/LLM.
 
 ### store
 
-Запись completion в Semantic Cache после успешного LLM (обычно после guardrails).
+Writing the completion to the Semantic Cache after a successful LLM call (usually after guardrails).
 
-### miss (на рёбрах схемы)
+### miss (on Diagram Edges)
 
-1) CDN → Gateway: нет в edge-кэше.  
-2) Semantic Cache → RAG: нет подходящего векторного hit (см. Cache hit / miss).
+1) CDN → Gateway: not in the edge cache.  
+2) Semantic Cache → RAG: no suitable vector hit (see Cache hit / miss).
 
 ### prompt
 
-Собранный контекст (RAG + история) уходит в LLM Client.
+The assembled context (RAG + history) goes to the LLM Client.
 
 ### complete
 
-Worker закончил job и пишет итог в Result Store.
+The worker has finished the job and writes the result to the Result Store.
 
 ### Result Store
 
-Хранилище статусов/ответов async-заданий (Redis/SQL и т.п.) для poll или push клиенту.
+A store of async job statuses/responses (Redis/SQL, etc.) for poll or push to the client.
 
 ### webhook / SSE
 
-**Webhook** — HTTP-колбэк клиенту по готовности. **SSE** (Server-Sent Events) — поток событий с сервера. Альтернатива опросу (**poll**).
+**Webhook** — an HTTP callback to the client on completion. **SSE** (Server-Sent Events) — a stream of events from the server. An alternative to polling (**poll**).
 
 ### poll / push
 
-Клиент сам спрашивает статус (**poll**) или сервер доставляет результат (**push**: webhook/SSE).
+The client asks for the status itself (**poll**) or the server delivers the result (**push**: webhook/SSE).
 
 ### RAG (Retrieval-Augmented Generation)
 
-Retrieval по Product/Policy KB + генерация LLM. На схеме — после Semantic Cache miss.
+Retrieval over the Product/Policy KB + LLM generation. On the diagram — after a Semantic Cache miss.
 
 ### KB (Knowledge Base)
 
-База знаний: Product KB + Policy KB (hw-3/5).
+Knowledge base: Product KB + Policy KB (hw-3/5).
 
 ### LLM / LLM Client / SaaS / self-host
 
-Большая языковая модель; доступ через абстракцию LLM Client (hw-4) — облачный SaaS или свой инстанс.
+A large language model; accessed through the LLM Client abstraction (hw-4) — cloud SaaS or our own instance.
 
 ### vLLM
 
-Движок инференса LLM с batching/paging KV — в Inference Workers (hw-7).
+An LLM inference engine with batching/KV paging — in the Inference Workers (hw-7).
 
 ### PII (Personally Identifiable Information)
 
-Персональные данные. На схеме: Security Layer маскирует/фильтрует до записи в кэш.
+Personal data. On the diagram: the Security Layer masks/filters it before a cache write.
 
 ### Guardrails
 
-Входные/выходные ограничения (injection, токсичность, policy) до ответа пользователю и до cache write.
+Input/output constraints (injection, toxicity, policy) before the reply reaches the user and before a cache write.
 
 ### guarded write
 
-Запись в Semantic Cache только после прохождения Security Layer (PII + Output Guardrails).
+Writing to the Semantic Cache only after passing the Security Layer (PII + Output Guardrails).
 
 ### Observability · hit-rate · metrics
 
-Мониторинг: доля cache hit, глубина очереди, p95 и др. (hw-6); ребро **metrics** — телеметрия с workers.
+Monitoring: cache hit share, queue depth, p95, etc. (hw-6); the **metrics** edge is telemetry from the workers.
 
 ### HTTPS
 
-Шифрованный HTTP от клиента до CDN/Gateway.
+Encrypted HTTP from the client to the CDN/Gateway.
 
 ---
 
-## Быстрый указатель
+## Quick Index
 
-| Термин | Одной фразой |
+| Term | In one phrase |
 | ------ | ------------ |
-| 10k RPS / &lt;200 ms | Целевые NFR sync-path |
-| CDN / Edge / Geo-DNS / SKU | Край сети и hot SKU cache |
+| 10k RPS / &lt;200 ms | Target sync path NFRs |
+| CDN / Edge / Geo-DNS / SKU | Network edge and hot SKU cache |
 | recsys sync | Sync `/get_recommendation` |
-| Ranker + Top-K / candidates | Узкий sync-path без полного LLM |
-| Soft degrade / fallback | Ranker-only при timeout |
-| lookup / store / miss | Поиск, запись и промах Semantic Cache |
-| enqueue / consume / complete | Положить в очередь → взять → готово |
-| Jobs API · 202 · job_id | Async accept без ожидания LLM |
-| SB / Kafka / Redis Streams | Варианты Request Queue |
-| queue length / depth metric | Триггер KEDA |
-| Result Store · poll / push · SSE | Как клиент забирает async-ответ |
+| Ranker + Top-K / candidates | Narrow sync path without the full LLM |
+| Soft degrade / fallback | Ranker-only on timeout |
+| lookup / store / miss | Semantic Cache search, write and miss |
+| enqueue / consume / complete | Put in the queue → take → done |
+| Jobs API · 202 · job_id | Async accept without waiting for the LLM |
+| SB / Kafka / Redis Streams | Request Queue options |
+| queue length / depth metric | KEDA trigger |
+| Result Store · poll / push · SSE | How the client gets the async response |
 | RAG / KB / prompt | Miss → retrieval → LLM |
 | vLLM / warm GPU | Inference workers |
-| PII / Guardrails / guarded write | Безопасная запись в кэш |
-| KEDA / ScaledObject / HPA | Scale по очереди / по CPU·RPS |
-| Backpressure | Не убить sync при пике LLM |
+| PII / Guardrails / guarded write | Safe cache write |
+| KEDA / ScaledObject / HPA | Scaling by queue / by CPU·RPS |
+| Backpressure | Do not kill sync during an LLM peak |

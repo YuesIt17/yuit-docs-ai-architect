@@ -10,7 +10,7 @@ Case: [RetailPartnerX_AI_Strategy.md](../../hw-1/RetailPartnerX_AI_Strategy.md) 
 
 **Assignment:** a multi-level architecture of an AI recommendation service — C4 (C1–C3), Sequence, OpenAPI for the Backend ↔ AI Service integration.
 
-**MVP scope:** the "Frequently bought with" block on the **product page** (`context=product_page`). Checkout is described in the API, but the main scenario in the diagrams is the SKU page.
+**MVP scope:** the "Frequently bought together" block on the **product page** (`context=product_page`). Checkout is described in the API, but the main scenario in the diagrams is the SKU page.
 
 **NFR:** synchronous Backend ↔ AI Service response; the quality metric is **p95 latency** (see below). A specific millisecond threshold is **not set** in hw-1 — the architecture leaves headroom for a tight latency budget (Ranker → Top-K → LLM).
 
@@ -108,7 +108,7 @@ The designed system consists of the Frontend, Backend, **AI Service**, SQL DB an
 4. The **Router** determines the scenario; the **RAG Manager** gets the product context from the **Vector DB**.
 5. The **Loader** takes candidates from **Redis** and features from the **SQL DB**.
 6. **Ranker** → Top-K → **Prompt Factory** (+ RAG context) → **LLM Client** → **Response Builder**.
-7. Response with `recommendations[]` → UI: the "Frequently bought with" block.
+7. Response with `recommendations[]` → UI: the "Frequently bought together" block.
 
 ---
 

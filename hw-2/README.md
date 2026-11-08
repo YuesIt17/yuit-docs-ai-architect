@@ -1,67 +1,67 @@
-# Домашнее задание
+# Assignment
 
-**Многоуровневое проектирование: от C4 Model до спецификации API**
+**Multi-level design: from the C4 Model to the API specification**
 
-> **Сокращения:** [Глоссарий](Glossary.md) · **Артефакты:** [diagrams/](diagrams/) · [openapi/recommendation-api.yaml](openapi/recommendation-api.yaml)
+> **Abbreviations:** [Glossary](Glossary.md) · **Artifacts:** [diagrams/](diagrams/) · [openapi/recommendation-api.yaml](openapi/recommendation-api.yaml)
 
-## Цель
+## Goal
 
-Спроектировать многоуровневую архитектуру AI-сервиса с использованием диаграмм C4 и спецификации API для согласования интеграции.
+Design a multi-level architecture of an AI service using C4 diagrams and an API specification to align on the integration.
 
-## Описание / пошаговая инструкция
+## Description / Step-by-Step Instructions
 
-### Контекст
+### Context
 
-Продолжаем работу над проектом из первого ДЗ (или выберите свой кейс).
+We continue working on the project from the first assignment (or choose your own case).
 
-### Шаги выполнения
+### Steps
 
-1. **C2 Container Diagram** — нарисуйте диаграмму контейнеров всей системы. Выделите Frontend, Backend, AI Service, Vector DB, SQL DB.
-2. **C3 Component Diagram** — «провалитесь» внутрь контейнера AI Service. Покажите его внутренние компоненты (например, Controller, RAG Manager, LLM Client, Prompt Template Factory).
-3. **Sequence Diagram** — отрисуйте диаграмму последовательности для сценария «Пользователь запрашивает рекомендацию».
-4. **API Spec** — напишите спецификацию API (в формате YAML / Swagger) для взаимодействия между Backend и AI Service (эндпоинт `/get_recommendation`).
+1. **C2 Container Diagram** — draw the container diagram of the whole system. Identify the Frontend, Backend, AI Service, Vector DB and SQL DB.
+2. **C3 Component Diagram** — "drill down" into the AI Service container. Show its internal components (for example, Controller, RAG Manager, LLM Client, Prompt Template Factory).
+3. **Sequence Diagram** — draw the sequence diagram for the "User requests a recommendation" scenario.
+4. **API Spec** — write the API specification (in YAML / Swagger format) for the interaction between the Backend and AI Service (the `/get_recommendation` endpoint).
 
-## Полезные материалы
+## Useful Materials
 
-| Инструмент / методология | Описание |
+| Tool / method | Description |
 |--------------------------|----------|
-| **C4 Model** | Методология многоуровневого проектирования |
-| **OpenAPI (Swagger)** | Редактор спецификации API |
-| **Petstore API** | Пример спецификации |
+| **C4 Model** | A multi-level design method |
+| **OpenAPI (Swagger)** | An API specification editor |
+| **Petstore API** | An example specification |
 
-## Формат сдачи
+## Submission Format
 
-- ссылка на диаграммы (Draw.io / Structurizr / Holst);
-- файл или ссылка на Gist с OpenAPI-спецификацией (YAML / JSON).
+- a link to the diagrams (Draw.io / Structurizr / Holst);
+- a file or Gist link with the OpenAPI specification (YAML / JSON).
 
-При отправке ссылки убедитесь, что по ней открыт доступ.
+When submitting a link, make sure access to it is open.
 
-Если у вас возникнут вопросы, вы можете задать их в чате проверки домашнего задания или в группе в VK.
+If you have questions, you can ask them in the assignment review chat or in the VK group.
 
-## Критерии оценки
+## Evaluation Criteria
 
-Статус **«Принято»**, если:
+Status **"Accepted"** if:
 
-| Критерий | Описание |
+| Criterion | Description |
 |----------|----------|
-| **Соответствие нотации** | Диаграммы читаемы, связи направлены верно |
-| **Связность** | Компоненты на C3 соответствуют шагам на Sequence Diagram |
-| **Качество API** | Спецификация содержит типы данных, примеры запросов / ответов и коды ошибок |
+| **Notation compliance** | The diagrams are readable and the links point the right way |
+| **Consistency** | The components on C3 match the steps on the Sequence diagram |
+| **API quality** | The specification contains data types, request / response examples and error codes |
 
-## Компетенции
+## Competencies
 
-Разрабатывать, документировать и верифицировать архитектуру AI-решений на различных уровнях детализации, используя профессиональный инструментарий и стандарты:
+Develop, document and verify the architecture of AI solutions at different levels of detail, using professional tools and standards:
 
-- создавать диаграммы контекста и контейнеров (C1 и C2) для AI-решений, используя Draw.io или Structurizr;
-- разрабатывать LLD для отдельных контейнеров, включая C3-диаграммы и OpenAPI-спецификации API.
+- create context and container diagrams (C1 and C2) for AI solutions using Draw.io or Structurizr;
+- develop an LLD for individual containers, including C3 diagrams and OpenAPI specifications.
 
-## Артефакты решения (RetailPartnerX)
+## Solution Artifacts (RetailPartnerX)
 
-| Артефакт | Путь |
+| Artifact | Path |
 |----------|------|
-| Диаграммы Draw.io | [diagrams/](diagrams/) — C1, C2, C3, Sequence |
+| Draw.io diagrams | [diagrams/](diagrams/) — C1, C2, C3, Sequence |
 | OpenAPI | [openapi/recommendation-api.yaml](openapi/recommendation-api.yaml) |
-| Кейс hw-1 | [RetailPartnerX_AI_Strategy.md](../hw-1/RetailPartnerX_AI_Strategy.md) |
-| Состав и связность | [diagrams/README.md](diagrams/README.md) |
+| hw-1 case | [RetailPartnerX_AI_Strategy.md](../hw-1/RetailPartnerX_AI_Strategy.md) |
+| Composition and consistency | [diagrams/README.md](diagrams/README.md) |
 
-Вспомогательные specs и шаблоны — [diagrams/_dev/](diagrams/_dev/) (не для сдачи).
+Supporting specs and templates — [diagrams/_dev/](diagrams/_dev/) (not for submission).

@@ -76,7 +76,7 @@
     {
       "from": "ctrl",
       "to": "rag",
-      "label": "Контекст",
+      "label": "Context",
       "parent": "boundary",
       "exitX": 1,
       "exitY": 0.5,
@@ -87,7 +87,7 @@
     {
       "from": "rag",
       "to": "prompts",
-      "label": "Контекст",
+      "label": "Context",
       "parent": "boundary",
       "exitX": 1,
       "exitY": 0.5,
@@ -109,7 +109,7 @@
     {
       "from": "llm",
       "to": "ctrl",
-      "label": "Ответ",
+      "label": "Response",
       "parent": "boundary",
       "exitX": 0.5,
       "exitY": 0,
@@ -135,7 +135,7 @@
     {
       "from": "ctrl",
       "to": "sql",
-      "label": "Логирование",
+      "label": "Logging",
       "exitX": 0.5,
       "exitY": 1,
       "entryX": 0.5,

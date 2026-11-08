@@ -1,10 +1,10 @@
-# Python (общее окружение hw-*)
+# Python (Shared hw-* Environment)
 
-Зависимости и venv **на уровне репозитория** — один Python для всех ДЗ с кодом (`hw-3/code`, будущие `hw-*/code`).
+Dependencies and venv are **at the repository level** — one Python for all assignments with code (`hw-3/code`, future `hw-*/code`).
 
-## Быстрый старт
+## Quick Start
 
-Из **корня репозитория**:
+From the **repository root**:
 
 ```powershell
 python -m venv .venv
@@ -21,16 +21,16 @@ source .venv/bin/activate
 pip install -r tools/python/requirements.txt
 ```
 
-## Проверка (hw-3)
+## Check (hw-3)
 
 ```powershell
 python -m pytest hw-3/code/tests -q
 ```
 
-## Разделение ответственности
+## Separation of Responsibilities
 
-| Что | Где |
+| What | Where |
 |-----|-----|
-| **Tool** (зависимости) | `tools/python/requirements.txt` |
-| **venv / pytest cache** | корень репо: `.venv/`, `.pytest_cache/` |
-| **Код ДЗ** | `{hwId}/code/` |
+| **Tool** (dependencies) | `tools/python/requirements.txt` |
+| **venv / pytest cache** | repo root: `.venv/`, `.pytest_cache/` |
+| **Assignment code** | `{hwId}/code/` |

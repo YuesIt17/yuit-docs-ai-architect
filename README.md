@@ -96,7 +96,7 @@ Shopping assistant in the app chat: the Orchestrator coordinates 6 specialized a
 
 The architecture patterns of this case apply to enterprise retail problems:
 
-- **Product recommendations** — a "Frequently bought with" block on the SKU page with a controlled latency budget
+- **Product recommendations** — a "Frequently bought together" block on the SKU page with a controlled latency budget
 - **Shopping assistant** — conversational commerce with constraint parsing (allergens, budget, promotions)
 - **Policy compliance** — RAG over internal policies (GDPR, 18+, allergens) as a semantic guard
 - **Knowledge freshness** — a data pipeline that keeps the Product KB and embeddings up to date

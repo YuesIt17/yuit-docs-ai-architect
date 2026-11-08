@@ -1,67 +1,67 @@
-# Домашнее задание hw-8 — RetailPartnerX
+# Assignment hw-8 — RetailPartnerX
 
-**Автоматизация поставки: IaC, CI/CD и MLOps-конвейеры**
+**Delivery automation: IaC, CI/CD and MLOps pipelines**
 
-> **Сокращения:** [Глоссарий](Glossary.md) · **Артефакты:** [docs/](docs/) · [diagrams/](diagrams/)
+> **Abbreviations:** [Glossary](Glossary.md) · **Artifacts:** [docs/](docs/) · [diagrams/](diagrams/)
 
-## Цель
+## Goal
 
-Спроектировать автоматизированный пайплайн поставки AI-сервиса RetailPartnerX с интеграцией обучения моделей и Canary-релизом.
+Design an automated delivery pipeline for the RetailPartnerX AI service, integrating model training and a Canary release.
 
-## Контекст и преемственность
+## Context and Continuity
 
-| ДЗ | Артефакт | Связь с hw-8 |
+| Assignment | Artifact | Link to hw-8 |
 | -- | -------- | ------------ |
-| [hw-1](../hw-1/RetailPartnerX_AI_Strategy.md) | Roadmap PoC→MVP→Prod | Prod = автоматизация поставки + безопасный релиз |
-| [hw-2](../hw-2/diagrams/README.md) | AI Service, OpenAPI | Артефакт деплоя: Docker-образ сервиса + контракт API |
-| [hw-3](../hw-3/README.md) | Multi-agent RAG | Релиз агентов + обновление Product/Policy KB |
-| [hw-4](../hw-4/docs/adr-001-llm-hosting.md) | LLM hosting ADR | LLM Client не меняет контракт деплоя; секреты через Secret Manager |
-| [hw-5](../hw-5/docs/data-pipeline.md) | Kafka → S3 → Feature Store / Vector DB | Триггер MLOps: новый curated dataset / catalog → retrain + re-embed |
-| [hw-6](../hw-6/docs/quality-assurance.md) | Eval gates, observability | Unit/E2E + Ragas/DeepEval в CI; метрики отката Canary |
-| [hw-7](../hw-7/docs/recommendation.md) | GPU sizing | K8s node pools / GPU node group под self-hosted LLM (roadmap) |
+| [hw-1](../hw-1/RetailPartnerX_AI_Strategy.md) | PoC→MVP→Prod roadmap | Prod = delivery automation + safe release |
+| [hw-2](../hw-2/diagrams/README.md) | AI Service, OpenAPI | Deployment artifact: service Docker image + API contract |
+| [hw-3](../hw-3/README.md) | Multi-agent RAG | Agent release + Product/Policy KB updates |
+| [hw-4](../hw-4/docs/adr-001-llm-hosting.md) | LLM hosting ADR | The LLM Client does not change the deployment contract; secrets via Secret Manager |
+| [hw-5](../hw-5/docs/data-pipeline.md) | Kafka → S3 → Feature Store / Vector DB | MLOps trigger: new curated dataset / catalog → retrain + re-embed |
+| [hw-6](../hw-6/docs/quality-assurance.md) | Eval gates, observability | Unit/E2E + Ragas/DeepEval in CI; Canary rollback metrics |
+| [hw-7](../hw-7/docs/recommendation.md) | GPU sizing | K8s node pools / GPU node group for a self-hosted LLM (roadmap) |
 
-**Задача:** для RetailPartnerX (рекомендации + шопинг-ассистент) описать **IaC → CI/CD → MLOps → Canary**, чтобы код приложения и версия модели из Model Registry поставлялись в prod с минимумом ручных действий.
+**Task:** for RetailPartnerX (recommendations + shopping assistant), describe **IaC → CI/CD → MLOps → Canary** so that the application code and the model version from the Model Registry reach prod with minimal manual steps.
 
-Тема курса сохранена; пайплайны привязаны к AI Service, Ranker, Vector DB и eval-гейтам из предыдущих модулей.
+The course topic is preserved; the pipelines are tied to the AI Service, Ranker, Vector DB and eval gates from earlier modules.
 
-## Шаги выполнения (артефакты решения)
+## Steps (Solution Artifacts)
 
-| Шаг ДЗ | Документ / файл |
+| Assignment step | Document / file |
 | ------ | --------------- |
 | 1. Infrastructure as Code | [docs/delivery-pipeline.md](docs/delivery-pipeline.md) §1 · [docs/terraform-sketch.tf](docs/terraform-sketch.tf) |
 | 2. CI/CD Pipeline | [diagrams/cicd-mlops-pipeline.png](diagrams/cicd-mlops-pipeline.png) · [docs/delivery-pipeline.md](docs/delivery-pipeline.md) §2 |
-| 3. MLOps Integration | Схема (нижний контур) · [docs/delivery-pipeline.md](docs/delivery-pipeline.md) §3 |
+| 3. MLOps Integration | Diagram (lower loop) · [docs/delivery-pipeline.md](docs/delivery-pipeline.md) §3 |
 | 4. Release Strategy (Canary) | [docs/delivery-pipeline.md](docs/delivery-pipeline.md) §4 |
 
-## Формат сдачи
+## Submission Format
 
-| Артефакт | Путь |
+| Artifact | Path |
 | -------- | ---- |
-| Схема CI/CD + MLOps | [diagrams/cicd-mlops-pipeline.drawio](diagrams/cicd-mlops-pipeline.drawio) · [PNG](diagrams/cicd-mlops-pipeline.png) |
-| Описание IaC / пайплайнов / Canary | [docs/delivery-pipeline.md](docs/delivery-pipeline.md) |
-| Псевдокод Terraform | [docs/terraform-sketch.tf](docs/terraform-sketch.tf) |
+| CI/CD + MLOps diagram | [diagrams/cicd-mlops-pipeline.drawio](diagrams/cicd-mlops-pipeline.drawio) · [PNG](diagrams/cicd-mlops-pipeline.png) |
+| Description of IaC / pipelines / Canary | [docs/delivery-pipeline.md](docs/delivery-pipeline.md) |
+| Terraform pseudocode | [docs/terraform-sketch.tf](docs/terraform-sketch.tf) |
 
-## Критерии самопроверки
+## Self-Check Criteria
 
-| Критерий | Как закрыто |
+| Criterion | How it is met |
 | -------- | ----------- |
-| Интеграция | App image + `model_uri` / `index_version` из Model Registry — [§3](docs/delivery-pipeline.md), [схема](diagrams/cicd-mlops-pipeline.png) |
-| Безопасность релиза | Unit → Staging → E2E/Eval → Canary 1%→5%→100% + rollback-метрики — [§2, §4](docs/delivery-pipeline.md) |
-| Автоматизация | Terraform + GitOps (Argo CD) + Airflow→Registry→CD; ручной только optional prod gate — [§1–3](docs/delivery-pipeline.md) |
+| Integration | App image + `model_uri` / `index_version` from the Model Registry — [§3](docs/delivery-pipeline.md), [diagram](diagrams/cicd-mlops-pipeline.png) |
+| Release safety | Unit → Staging → E2E/Eval → Canary 1%→5%→100% + rollback metrics — [§2, §4](docs/delivery-pipeline.md) |
+| Automation | Terraform + GitOps (Argo CD) + Airflow→Registry→CD; only an optional manual prod gate — [§1–3](docs/delivery-pipeline.md) |
 
-Статус «Принято», если все три критерия выполнены.
+Status "Accepted" if all three criteria are met.
 
-## Полезные материалы
+## Useful Materials
 
-| Материал | Описание |
+| Material | Description |
 | -------- | -------- |
 | [Argo CD — Architectural Overview](https://argo-cd.readthedocs.io/en/stable/operator-manual/architecture/) | API Server, Repo Server, Application Controller |
-| [Canary Release (Martin Fowler)](https://martinfowler.com/bliki/CanaryRelease.html) | Постепенный rollout и rollback трафика |
+| [Canary Release (Martin Fowler)](https://martinfowler.com/bliki/CanaryRelease.html) | Gradual rollout and traffic rollback |
 
-## Компетенции
+## Competencies
 
-Планировать и организовывать надёжную инфраструктуру для AI-систем, включая CI/CD и отказоустойчивость:
+Plan and organize reliable infrastructure for AI systems, including CI/CD and fault tolerance:
 
-- писать Terraform-конфигурации для базовой инфраструктуры (VPC, Kubernetes, S3);
-- проектировать схемы MLOps-пайплайнов для RAG с автоматическим обновлением векторной базы;
-- разрабатывать планы релиза AI-сервисов со стратегией Canary.
+- write Terraform configurations for base infrastructure (VPC, Kubernetes, S3);
+- design MLOps pipelines for RAG with automatic vector database updates;
+- develop release plans for AI services with a Canary strategy.

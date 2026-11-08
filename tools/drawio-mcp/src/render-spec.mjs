@@ -261,7 +261,7 @@ export const SPEC_SCHEMA_HELP = {
     nodes: [
       {
         id: "shopper",
-        label: "Покупатель\\nСайт / приложение",
+        label: "Customer\\nWebsite / app",
         style: "person",
         x: 80,
         y: 280,
@@ -270,7 +270,7 @@ export const SPEC_SCHEMA_HELP = {
       },
       {
         id: "system",
-        label: "Моя система",
+        label: "My system",
         style: "system",
         x: 320,
         y: 240,

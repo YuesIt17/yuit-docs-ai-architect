@@ -1,14 +1,14 @@
-# Глоссарий hw-3
+# hw-3 Glossary
 
-Термины мультиагентных систем и RAG для RetailPartnerX. Общие определения C4, RAG, Vector DB — в [hw-2/Glossary.md](../hw-2/Glossary.md).
+Terms for multi-agent systems and RAG for RetailPartnerX. General definitions of C4, RAG, Vector DB are in [hw-2/Glossary.md](../hw-2/Glossary.md).
 
-| Термин | Расшифровка | Кратко |
+| Term | Expansion | In short |
 |--------|-------------|--------|
-| **Orchestrator** | Координатор агентов | Менеджер: планирует шаги, делегирует специалистам, собирает ответ |
-| **SRP** | Single Responsibility Principle | Один агент — одна зона ответственности |
-| **Policy KB** | Policy Knowledge Base | База политик: аллергены, акции, GDPR, blocklists (R4) |
-| **Product KB** | Product Knowledge Base | Эмбеддинги описаний SKU из PIM (Vector DB hw-2) |
-| **Hybrid retrieval** | Гибридный поиск | Dense (vector) + sparse (BM25) для юридических формулировок |
-| **Reranking** | Переранжирование | Cross-encoder сужает Top-N чанков до Top-K для LLM |
-| **LangGraph** | — | Фреймворк state machine для multi-agent workflow |
-| **Guardrails** | Ограничители | Policy Analyst блокирует нарушения до ответа пользователю (R8) |
+| **Orchestrator** | Agent coordinator | Manager: plans steps, delegates to specialists, assembles the answer |
+| **SRP** | Single Responsibility Principle | One agent — one area of responsibility |
+| **Policy KB** | Policy Knowledge Base | Policy base: allergens, promotions, GDPR, blocklists (R4) |
+| **Product KB** | Product Knowledge Base | Embeddings of SKU descriptions from PIM (hw-2 Vector DB) |
+| **Hybrid retrieval** | Hybrid search | Dense (vector) + sparse (BM25) for legal wording |
+| **Reranking** | Re-ranking | A cross-encoder narrows Top-N chunks to Top-K for the LLM |
+| **LangGraph** | — | A state machine framework for multi-agent workflows |
+| **Guardrails** | Guardrails | The Policy Analyst blocks violations before the reply reaches the user (R8) |

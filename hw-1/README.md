@@ -1,60 +1,60 @@
-# Домашнее задание
+# Assignment
 
-**Разработка стратегии, оценка рисков и дорожной карты AI-проекта**
+**Developing the strategy, risk assessment and roadmap of an AI project**
 
-## Цель
+## Goal
 
-Разработать стратегию внедрения AI-решения с выбором контрактной модели, оценкой рисков и дорожной картой для согласования с заказчиком.
+Develop an adoption strategy for an AI solution, with a choice of contract model, a risk assessment and a roadmap for alignment with the client.
 
-## Описание / пошаговая инструкция
+## Description / Step-by-Step Instructions
 
-### Легенда
+### Scenario
 
-Вы — архитектор в компании-интеграторе. Клиент (крупный ритейлер) хочет внедрить AI-систему персонализированных рекомендаций, но требования размыты («хотим как у Ozon»). Описание кейса вы найдёте в доп. материалах к этому занятию.
+You are an architect at a systems integrator. The client (a large retailer) wants to introduce an AI personalized recommendation system, but the requirements are vague ("we want it like Ozon"). The case description is in the additional materials for this lesson.
 
-### Шаги выполнения
+### Steps
 
-1. **Анализ требований** — на основе легенды сформулируйте 5–7 уточняющих вопросов клиенту для снятия неопределённости.
-2. **Выбор контракта** — обоснуйте выбор модели (T&M, FP или гибрид) для этапа PoC и для основной разработки. Поясните, почему это выгодно обеим сторонам.
-3. **Оценка рисков** — составьте матрицу рисков (минимум 5 рисков), специфичных для AI (например, качество данных, галлюцинации модели). Предложите план митигации.
-4. **Roadmap** — разработайте дорожную карту. Опишите критерии успеха (DoD) для этапов:
-   - **PoC** — проверка гипотезы;
-   - **MVP** — выход на пользователей;
-   - **Production** — масштабирование.
+1. **Requirements analysis** — based on the scenario, formulate 5–7 clarifying questions for the client to remove uncertainty.
+2. **Contract choice** — justify the model (T&M, FP or hybrid) for the PoC stage and for the main development. Explain why it benefits both parties.
+3. **Risk assessment** — build a risk matrix (at least 5 risks) specific to AI (for example, data quality, model hallucinations). Propose a mitigation plan.
+4. **Roadmap** — develop a roadmap. Describe the success criteria (DoD) for the stages:
+   - **PoC** — testing the hypothesis;
+   - **MVP** — reaching users;
+   - **Production** — scaling.
 
-## Полезные материалы
+## Useful Materials
 
-- [Матрица рисков. Пример заполнения](docs/Risk_Matrix_Example.xlsx)
-- [Шаблон реестра рисков для количественной оценки](docs/ISAR%20Sample_risk_calculator%20Final.xlsx)
+- [Risk matrix. Filled-in example](docs/Risk_Matrix_Example.xlsx)
+- [Risk register template for quantitative assessment](docs/ISAR%20Sample_risk_calculator%20Final.xlsx)
 
-## Формат сдачи
+## Submission Format
 
-PDF-файл (или ссылка на Google Doc / Holst), содержащий:
+A PDF file (or a link to a Google Doc / Holst) containing:
 
-- список вопросов;
-- обоснование контракта;
-- матрицу рисков;
-- схему / таблицу Roadmap.
+- the list of questions;
+- the contract justification;
+- the risk matrix;
+- a Roadmap diagram / table.
 
-Если вы отправляете ссылку, убедитесь, что по ней открыт доступ.
+If you submit a link, make sure access to it is open.
 
-Если у вас возникнут вопросы, вы можете задать их в чате проверки домашнего задания или в группе в VK.
+If you have questions, you can ask them in the assignment review chat or in the VK group.
 
-## Критерии оценки
+## Evaluation Criteria
 
-Статус **«Принято»**, если:
+Status **"Accepted"** if:
 
-| Критерий | Описание |
+| Criterion | Description |
 |----------|----------|
-| **Обоснованность** | Выбор типа контракта логично вытекает из уровня неопределённости |
-| **Полнота** | Roadmap покрывает все три стадии (PoC, MVP, Prod) |
-| **Реалистичность** | Риски специфичны для AI-проектов, а не общие фразы |
-| **Структура** | Документ читаем и понятен для бизнеса |
+| **Soundness** | The contract type follows logically from the level of uncertainty |
+| **Completeness** | The roadmap covers all three stages (PoC, MVP, Prod) |
+| **Realism** | The risks are specific to AI projects, not generic phrases |
+| **Structure** | The document is readable and clear to the business |
 
-## Компетенции
+## Competencies
 
-Анализировать проектные ограничения и требования для выявления рисков и разработки плана проекта, разбитого на этапы с измеримой бизнес-ценностью:
+Analyze project constraints and requirements to identify risks and develop a project plan broken into stages with measurable business value:
 
-- аргументированно обосновывать выбор коммерческой модели контракта (FP, T&M, T&M with a cap) для конкретного проекта;
-- составлять матрицу рисков и черновик Change Request для проектов с фиксированной ценой (FP);
-- разрабатывать дорожную карту проекта, декомпозируя задачи на этапы PoC, MVP и Production.
+- justify the choice of a commercial contract model (FP, T&M, T&M with a cap) for a specific project;
+- build a risk matrix and a draft Change Request for fixed-price (FP) projects;
+- develop a project roadmap, decomposing tasks into PoC, MVP and Production stages.
