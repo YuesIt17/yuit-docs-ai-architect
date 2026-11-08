@@ -25,7 +25,7 @@ You are an architect at a systems integrator. The client (a large retailer) want
 ## Useful Materials
 
 - [Risk matrix. Filled-in example](docs/Risk_Matrix_Example.xlsx)
-- [Risk register template for quantitative assessment](docs/ISAR%20Sample_risk_calculator%20Final.xlsx)
+- Risk register template for quantitative assessment (ISAR calculator, third-party course material, not included in this repository)
 
 ## Submission Format
 
