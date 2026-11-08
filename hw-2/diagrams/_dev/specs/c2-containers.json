@@ -5,7 +5,7 @@
   "nodes": [
     {
       "id": "shopper",
-      "label": "Покупатель",
+      "label": "Shopper",
       "style": "person",
       "x": 30,
       "y": 265,
@@ -33,7 +33,7 @@
     },
     {
       "id": "be",
-      "label": "Backend\nBFF, корзина",
+      "label": "Backend\nBFF, cart",
       "style": "container",
       "x": 260,
       "y": 88,
@@ -43,7 +43,7 @@
     },
     {
       "id": "ai",
-      "label": "AI Service\nРекомендации",
+      "label": "AI Service\nRecommendations",
       "style": "container",
       "x": 585,
       "y": 88,
@@ -63,7 +63,7 @@
     },
     {
       "id": "vec",
-      "label": "Vector DB\nопционально / RAG future",
+      "label": "Vector DB\noptional / RAG future",
       "style": "db",
       "x": 580,
       "y": 282,
@@ -73,7 +73,7 @@
     },
     {
       "id": "pim",
-      "label": "PIM\nКаталог",
+      "label": "PIM\nCatalog",
       "style": "external",
       "x": 475,
       "y": 50,
@@ -139,7 +139,7 @@
     {
       "from": "ai",
       "to": "vec",
-      "label": "опционально",
+      "label": "optional",
       "parent": "boundary",
       "exitX": 0.5,
       "exitY": 1,

@@ -4,13 +4,13 @@
             <root>
                 <mxCell id="0"/>
                 <mxCell id="1" parent="0"/>
-                <mxCell id="2" value="App / CDP&amp;#10;Клики, просмотры" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#999999;strokeColor=#666666;fontColor=#ffffff;align=center;" parent="1" vertex="1">
+                <mxCell id="2" value="App / CDP&amp;#10;Clicks, views" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#999999;strokeColor=#666666;fontColor=#ffffff;align=center;" parent="1" vertex="1">
                     <mxGeometry x="40" y="115" width="150" height="80" as="geometry"/>
                 </mxCell>
-                <mxCell id="3" value="PIM / ERP&amp;#10;Каталог SKU" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#999999;strokeColor=#666666;fontColor=#ffffff;align=center;" parent="1" vertex="1">
+                <mxCell id="3" value="PIM / ERP&amp;#10;SKU catalog" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#999999;strokeColor=#666666;fontColor=#ffffff;align=center;" parent="1" vertex="1">
                     <mxGeometry x="40" y="415" width="150" height="80" as="geometry"/>
                 </mxCell>
-                <mxCell id="4" value="Data Platform — RetailPartnerX&amp;#10;Lambda: stream (поведение) + batch (каталог) → общий Lake / serving" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 8;fillColor=none;strokeColor=#666666;align=left;verticalAlign=top;fontStyle=1;fontColor=#333333;" parent="1" vertex="1">
+                <mxCell id="4" value="Data Platform — RetailPartnerX&amp;#10;Lambda: stream (behavior) + batch (catalog) → shared Lake / serving" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 8;fillColor=none;strokeColor=#666666;align=left;verticalAlign=top;fontStyle=1;fontColor=#333333;" parent="1" vertex="1">
                     <mxGeometry x="230" y="40" width="1000" height="720" as="geometry"/>
                 </mxCell>
                 <mxCell id="5" value="Kafka&amp;#10;Events stream" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#438DD5;strokeColor=#3C7FC0;fontColor=#ffffff;align=center;" parent="4" vertex="1">
@@ -37,13 +37,13 @@
                 <mxCell id="12" value="Offline train&amp;#10;Ranker" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;strokeColor=#3C7FC0;fontColor=#000000;align=center;" parent="4" vertex="1">
                     <mxGeometry x="680" y="230" width="170" height="70" as="geometry"/>
                 </mxCell>
-                <mxCell id="13" value="Очистка — в Spark (stream + batch)&amp;#10;• schema: валидация контракта&amp;#10;• дедуп / отсев ботов&amp;#10;• нормализация customer_id, sku_id" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#fff2cc;strokeColor=#d6b656;size=14;align=left;fontSize=11;spacingLeft=4;spacingTop=2;" parent="4" vertex="1">
+                <mxCell id="13" value="Cleaning in Spark (stream + batch)&amp;#10;• schema: contract validation&amp;#10;• dedup / bot filtering&amp;#10;• customer_id, sku_id normalization" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#fff2cc;strokeColor=#d6b656;size=14;align=left;fontSize=11;spacingLeft=4;spacingTop=2;" parent="4" vertex="1">
                     <mxGeometry x="40" y="560" width="260" height="100" as="geometry"/>
                 </mxCell>
-                <mxCell id="28" value="Эмбеддинги — offline batch&amp;#10;после curated catalog → Vector DB&amp;#10;не в online path Ranker / RAG&amp;#10;(p95 latency, hw-2)" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#fff2cc;strokeColor=#d6b656;size=14;align=left;fontSize=11;spacingLeft=4;spacingTop=2;" vertex="1" parent="4">
+                <mxCell id="28" value="Embeddings: offline batch&amp;#10;after curated catalog → Vector DB&amp;#10;not in the Ranker / RAG online path&amp;#10;(p95 latency, hw-2)" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#fff2cc;strokeColor=#d6b656;size=14;align=left;fontSize=11;spacingLeft=4;spacingTop=2;" vertex="1" parent="4">
                     <mxGeometry x="330" y="560" width="280" height="100" as="geometry"/>
                 </mxCell>
-                <mxCell id="29" value="Anti-skew (Feature Store)&amp;#10;одни feature definitions&amp;#10;offline train = online serve (Redis)&amp;#10;point-in-time joins при обучении" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#fff2cc;strokeColor=#d6b656;size=14;align=left;fontSize=11;spacingLeft=4;spacingTop=2;" vertex="1" parent="4">
+                <mxCell id="29" value="Anti-skew (Feature Store)&amp;#10;shared feature definitions&amp;#10;offline train = online serve (Redis)&amp;#10;point-in-time joins during training" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#fff2cc;strokeColor=#d6b656;size=14;align=left;fontSize=11;spacingLeft=4;spacingTop=2;" vertex="1" parent="4">
                     <mxGeometry x="640" y="560" width="300" height="100" as="geometry"/>
                 </mxCell>
                 <mxCell id="17" value="consume" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#666666;fontColor=#333333;labelBackgroundColor=#ffffff;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" parent="4" source="5" target="6" edge="1">

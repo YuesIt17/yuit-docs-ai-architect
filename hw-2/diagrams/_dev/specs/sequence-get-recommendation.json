@@ -12,7 +12,7 @@
     "msgStep": 46,
     "lifelineHeight": 900,
     "participants": [
-      { "id": "shopper", "label": "Покупатель", "type": "person" },
+      { "id": "shopper", "label": "Shopper", "type": "person" },
       { "id": "frontend", "label": "Frontend", "type": "lifeline" },
       { "id": "backend", "label": "Backend", "type": "lifeline" },
       { "id": "controller", "label": "Rec.\nController", "type": "lifeline" },
@@ -28,7 +28,7 @@
       { "id": "vec", "label": "Vector DB", "type": "lifeline" }
     ],
     "messages": [
-      { "from": 0, "to": 1, "label": "Открывает карточку SKU-123" },
+      { "from": 0, "to": 1, "label": "Opens product page SKU-123" },
       { "from": 1, "to": 2, "label": "GET /products/SKU-123" },
       { "from": 2, "to": 3, "label": "POST /get_recommendation" },
       { "from": 3, "to": 4, "label": "resolve(context)" },
@@ -48,7 +48,7 @@
       { "from": 10, "to": 3, "label": "recommendations[]", "return": true },
       { "from": 3, "to": 2, "label": "200 OK", "return": true },
       { "from": 2, "to": 1, "label": "product + recommendations", "return": true },
-      { "from": 1, "to": 0, "label": "С этим покупают", "return": true }
+      { "from": 1, "to": 0, "label": "Frequently bought together", "return": true }
     ],
     "notes": [
       {

@@ -5,7 +5,7 @@
   "nodes": [
     {
       "id": "cdp",
-      "label": "App / CDP\nКлики, просмотры",
+      "label": "App / CDP\nClicks, views",
       "style": "external",
       "x": 40,
       "y": 120,
@@ -14,7 +14,7 @@
     },
     {
       "id": "pim",
-      "label": "PIM / ERP\nКаталог SKU",
+      "label": "PIM / ERP\nSKU catalog",
       "style": "external",
       "x": 40,
       "y": 420,
@@ -23,7 +23,7 @@
     },
     {
       "id": "boundary",
-      "label": "Data Platform — RetailPartnerX\nLambda: stream (поведение) + batch (каталог) → общий Lake / serving",
+      "label": "Data Platform — RetailPartnerX\nLambda: stream (behavior) + batch (catalog) → shared Lake / serving",
       "style": "boundary",
       "x": 230,
       "y": 40,
@@ -112,7 +112,7 @@
     },
     {
       "id": "note_clean",
-      "label": "Очистка — в Spark (stream + batch)\n• schema: валидация контракта\n• дедуп / отсев ботов\n• нормализация customer_id, sku_id",
+      "label": "Cleaning in Spark (stream + batch)\n• schema: contract validation\n• dedup / bot filtering\n• customer_id, sku_id normalization",
       "style": "note",
       "x": 40,
       "y": 560,
@@ -122,7 +122,7 @@
     },
     {
       "id": "note_embed",
-      "label": "Эмбеддинги — offline batch\nпосле curated catalog → Vector DB\nне в online path Ranker / RAG\n(p95 latency, hw-2)",
+      "label": "Embeddings: offline batch\nafter curated catalog → Vector DB\nnot in the Ranker / RAG online path\n(p95 latency, hw-2)",
       "style": "note",
       "x": 330,
       "y": 560,
@@ -132,7 +132,7 @@
     },
     {
       "id": "note_skew",
-      "label": "Anti-skew (Feature Store)\nодни feature definitions\noffline train = online serve (Redis)\npoint-in-time joins при обучении",
+      "label": "Anti-skew (Feature Store)\nshared feature definitions\noffline train = online serve (Redis)\npoint-in-time joins during training",
       "style": "note",
       "x": 640,
       "y": 560,
