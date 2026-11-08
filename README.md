@@ -1,28 +1,28 @@
 # RetailPartnerX — AI Architecture Case Study
 
-> Учебный архитектурный кейс: персонализированные рекомендации и shopping assistant для FMCG-ритейлера
+> Educational architecture case study: personalized recommendations and a shopping assistant for an FMCG retailer
 
-**HTML-презентация:** [GitHub Pages](https://yuesit17.github.io/yuit-docs-ai-architect/portfolio/) · **GitHub:** [YuesIt17/yuit-docs-ai-architect](https://github.com/YuesIt17/yuit-docs-ai-architect)
-
----
-
-## Кратко о проекте
-
-**RetailPartnerX** — вымышленный FMCG-ритейлер с omnichannel-каналами. Заказчик формулирует цель как «персональные рекомендации как у Tesco / Carrefour», но без KPI, границ данных и каналов. Кейс прорабатывает архитектуру AI-native системы: от программы и рисков до C4, API, agentic RAG, data pipeline, production-readiness и capacity / cost инференса.
-
-Репозиторий развивается последовательно через учебные модули (`hw-1` … `hw-7`) как единый architecture case study. Физические имена папок сохранены для процесса сдачи курса.
-
-**Что здесь есть:** architecture design, прототип LangGraph (stub без API keys), эксперименты и coursework. **Что здесь нет:** production deployment, реальная нагрузка, работающий стек Kafka / Vector DB / observability.
+**HTML presentation:** [GitHub Pages](https://yuesit17.github.io/yuit-docs-ai-architect/portfolio/) · **GitHub:** [YuesIt17/yuit-docs-ai-architect](https://github.com/YuesIt17/yuit-docs-ai-architect)
 
 ---
 
-## Архитектурный фокус
+## Project Overview
 
-| Направление | Суть |
+**RetailPartnerX** is a fictional FMCG retailer with omnichannel sales. The client states the goal as "personal recommendations like Tesco / Carrefour", but without KPIs, data boundaries or channels. The case works through the architecture of an AI-native system: from the program and risks to C4, API, agentic RAG, data pipeline, production readiness and inference capacity / cost.
+
+The repository evolves step by step through course modules (`hw-1` … `hw-7`) as a single architecture case study. The physical folder names are kept for the course submission process.
+
+**What is here:** architecture design, a LangGraph prototype (stub, no API keys), experiments and coursework. **What is not here:** a production deployment, real load, a running Kafka / Vector DB / observability stack.
+
+---
+
+## Architecture Focus
+
+| Area | Essence |
 |-------------|------|
-| **Program & Risk** | Discovery, контракт PoC→MVP→Prod, AI-риски R1–R8, roadmap с DoD |
-| **System Design (C4)** | Границы системы, контейнеры, компоненты AI Service, sequence flows |
-| **Integration (OpenAPI)** | Контракт Backend ↔ AI Service: `POST /get_recommendation` |
+| **Program & Risk** | Discovery, PoC→MVP→Prod contract, AI risks R1–R8, roadmap with DoD |
+| **System Design (C4)** | System boundaries, containers, AI Service components, sequence flows |
+| **Integration (OpenAPI)** | Backend ↔ AI Service contract: `POST /get_recommendation` |
 | **Agentic RAG** | Supervisor multi-agent, dual KB (Product + Policy), LangGraph prototype |
 | **Architecture Decisions** | ADR-001: SaaS LLM for PoC/MVP via LLM Client abstraction |
 | **Data Architecture** | Kafka → Spark → S3 → Feature Store / Vector DB, anti-skew governance |
@@ -33,29 +33,29 @@
 
 ## Architecture at a Glance
 
-![C2 — контейнеры системы](hw-2/diagrams/c2-containers.png)
+![C2 — system containers](hw-2/diagrams/c2-containers.png)
 
-| Элемент | Описание |
+| Element | Description |
 |---------|----------|
-| **Границы** | Frontend → Backend (BFF) → AI Service; внешние системы: PIM, CDP/CRM |
-| **Хранилища** | SQL DB (история, каталог), Redis (кэш кандидатов), Vector DB (RAG) |
-| **AI Service** | Ranker → Top-K → RAG + LLM re-rank; синхронный ответ на карточке товара |
-| **Trust boundary** | Backend не знает ML-деталей — только OpenAPI-контракт |
-| **NFR** | p95 latency как класс метрики (числовой SLO — после замеров MVP, см. [hw-2/diagrams/README.md](hw-2/diagrams/README.md)) |
+| **Boundaries** | Frontend → Backend (BFF) → AI Service; external systems: PIM, CDP/CRM |
+| **Storage** | SQL DB (history, catalog), Redis (candidate cache), Vector DB (RAG) |
+| **AI Service** | Ranker → Top-K → RAG + LLM re-rank; synchronous response on the product page |
+| **Trust boundary** | The Backend knows no ML details — only the OpenAPI contract |
+| **NFR** | p95 latency as the metric class (numeric SLO — after MVP measurements, see [hw-2/diagrams/README.md](hw-2/diagrams/README.md)) |
 
 ![Multi-agent architecture](hw-3/diagrams/multi-agent-architecture.png)
 
-Shopping assistant в чате приложения: Orchestrator координирует 6 специализированных агентов; Policy Analyst — semantic guard по Policy KB; Basket Assembler переиспользует recsys API из hw-2.
+Shopping assistant in the app chat: the Orchestrator coordinates 6 specialized agents; the Policy Analyst is a semantic guard over the Policy KB; the Basket Assembler reuses the recsys API from hw-2.
 
 ---
 
-## Архитектурный путь
+## Architecture Journey
 
-| Модуль | Архитектурный фокус | Основные артефакты |
+| Module | Architecture focus | Main artifacts |
 |--------|---------------------|-------------------|
-| [hw-1](hw-1/) | Программа, риски, roadmap | [RetailPartnerX_AI_Strategy.md](hw-1/RetailPartnerX_AI_Strategy.md) |
-| [hw-2](hw-2/) | C4, Sequence, API-контракт | [diagrams/](hw-2/diagrams/), [recommendation-api.yaml](hw-2/openapi/recommendation-api.yaml) |
-| [hw-3](hw-3/) | Agentic RAG, multi-agent, прототип | [agents.md](hw-3/docs/agents.md), [rag-pipeline.md](hw-3/docs/rag-pipeline.md), [code/](hw-3/code/) |
+| [hw-1](hw-1/) | Program, risks, roadmap | [RetailPartnerX_AI_Strategy.md](hw-1/RetailPartnerX_AI_Strategy.md) |
+| [hw-2](hw-2/) | C4, Sequence, API contract | [diagrams/](hw-2/diagrams/), [recommendation-api.yaml](hw-2/openapi/recommendation-api.yaml) |
+| [hw-3](hw-3/) | Agentic RAG, multi-agent, prototype | [agents.md](hw-3/docs/agents.md), [rag-pipeline.md](hw-3/docs/rag-pipeline.md), [code/](hw-3/code/) |
 | [hw-4](hw-4/) | ADR: LLM hosting | [adr-001-llm-hosting.md](hw-4/docs/adr-001-llm-hosting.md) |
 | [hw-5](hw-5/) | Data pipeline, Feature Store | [data-pipeline.md](hw-5/docs/data-pipeline.md), [diagram](hw-5/diagrams/data-pipeline.png) |
 | [hw-6](hw-6/) | Security, Evaluation, Observability | [quality-assurance.md](hw-6/docs/quality-assurance.md), [security-layer.png](hw-6/diagrams/security-layer.png) |
@@ -63,83 +63,83 @@ Shopping assistant в чате приложения: Orchestrator координ
 
 ---
 
-## Ключевые архитектурные решения
+## Key Architecture Decisions
 
-| Решение | Контекст / Trade-off | Evidence |
+| Decision | Context / Trade-off | Evidence |
 |---------|---------------------|----------|
-| **AI Service — отдельный контейнер** | Независимый релиз и масштаб ML/LLM vs сетевой hop | [hw-2/diagrams/README.md](hw-2/diagrams/README.md) §1 |
-| **Ranker → Top-K → RAG/LLM** | Latency и cost control vs полный LLM на каталог | [hw-2/diagrams/README.md](hw-2/diagrams/README.md) §2, допущение A-001 |
-| **Supervisor multi-agent (6 agents)** | SRP, изоляция Policy Analyst vs монолитный промпт | [hw-3/docs/agents.md](hw-3/docs/agents.md) |
-| **SaaS LLM for PoC/MVP** | TTM и quality vs data residency / vendor lock-in | [hw-4/docs/adr-001-llm-hosting.md](hw-4/docs/adr-001-llm-hosting.md) |
-| **Dual KB RAG (Product + Policy)** | Разные retrieval-стратегии vs смешение в одном индексе | [hw-3/docs/rag-pipeline.md](hw-3/docs/rag-pipeline.md) |
-| **Kafka → Spark → Feature Store** | Training-serving consistency vs сложность pipeline | [hw-5/docs/data-pipeline.md](hw-5/docs/data-pipeline.md) |
-| **Security Layer до LLM** | PII, prompt injection, output guardrails vs latency overhead | [hw-6/docs/quality-assurance.md](hw-6/docs/quality-assurance.md) §1 |
-| **Self-hosted INT4 + vLLM (2×A100)** | OpEx @ 1000 RPM vs FP16 / лишние реплики; RU-cloud vs AWS/GCP | [hw-7/docs/inference-sizing.md](hw-7/docs/inference-sizing.md) |
+| **AI Service as a separate container** | Independent ML/LLM release and scaling vs a network hop | [hw-2/diagrams/README.md](hw-2/diagrams/README.md) §1 |
+| **Ranker → Top-K → RAG/LLM** | Latency and cost control vs running the LLM on the full catalog | [hw-2/diagrams/README.md](hw-2/diagrams/README.md) §2, assumption A-001 |
+| **Supervisor multi-agent (6 agents)** | SRP, Policy Analyst isolation vs a monolithic prompt | [hw-3/docs/agents.md](hw-3/docs/agents.md) |
+| **SaaS LLM for PoC/MVP** | TTM and quality vs data residency / vendor lock-in | [hw-4/docs/adr-001-llm-hosting.md](hw-4/docs/adr-001-llm-hosting.md) |
+| **Dual KB RAG (Product + Policy)** | Different retrieval strategies vs mixing in a single index | [hw-3/docs/rag-pipeline.md](hw-3/docs/rag-pipeline.md) |
+| **Kafka → Spark → Feature Store** | Training-serving consistency vs pipeline complexity | [hw-5/docs/data-pipeline.md](hw-5/docs/data-pipeline.md) |
+| **Security Layer before the LLM** | PII, prompt injection, output guardrails vs latency overhead | [hw-6/docs/quality-assurance.md](hw-6/docs/quality-assurance.md) §1 |
+| **Self-hosted INT4 + vLLM (2×A100)** | OpEx @ 1000 RPM vs FP16 / extra replicas; RU cloud vs AWS/GCP | [hw-7/docs/inference-sizing.md](hw-7/docs/inference-sizing.md) |
 
 ---
 
 ## Production Readiness
 
-| Область | Статус | Что учтено | Evidence |
+| Area | Status | What is covered | Evidence |
 |---------|--------|------------|----------|
-| **Security** | Архитектурный дизайн | PII Sanitizer, Input/Output Guardrails, Secret Manager, OWASP LLM | [hw-6](hw-6/docs/quality-assurance.md) |
-| **Reliability** | Архитектурный дизайн + Studied | OpenAPI 503, graceful degradation в стратегии, timeout/retry patterns | [hw-2 OpenAPI](hw-2/openapi/recommendation-api.yaml), [hw-1](hw-1/RetailPartnerX_AI_Strategy.md) |
-| **Evaluation** | Планируется | Faithfulness, Answer Relevancy; Ragas / DeepEval CI gates | [hw-6 §2](hw-6/docs/quality-assurance.md) |
-| **Observability** | Планируется | Prometheus, Tempo, Langfuse, Grafana dashboard spec | [hw-6 §3](hw-6/docs/quality-assurance.md) |
-| **Data** | Архитектурный дизайн | Ingestion, Feature Store, anti-skew, index versioning | [hw-5](hw-5/docs/data-pipeline.md) |
-| **Capacity / Cost** | Архитектурный дизайн | VRAM + KV, GPU fit, сравнение 4 облаков, INT4/vLLM | [hw-7](hw-7/docs/inference-sizing.md) |
-| **Platform** | Не реализовано | Deployment, K8s, CI/CD — не в scope репозитория | — |
+| **Security** | Architecture design | PII Sanitizer, Input/Output Guardrails, Secret Manager, OWASP LLM | [hw-6](hw-6/docs/quality-assurance.md) |
+| **Reliability** | Architecture design + Studied | OpenAPI 503, graceful degradation in the strategy, timeout/retry patterns | [hw-2 OpenAPI](hw-2/openapi/recommendation-api.yaml), [hw-1](hw-1/RetailPartnerX_AI_Strategy.md) |
+| **Evaluation** | Planned | Faithfulness, Answer Relevancy; Ragas / DeepEval CI gates | [hw-6 §2](hw-6/docs/quality-assurance.md) |
+| **Observability** | Planned | Prometheus, Tempo, Langfuse, Grafana dashboard spec | [hw-6 §3](hw-6/docs/quality-assurance.md) |
+| **Data** | Architecture design | Ingestion, Feature Store, anti-skew, index versioning | [hw-5](hw-5/docs/data-pipeline.md) |
+| **Capacity / Cost** | Architecture design | VRAM + KV, GPU fit, comparison of 4 clouds, INT4/vLLM | [hw-7](hw-7/docs/inference-sizing.md) |
+| **Platform** | Not implemented | Deployment, K8s, CI/CD — outside the repository scope | — |
 
 ---
 
 ## Enterprise / Retail Context
 
-Архитектурные patterns кейса применимы к enterprise-retail задачам:
+The architecture patterns of this case apply to enterprise retail problems:
 
-- **Product recommendations** — блок «С этим покупают» на карточке SKU с контролируемым latency-budget
-- **Shopping assistant** — conversational commerce с constraint parsing (аллергены, бюджет, акции)
-- **Policy compliance** — RAG по internal policies (GDPR, 18+, аллергены) как semantic guard
-- **Knowledge freshness** — data pipeline для актуальности Product KB и embeddings
-- **Inference capacity** — sizing GPU и TCO self-hosted LLM при целевом RPM (триггер пересмотра SaaS ADR)
+- **Product recommendations** — a "Frequently bought with" block on the SKU page with a controlled latency budget
+- **Shopping assistant** — conversational commerce with constraint parsing (allergens, budget, promotions)
+- **Policy compliance** — RAG over internal policies (GDPR, 18+, allergens) as a semantic guard
+- **Knowledge freshness** — a data pipeline that keeps the Product KB and embeddings up to date
+- **Inference capacity** — GPU sizing and TCO of a self-hosted LLM at a target RPM (the trigger for revisiting the SaaS ADR)
 
-Это учебный кейс; patterns описаны как архитектурный подход, а не как описание реальных внутренних систем.
+This is an educational case; the patterns are described as an architecture approach, not as a description of real internal systems.
 
 ---
 
-## Статус проекта
+## Project Status
 
-RetailPartnerX — **учебный архитектурный кейс**, развиваемый в рамках программы AI Architect.
+RetailPartnerX is an **educational architecture case study** developed as part of the AI Architect program.
 
-Репозиторий содержит:
+The repository contains:
 
 - architecture design (C4, ADR, data pipeline, security/eval/observability, inference sizing)
-- прототип LangGraph (stub, keyword RAG, 7 pytest, без LLM API keys)
-- coursework artifacts в `hw-*`
+- a LangGraph prototype (stub, keyword RAG, 7 pytest tests, no LLM API keys)
+- coursework artifacts in `hw-*`
 
-Цель — практическая проработка архитектуры AI-native систем и production-oriented trade-offs. **Проект не является production deployment.**
+The goal is hands-on work on the architecture of AI-native systems and production-oriented trade-offs. **The project is not a production deployment.**
 
 ---
 
-## Автор
+## Author
 
-**Евгений Юлов** · [LinkedIn](https://www.linkedin.com/in/eugene-yulov/)
+**Eugene Yulov** · [LinkedIn](https://www.linkedin.com/in/eugene-yulov/)
 
-Engineering Manager с 13+ годами опыта в IT / software development.
+Engineering Manager with 13+ years of experience in IT / software development.
 
-Профессиональный фокус:
+Professional focus:
 
 - Solution Architecture
 - Distributed Systems
 - Platform Engineering
-- AI Architecture (развиваемая специализация на базе system engineering background)
+- AI Architecture (a growing specialization built on a system engineering background)
 
 ---
 
-## Навигация
+## Navigation
 
-| Ресурс | Описание |
+| Resource | Description |
 |--------|----------|
-| [portfolio/index.html](https://yuesit17.github.io/yuit-docs-ai-architect/portfolio/) | HTML-презентация для architecture review (GitHub Pages) |
-| [hw-1 … hw-7](#архитектурный-путь) | Evidence по модулям |
-| [docs/interview/INTERVIEW-SUMMARY.md](docs/interview/INTERVIEW-SUMMARY.md) | Краткая шпаргалка для собеседований |
-| [docs/interview/ARCHITECTURE-INTERVIEW-CHEATSHEET.md](docs/interview/ARCHITECTURE-INTERVIEW-CHEATSHEET.md) | Общие темы Solution Architect |
+| [portfolio/index.html](https://yuesit17.github.io/yuit-docs-ai-architect/portfolio/) | HTML presentation for architecture review (GitHub Pages) |
+| [hw-1 … hw-7](#architecture-journey) | Evidence by module |
+| [docs/interview/INTERVIEW-SUMMARY.md](docs/interview/INTERVIEW-SUMMARY.md) | Short interview cheat sheet |
+| [docs/interview/ARCHITECTURE-INTERVIEW-CHEATSHEET.md](docs/interview/ARCHITECTURE-INTERVIEW-CHEATSHEET.md) | General Solution Architect topics |
