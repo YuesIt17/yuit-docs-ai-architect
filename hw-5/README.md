@@ -1,61 +1,61 @@
-# Домашнее задание hw-5 — RetailPartnerX
+# Assignment hw-5 — RetailPartnerX
 
-**Проектирование Data Pipelines и интеграционных шлюзов**
+**Designing Data Pipelines and integration gateways**
 
-> **Сокращения:** [Глоссарий](Glossary.md) · **Артефакты:** [docs/](docs/) · [diagrams/](diagrams/)
+> **Abbreviations:** [Glossary](Glossary.md) · **Artifacts:** [docs/](docs/) · [diagrams/](diagrams/)
 
-## Цель
+## Goal
 
-Спроектировать data pipeline и выбрать хранилища для обеспечения консистентности данных при обучении и инференсе AI-системы рекомендаций RetailPartnerX.
+Design a data pipeline and choose storage to ensure data consistency across training and inference of the RetailPartnerX AI recommendation system.
 
-## Контекст и преемственность
+## Context and Continuity
 
-| ДЗ                                            | Артефакт                       | Связь с hw-5                                                                 |
+| Assignment | Artifact | Link to hw-5 |
 | --------------------------------------------- | ------------------------------ | ---------------------------------------------------------------------------- |
-| [hw-1](../hw-1/RetailPartnerX_AI_Strategy.md) | AI-стратегия рекомендаций      | Риск R1 (качество поведенческих данных); KPI CTR; CDP / PIM в контуре        |
-| [hw-2](../hw-2/diagrams/README.md)            | C4, Sequence, OpenAPI          | PIM (каталог), CDP/CRM (события), Vector DB, Ranker, `POST /get_recommendation` |
-| [hw-3](../hw-3/README.md)                     | Мультиагентный RAG-ассистент   | Product KB / эмбеддинги в Vector DB нуждаются в регулярном обновлении        |
-| [hw-4](../hw-4/README.md)                     | ADR: хостинг LLM               | Inference LLM ≠ data plane; пайплайны данных независимы от SaaS/self-hosted  |
+| [hw-1](../hw-1/RetailPartnerX_AI_Strategy.md) | AI recommendation strategy | Risk R1 (behavioral data quality); CTR KPI; CDP / PIM in scope |
+| [hw-2](../hw-2/diagrams/README.md) | C4, Sequence, OpenAPI | PIM (catalog), CDP/CRM (events), Vector DB, Ranker, `POST /get_recommendation` |
+| [hw-3](../hw-3/README.md) | Multi-agent RAG assistant | Product KB / embeddings in the Vector DB need regular updates |
+| [hw-4](../hw-4/README.md) | ADR: LLM hosting | LLM inference ≠ data plane; data pipelines are independent of SaaS/self-hosted |
 
-**Задача:** для RetailPartnerX (персонализированные рекомендации + шопинг-ассистент) обеспечить регулярное обновление данных о **товарах** и **поведении пользователей**, чтобы offline-обучение Ranker и online-инференс (карточка товара, чат) опирались на согласованные признаки и эмбеддинги.
+**Task:** for RetailPartnerX (personalized recommendations + shopping assistant), ensure regular updates of data on **products** and **user behavior**, so that offline Ranker training and online inference (product page, chat) rely on consistent features and embeddings.
 
-Тема заменяет абстрактный шаблон «система рекомендаций», сохраняя структуру ДЗ (источники → ETL/ELT → хранилища → governance).
+The topic replaces the abstract "recommendation system" template while keeping the assignment structure (sources → ETL/ELT → storage → governance).
 
-## Шаги выполнения (артефакты решения)
+## Steps (Solution Artifacts)
 
-| Шаг ДЗ               | Документ / файл                                                                 |
+| Assignment step | Document / file |
 | -------------------- | ------------------------------------------------------------------------------- |
-| 1. Data Sources      | [docs/data-pipeline.md](docs/data-pipeline.md) — источники (stream / batch) |
-| 2. Pipeline Design   | [diagrams/data-pipeline.png](diagrams/data-pipeline.png) · [docs/data-pipeline.md](docs/data-pipeline.md) — ETL/ELT поток |
-| 3. Storage Selection | [docs/data-pipeline.md](docs/data-pipeline.md) — стек Kafka → Spark → S3 → FS / Vector DB |
+| 1. Data Sources | [docs/data-pipeline.md](docs/data-pipeline.md) — sources (stream / batch) |
+| 2. Pipeline Design | [diagrams/data-pipeline.png](diagrams/data-pipeline.png) · [docs/data-pipeline.md](docs/data-pipeline.md) — ETL/ELT flow |
+| 3. Storage Selection | [docs/data-pipeline.md](docs/data-pipeline.md) — Kafka → Spark → S3 → FS / Vector DB stack |
 | 4. Data Governance   | [docs/data-pipeline.md](docs/data-pipeline.md) — Training-Serving Skew |
 
-## Формат сдачи
+## Submission Format
 
-| Артефакт                      | Путь                                                                   |
+| Artifact | Path |
 | ----------------------------- | ---------------------------------------------------------------------- |
-| Схема архитектуры данных      | [diagrams/data-pipeline.drawio](diagrams/data-pipeline.drawio) · [PNG](diagrams/data-pipeline.png) |
-| Текстовое описание (1–2 стр.) | [docs/data-pipeline.md](docs/data-pipeline.md)                         |
+| Data architecture diagram | [diagrams/data-pipeline.drawio](diagrams/data-pipeline.drawio) · [PNG](diagrams/data-pipeline.png) |
+| Text description (1–2 pages) | [docs/data-pipeline.md](docs/data-pipeline.md) |
 
-## Критерии самопроверки
+## Self-Check Criteria
 
-| Критерий         | Как закрыто                                                                                          |
+| Criterion | How it is met |
 | ---------------- | ---------------------------------------------------------------------------------------------------- |
-| Выбор технологий | Stream (Kafka + Spark Streaming) vs Batch (PIM → Spark) — [docs/data-pipeline.md](docs/data-pipeline.md) |
-| Полнота потока   | PIM/CDP → Lake → Feature Store / Vector DB → AI Service — [схема](diagrams/data-pipeline.png)        |
-| Feature Store    | Offline + Redis online, единые definitions, anti-skew — [docs/data-pipeline.md](docs/data-pipeline.md) |
+| Technology choice | Stream (Kafka + Spark Streaming) vs Batch (PIM → Spark) — [docs/data-pipeline.md](docs/data-pipeline.md) |
+| Flow completeness | PIM/CDP → Lake → Feature Store / Vector DB → AI Service — [diagram](diagrams/data-pipeline.png) |
+| Feature Store | Offline + Redis online, unified definitions, anti-skew — [docs/data-pipeline.md](docs/data-pipeline.md) |
 
-Статус «Принято», если все три критерия выполнены.
+Status "Accepted" if all three criteria are met.
 
-## Полезные материалы
+## Useful Materials
 
-| Материал                                                                 | Описание                          |
+| Material | Description |
 | ------------------------------------------------------------------------ | --------------------------------- |
-| [Пример архитектуры Lambda/Kappa](https://bigdataschool.ru/blog/kappa-architecture/) | Batch + stream vs единый поток |
+| [Lambda/Kappa architecture example](https://bigdataschool.ru/blog/kappa-architecture/) | Batch + stream vs a single stream |
 
-## Компетенции
+## Competencies
 
-Проектировать и внедрять механизмы обеспечения качества (QA), отказоустойчивости и информационной безопасности (Security) в архитектуру AI-системы на всех этапах её жизненного цикла:
+Design and implement quality assurance (QA), fault tolerance and information security mechanisms in the architecture of an AI system at all stages of its lifecycle:
 
-- проектировать отказоустойчивые интеграции с унаследованными системами через брокеры сообщений;
-- проектировать сквозные (end-to-end) data pipelines для AI-систем, от сбора до подготовки данных для обучения моделей.
+- design fault-tolerant integrations with legacy systems through message brokers;
+- design end-to-end data pipelines for AI systems, from collection to preparing data for model training.

@@ -5,8 +5,8 @@ on:
     branches: [main]
   workflow_dispatch:
 
-# Публикуем содержимое репозитория в ветку gh-pages (classic Pages flow).
-# Первый запуск: Settings → Pages → Source: Deploy from branch → gh-pages / (root)
+# Publish the repository contents to the gh-pages branch (classic Pages flow).
+# First run: Settings → Pages → Source: Deploy from branch → gh-pages / (root)
 
 permissions:
   contents: write

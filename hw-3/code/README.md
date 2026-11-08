@@ -1,38 +1,38 @@
-# Прототип Shopping Assistant (hw-3)
+# Shopping Assistant Prototype (hw-3)
 
 
 
-LangGraph stub: 6 агентов без API-ключей. Архитектура — [docs/agents.md](../docs/agents.md).
+LangGraph stub: 6 agents with no API keys. Architecture — [docs/agents.md](../docs/agents.md).
 
 
 
-## Структура
+## Structure
 
 
 
-| Путь | Назначение |
+| Path | Purpose |
 
 |------|------------|
 
-| [shopping_assistant/](shopping_assistant/) | Модуль: граф, данные, `build_app()` |
+| [shopping_assistant/](shopping_assistant/) | Module: graph, data, `build_app()` |
 
 | [tests/](tests/) | pytest |
 
-| [notebooks/shopping_assistant_demo.ipynb](notebooks/shopping_assistant_demo.ipynb) | Демо в Jupyter / Colab |
+| [notebooks/shopping_assistant_demo.ipynb](notebooks/shopping_assistant_demo.ipynb) | Demo in Jupyter / Colab |
 
-| [tools/python/](../../tools/python/) | Общие зависимости Python для всех hw-* |
-
-
-
-## 1. Подготовка окружения
+| [tools/python/](../../tools/python/) | Shared Python dependencies for all hw-* |
 
 
 
-Нужен **Python 3.10+** ([python.org/downloads](https://www.python.org/downloads/)). Один venv на **корень репозитория** — см. [tools/python/README.md](../../tools/python/README.md).
+## 1. Environment Setup
 
 
 
-Из корня репозитория (если вы в `hw-3/code`, сначала поднимитесь на два уровня):
+Requires **Python 3.10+** ([python.org/downloads](https://www.python.org/downloads/)). One venv at the **repository root** — see [tools/python/README.md](../../tools/python/README.md).
+
+
+
+From the repository root (if you are in `hw-3/code`, first go up two levels):
 
 ```powershell
 cd ..\..
@@ -59,11 +59,11 @@ pip install -r tools/python/requirements.txt
 
 
 
-## 2. Запуск тестов (основная проверка)
+## 2. Running the Tests (Main Check)
 
 
 
-Из **корня репозитория** (venv активирован):
+From the **repository root** (venv activated):
 
 
 
@@ -75,7 +75,7 @@ python -m pytest hw-3/code/tests -q
 
 
 
-Подробный вывод:
+Verbose output:
 
 
 
@@ -87,19 +87,19 @@ python -m pytest hw-3/code/tests -v
 
 
 
-> Не вызывайте просто `pytest`, если видите `pytest : The term 'pytest' is not recognized` — используйте `python -m pytest` (или активируйте venv, где pytest в PATH).
+> Do not call plain `pytest` if you see `pytest : The term 'pytest' is not recognized` — use `python -m pytest` (or activate the venv where pytest is on PATH).
 
 
 
-Ожидание: 7 passed — парсинг, RAG stub, корзина, happy path графа.
+Expected: 7 passed — parsing, RAG stub, cart, graph happy path.
 
 
 
-## 3. Запуск прототипа из CLI
+## 3. Running the Prototype from the CLI
 
 
 
-Из корня (venv активирован):
+From the root (venv activated):
 
 
 
@@ -115,41 +115,41 @@ python -c "from shopping_assistant import run_query; r = run_query(); print(r['f
 
 ## 4. Jupyter / Colab
 
-### Локально (Jupyter / VS Code)
+### Locally (Jupyter / VS Code)
 
-1. Открыть [notebooks/shopping_assistant_demo.ipynb](notebooks/shopping_assistant_demo.ipynb).
-2. Kernel: `.venv` из **корня репозитория** (`pip install ipykernel` при необходимости).
-3. **Run all** — пути к `shopping_assistant/` и `tools/python/requirements.txt` подставляются автоматически.
+1. Open [notebooks/shopping_assistant_demo.ipynb](notebooks/shopping_assistant_demo.ipynb).
+2. Kernel: `.venv` from the **repository root** (`pip install ipykernel` if needed).
+3. **Run all** — the paths to `shopping_assistant/` and `tools/python/requirements.txt` are filled in automatically.
 
-### Colab (для сдачи)
+### Colab (for Submission)
 
-Код модуля не в одном файле — в Colab ноутбук **клонирует репозиторий** (см. первая code-ячейка).
+The module code is not in a single file, so in Colab the notebook **clones the repository** (see the first code cell).
 
-1. Запушьте ветку на GitHub.
-2. [Open in Colab](https://colab.research.google.com/github/YuesIt17/yuit-docs-ai-architect/blob/hw-3-multi-agent-rag/hw-3/code/notebooks/shopping_assistant_demo.ipynb) — или **File → Upload notebook** и загрузите `.ipynb` (тогда clone всё равно подтянет код с GitHub).
+1. Push the branch to GitHub.
+2. [Open in Colab](https://colab.research.google.com/github/YuesIt17/yuit-docs-ai-architect/blob/hw-3-multi-agent-rag/hw-3/code/notebooks/shopping_assistant_demo.ipynb) — or **File → Upload notebook** and upload the `.ipynb` (the clone will still pull the code from GitHub).
 3. **Runtime → Run all**.
 4. **File → Save a copy in Drive** → **Share → Anyone with the link**.
-5. URL вида `https://colab.research.google.com/drive/...` вставьте в [hw-3/README.md](../README.md).
+5. Paste the URL of the form `https://colab.research.google.com/drive/...` into [hw-3/README.md](../README.md).
 
-После merge в `main` замените в ноутбуке `REPO_BRANCH = "main"` и обновите Colab-ссылку на ветку `main`.
-
-
-
-## 5. Что проверяет прототип
+After merging into `main`, set `REPO_BRANCH = "main"` in the notebook and update the Colab link to the `main` branch.
 
 
 
-Сценарий: *«Собери ужин на 4 человека: паста, без глютена, бюджет до 2000 ₽»*.
+## 5. What the Prototype Checks
 
 
 
-- Intent Parser извлекает ограничения
+Scenario: *"Build a dinner for 4 people: pasta, gluten-free, budget up to 2000 ₽"*.
 
-- Catalog Searcher подбирает пасту, соус, сыр в бюджете
+
+
+- The Intent Parser extracts constraints
+
+- The Catalog Searcher selects pasta, sauce and cheese within the budget
 
 - Policy Analyst — keyword RAG + verdict
 
-- Promo Analyst — stub акции 2+1
+- The Promo Analyst — a 2+1 promotion stub
 
 - Basket Assembler — mock `get_recommendation`
 

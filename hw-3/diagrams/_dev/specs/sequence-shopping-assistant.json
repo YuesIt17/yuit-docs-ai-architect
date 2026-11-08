@@ -12,7 +12,7 @@
     "msgStep": 44,
     "lifelineHeight": 820,
     "participants": [
-      { "id": "shopper", "label": "Покупатель", "type": "person" },
+      { "id": "shopper", "label": "Customer", "type": "person" },
       { "id": "backend", "label": "Backend", "type": "lifeline" },
       { "id": "orch", "label": "Orchestrator", "type": "lifeline" },
       { "id": "parser", "label": "Intent\nParser", "type": "lifeline" },
@@ -24,7 +24,7 @@
       { "id": "polkb", "label": "Policy KB", "type": "lifeline" }
     ],
     "messages": [
-      { "from": 0, "to": 1, "label": "Ужин без глютена до 2000" },
+      { "from": 0, "to": 1, "label": "Gluten-free dinner up to 2000" },
       { "from": 1, "to": 2, "label": "POST /chat/assist" },
       { "from": 2, "to": 3, "label": "extract constraints" },
       { "from": 3, "to": 2, "label": "entities", "return": true },
@@ -41,7 +41,7 @@
       { "from": 2, "to": 7, "label": "assemble cart" },
       { "from": 7, "to": 2, "label": "cart draft", "return": true },
       { "from": 2, "to": 1, "label": "answer + SKUs", "return": true },
-      { "from": 1, "to": 0, "label": "корзина в чате", "return": true }
+      { "from": 1, "to": 0, "label": "cart in chat", "return": true }
     ],
     "notes": [
       {

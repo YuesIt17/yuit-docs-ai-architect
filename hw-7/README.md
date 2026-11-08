@@ -1,63 +1,63 @@
-# Домашнее задание hw-7 — RetailPartnerX
+# Assignment hw-7 — RetailPartnerX
 
-**Sizing: расчёт ресурсов инфраструктуры и стоимости инференса**
+**Sizing: calculating infrastructure resources and inference cost**
 
-> **Сокращения:** [Глоссарий](Glossary.md) · **Артефакты:** [docs/](docs/)
+> **Abbreviations:** [Glossary](Glossary.md) · **Artifacts:** [docs/](docs/)
 
-## Цель
+## Goal
 
-Рассчитать ресурсы и стоимость инференса LLM под заданную нагрузку и выбрать оптимальную конфигурацию оборудования с учётом оптимизаций (квантование, batching, vLLM).
+Calculate LLM inference resources and cost for a given load and choose the optimal hardware configuration, taking optimizations into account (quantization, batching, vLLM).
 
-## Контекст и преемственность
+## Context and Continuity
 
-| ДЗ                                            | Артефакт                                     | Связь с hw-7                                                             |
+| Assignment | Artifact | Link to hw-7 |
 | --------------------------------------------- | -------------------------------------------- | ------------------------------------------------------------------------ |
-| [hw-1](../hw-1/RetailPartnerX_AI_Strategy.md) | Стратегия, roadmap PoC→MVP→Prod              | Capacity planning на этапе роста нагрузки                                |
-| [hw-2](../hw-2/diagrams/README.md)            | AI Service, LLM Client, NFR latency          | Бюджет latency влияет на concurrent = RPM × latency                      |
-| [hw-3](../hw-3/README.md)                     | Multi-agent RAG shopping assistant           | Основной потребитель LLM-токенов в чате                                  |
-| [hw-4](../hw-4/docs/adr-001-llm-hosting.md)   | ADR: SaaS для PoC/MVP, self-hosted в roadmap | hw-7 — **TCO-оценка self-hosted Llama-3-70B** как триггер пересмотра ADR |
-| [hw-5](../hw-5/docs/data-pipeline.md)         | Data plane                                   | Не входит в GPU-инференс; стоимость data plane отдельно                  |
-| [hw-6](../hw-6/docs/quality-assurance.md)     | Observability                                | Метрики GPU util / queue depth для проверки sizing                       |
+| [hw-1](../hw-1/RetailPartnerX_AI_Strategy.md) | Strategy, PoC→MVP→Prod roadmap | Capacity planning as load grows |
+| [hw-2](../hw-2/diagrams/README.md) | AI Service, LLM Client, latency NFR | The latency budget affects concurrent = RPM × latency |
+| [hw-3](../hw-3/README.md) | Multi-agent RAG shopping assistant | The main consumer of LLM tokens in chat |
+| [hw-4](../hw-4/docs/adr-001-llm-hosting.md) | ADR: SaaS for PoC/MVP, self-hosted on the roadmap | hw-7 is the **TCO estimate of self-hosted Llama-3-70B** as a trigger for revisiting the ADR |
+| [hw-5](../hw-5/docs/data-pipeline.md) | Data plane | Not part of GPU inference; data plane cost is separate |
+| [hw-6](../hw-6/docs/quality-assurance.md) | Observability | GPU util / queue depth metrics to validate the sizing |
 
-**Задача:** для RetailPartnerX оценить self-hosted инференс **Llama-3-70B** (FP16 и INT4) при **1000 RPM** — VRAM/GPU, стоимость в Yandex / Cloud.ru / AWS / GCP, эффект Batching и vLLM.
+**Task:** for RetailPartnerX, estimate self-hosted inference of **Llama-3-70B** (FP16 and INT4) at **1000 RPM** — VRAM/GPU, cost in Yandex / Cloud.ru / AWS / GCP, and the effect of Batching and vLLM.
 
-Тема курса сохранена; расчёт привязан к shopping assistant и ADR-001 (self-hosted как опция при росте unit-cost).
+The course topic is preserved; the calculation is tied to the shopping assistant and ADR-001 (self-hosted as an option if unit-cost grows).
 
-## Шаги выполнения (артефакты решения)
+## Steps (Solution Artifacts)
 
-| Шаг ДЗ             | Документ / файл                                                   |
+| Assignment step | Document / file |
 | ------------------ | ----------------------------------------------------------------- |
 | 1. Hardware Sizing | [docs/inference-sizing.md](docs/inference-sizing.md) §2–4         |
 | 2. Cloud Selection | [docs/inference-sizing.md](docs/inference-sizing.md) §5–6         |
 | 3. Optimization    | [docs/inference-sizing.md](docs/inference-sizing.md) §7           |
-| 4. Вывод           | [docs/recommendation.md](docs/recommendation.md) · TL;DR в sizing |
+| 4. Conclusion | [docs/recommendation.md](docs/recommendation.md) · TL;DR in the sizing document |
 
-## Формат сдачи
+## Submission Format
 
-| Артефакт           | Путь                                                 |
+| Artifact | Path |
 | ------------------ | ---------------------------------------------------- |
-| Расчёты (Markdown) | [docs/inference-sizing.md](docs/inference-sizing.md) |
-| Краткий вывод      | [docs/recommendation.md](docs/recommendation.md)     |
+| Calculations (Markdown) | [docs/inference-sizing.md](docs/inference-sizing.md) |
+| Short conclusion | [docs/recommendation.md](docs/recommendation.md) |
 
-## Критерии самопроверки
+## Self-Check Criteria
 
-| Критерий          | Как закрыто                                                    |
+| Criterion | How it is met |
 | ----------------- | -------------------------------------------------------------- |
-| Точность VRAM     | Weights + KV Cache + overhead — [§2](docs/inference-sizing.md) |
-| Сравнение облаков | Yandex, Cloud.ru, AWS, GCP — [§5–6](docs/inference-sizing.md)  |
-| Оптимизация       | INT4 + Batching/vLLM — [§7](docs/inference-sizing.md)          |
+| VRAM accuracy | Weights + KV Cache + overhead — [§2](docs/inference-sizing.md) |
+| Cloud comparison | Yandex, Cloud.ru, AWS, GCP — [§5–6](docs/inference-sizing.md) |
+| Optimization | INT4 + Batching/vLLM — [§7](docs/inference-sizing.md) |
 
-## Полезные материалы
+## Useful Materials
 
-| Материал                                                                                           | Описание             |
+| Material | Description |
 | -------------------------------------------------------------------------------------------------- | -------------------- |
-| [LLM Model VRAM Calculator](https://huggingface.co/spaces/NyxKrage/LLM-Model-VRAM-Calculator)      | Калькулятор VRAM     |
-| [Yandex Cloud Compute pricing](https://yandex.cloud/en/docs/compute/pricing)                       | Прайс GPU (A100, T4) |
-| [Cloud.ru GPU](https://cloud.ru/products/vychislitelnyye-moschnosti-s-gpu)                         | Аренда A100 и др.    |
+| [LLM Model VRAM Calculator](https://huggingface.co/spaces/NyxKrage/LLM-Model-VRAM-Calculator) | VRAM calculator |
+| [Yandex Cloud Compute pricing](https://yandex.cloud/en/docs/compute/pricing) | GPU prices (A100, T4) |
+| [Cloud.ru GPU](https://cloud.ru/products/vychislitelnyye-moschnosti-s-gpu) | A100 rental and more |
 | [AWS EC2 on-demand](https://aws.amazon.com/ec2/pricing/on-demand/)                                 | P4d / G6 / G4dn      |
 | [GCP accelerator pricing](https://cloud.google.com/products/compute/pricing/accelerator-optimized) | A2 / G2              |
-| [Hugging Face: Llama 3.1 memory](https://huggingface.co/blog/llama31)                              | FP16/INT4 веса + KV  |
+| [Hugging Face: Llama 3.1 memory](https://huggingface.co/blog/llama31) | FP16/INT4 weights + KV |
 
-## Компетенции
+## Competencies
 
-Планировать инфраструктуру AI: детальный расчёт ресурсов on-prem/cloud и выбор GPU-конфигурации для хостинга LLM.
+Plan AI infrastructure: detailed on-prem/cloud resource calculation and choosing a GPU configuration for LLM hosting.

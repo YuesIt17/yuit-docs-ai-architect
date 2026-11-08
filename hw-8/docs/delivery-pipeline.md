@@ -1,83 +1,83 @@
 # Delivery Pipeline — RetailPartnerX
 
-**Проект:** персонализированные рекомендации + шопинг-ассистент  
-**Этап:** MVP → Prod (учебный architecture design)  
-**Схема:** [diagrams/cicd-mlops-pipeline.drawio](../diagrams/cicd-mlops-pipeline.drawio) · [PNG](../diagrams/cicd-mlops-pipeline.png)  
+**Project:** personalized recommendations + shopping assistant  
+**Stage:** MVP → Prod (educational architecture design)  
+**Diagram:** [diagrams/cicd-mlops-pipeline.drawio](../diagrams/cicd-mlops-pipeline.drawio) · [PNG](../diagrams/cicd-mlops-pipeline.png)  
 **IaC sketch:** [terraform-sketch.tf](terraform-sketch.tf)
 
-Связь с предыдущими ДЗ: roadmap Prod ([hw-1](../../hw-1/RetailPartnerX_AI_Strategy.md)); AI Service / OpenAPI ([hw-2](../../hw-2/diagrams/README.md)); agents + dual KB ([hw-3](../../hw-3/docs/rag-pipeline.md)); data lake / embeddings ([hw-5](../../hw-5/docs/data-pipeline.md)); eval gates + observability ([hw-6](../../hw-6/docs/quality-assurance.md)); GPU node sizing ([hw-7](../../hw-7/docs/recommendation.md)).
+Link to previous assignments: Prod roadmap ([hw-1](../../hw-1/RetailPartnerX_AI_Strategy.md)); AI Service / OpenAPI ([hw-2](../../hw-2/diagrams/README.md)); agents + dual KB ([hw-3](../../hw-3/docs/rag-pipeline.md)); data lake / embeddings ([hw-5](../../hw-5/docs/data-pipeline.md)); eval gates + observability ([hw-6](../../hw-6/docs/quality-assurance.md)); GPU node sizing ([hw-7](../../hw-7/docs/recommendation.md)).
 
-> Это **учебный** дизайн поставки, не production deployment. Цель — связать код, модель и инфраструктуру в один автоматизированный контур.
+> This is an **educational** delivery design, not a production deployment. The goal is to connect code, model and infrastructure into one automated loop.
 
 ---
 
 ## 1. Infrastructure as Code (Terraform)
 
-Автоматически поднимаем **базовую платформу**, на которой крутятся CI/CD runners-артефакты, AI Service, data plane и training jobs.
+We automatically provision the **base platform** that runs the CI/CD runner artifacts, AI Service, data plane and training jobs.
 
-### Ресурсы (что создаёт Terraform)
+### Resources (What Terraform Creates)
 
-| Ресурс | Назначение для RetailPartnerX |
+| Resource | Purpose for RetailPartnerX |
 | ------ | ----------------------------- |
-| **VPC** + subnets (public/private) | Изоляция control-plane, worker nodes, data jobs |
-| **Managed Kubernetes** (Yandex MK8s / EKS-аналог) | AI Service, Argo CD, Airflow workers, Ranker / agents |
-| **GPU node group** (опц., roadmap hw-7) | Self-hosted LLM / тяжёлый retrain |
-| **S3 buckets** | `raw` / `curated` Data Lake (hw-5); `models` (артефакты Registry); `artifacts` (CI build cache, eval reports) |
-| **Container Registry** | Docker-образы `ai-service`, `ranker-train`, `embed-job` |
+| **VPC** + subnets (public/private) | Isolation of the control plane, worker nodes, data jobs |
+| **Managed Kubernetes** (Yandex MK8s / EKS equivalent) | AI Service, Argo CD, Airflow workers, Ranker / agents |
+| **GPU node group** (optional, hw-7 roadmap) | Self-hosted LLM / heavy retrain |
+| **S3 buckets** | `raw` / `curated` Data Lake (hw-5); `models` (Registry artifacts); `artifacts` (CI build cache, eval reports) |
+| **Container Registry** | Docker images `ai-service`, `ranker-train`, `embed-job` |
 | **IAM / service accounts** | Least privilege: CI → push image; Airflow → S3 + Registry; Argo → deploy |
-| **Secret Manager** | LLM keys, registry tokens (продолжает hw-6) |
-| **Observability basics** | Namespace + ServiceMonitor hooks под Prometheus/Grafana (hw-6) |
+| **Secret Manager** | LLM keys, registry tokens (continues hw-6) |
+| **Observability basics** | Namespace + ServiceMonitor hooks for Prometheus/Grafana (hw-6) |
 
-Псевдокод модулей — в [terraform-sketch.tf](terraform-sketch.tf).
+Module pseudocode is in [terraform-sketch.tf](terraform-sketch.tf).
 
-### Принцип
+### Principle
 
 ```text
 terraform apply  →  VPC + K8s + S3 + Registry
-git push (infra) →  plan/apply в CI (только main, с review)
-app/model CD     →  не через terraform apply сервисов, а через GitOps (Argo CD)
+git push (infra) →  plan/apply in CI (main only, with review)
+app/model CD     →  not via terraform apply of services, but via GitOps (Argo CD)
 ```
 
-Инфраструктура (cluster, buckets) — **Terraform**. Приложения и версии моделей — **GitOps manifests** (Helm/Kustomize), чтобы Canary и rollback не требовали повторного `terraform apply`.
+Infrastructure (cluster, buckets) is **Terraform**. Applications and model versions are **GitOps manifests** (Helm/Kustomize), so Canary and rollback do not require another `terraform apply`.
 
 ---
 
 ## 2. CI/CD Pipeline
 
-Цепочка поставки **кода AI Service** (Ranker API + shopping assistant):
+The delivery chain for the **AI Service code** (Ranker API + shopping assistant):
 
 ```text
 Commit → Build Docker → Unit Tests → Deploy Staging → E2E / Eval Gates → Deploy Prod (Canary)
 ```
 
-| Этап | Что происходит | Авто? |
+| Stage | What happens | Automatic? |
 | ---- | -------------- | ----- |
-| **Commit** | Push в `main` / PR; webhook → CI | да |
-| **Build Docker** | Multi-stage image; тег `git-sha` + digest | да |
-| **Unit Tests** | pytest (как hw-3), lint, OpenAPI contract check | да |
-| **Deploy Staging** | Argo CD sync в namespace `staging` | да |
-| **E2E / Eval** | Smoke API + DeepEval/Ragas smoke (Faithfulness / Relevancy, hw-6) | да |
-| **Deploy Prod** | GitOps: новый image tag + `model_uri` в values → Argo Rollouts Canary | да\* |
+| **Commit** | Push to `main` / PR; webhook → CI | yes |
+| **Build Docker** | Multi-stage image; `git-sha` tag + digest | yes |
+| **Unit Tests** | pytest (as in hw-3), lint, OpenAPI contract check | yes |
+| **Deploy Staging** | Argo CD sync to the `staging` namespace | yes |
+| **E2E / Eval** | Smoke API + DeepEval/Ragas smoke (Faithfulness / Relevancy, hw-6) | yes |
+| **Deploy Prod** | GitOps: new image tag + `model_uri` in values → Argo Rollouts Canary | yes\* |
 
-\* Опциональный **manual approval** только на первый выход в prod / major model bump; повседневные релизы — без ручного шага.
+\* An optional **manual approval** only for the first prod launch / a major model bump; everyday releases have no manual step.
 
 ### GitOps (Argo CD)
 
-По [Argo CD Architecture](https://argo-cd.readthedocs.io/en/stable/operator-manual/architecture/):
+Per the [Argo CD Architecture](https://argo-cd.readthedocs.io/en/stable/operator-manual/architecture/):
 
-| Компонент | Роль в RetailPartnerX |
+| Component | Role at RetailPartnerX |
 | --------- | --------------------- |
-| **API Server** | UI/CLI, sync, webhook от Git | 
-| **Repository Server** | Кэш Git-манифестов (Helm values: image, `model_uri`, `index_version`) |
-| **Application Controller** | Сравнивает desired (Git) vs live (K8s); OutOfSync → sync / Canary step |
+| **API Server** | UI/CLI, sync, webhook from Git | 
+| **Repository Server** | Cache of Git manifests (Helm values: image, `model_uri`, `index_version`) |
+| **Application Controller** | Compares desired (Git) vs live (K8s); OutOfSync → sync / Canary step |
 
-CI **не** делает `kubectl apply` в prod: CI пушит образ и коммитит/PR в repo манифестов; Controller доводит кластер до desired state.
+CI does **not** run `kubectl apply` in prod: CI pushes the image and commits/opens a PR in the manifest repo; the Controller brings the cluster to the desired state.
 
 ---
 
 ## 3. MLOps Integration
 
-Связка **данных → обучение → реестр моделей → поставка** для Ranker и обновления Vector DB (RAG Product KB).
+Linking **data → training → model registry → delivery** for the Ranker and Vector DB updates (RAG Product KB).
 
 ```text
 Dataset / catalog updated (S3 curated)
@@ -89,83 +89,83 @@ Dataset / catalog updated (S3 curated)
   → Staging → Eval → Canary Prod
 ```
 
-### Связь кода приложения и артефакта модели
+### Linking Application Code and the Model Artifact
 
-| Артефакт | Где хранится | Как попадает в runtime |
+| Artifact | Where it is stored | How it reaches the runtime |
 | -------- | ------------ | ---------------------- |
 | **App image** | Container Registry | Deployment `image: ai-service@sha256:…` |
 | **Ranker model** | Model Registry → S3 `models/` | Env/ConfigMap: `MODEL_URI=models:/ranker/3` |
-| **Product KB index** | Vector DB + метаданные | `INDEX_VERSION=2026-09-21.v12` (hw-5 versioning) |
-| **LLM** | SaaS / self-host (ADR-001) | через LLM Client; версия провайдера не в том же образе |
+| **Product KB index** | Vector DB + metadata | `INDEX_VERSION=2026-09-21.v12` (hw-5 versioning) |
+| **LLM** | SaaS / self-host (ADR-001) | via the LLM Client; the provider version is not in the same image |
 
-AI Service при старте / hot-reload читает **только зарегистрированную** версию модели (`Production` stage в MLflow). Образ приложения и модель **версионируются раздельно**, но релиз в prod всегда указывает **явную пару** `(image_digest, model_uri, index_version)` в GitOps values — это закрывает критерий **Интеграция**.
+At startup / hot reload, the AI Service reads **only a registered** model version (`Production` stage in MLflow). The application image and the model are **versioned separately**, but a prod release always specifies an **explicit pair** `(image_digest, model_uri, index_version)` in the GitOps values — this satisfies the **Integration** criterion.
 
 ### RAG / Vector DB auto-update
 
-1. Airflow task `embed_catalog` читает curated PIM-слой из S3 (hw-5).  
-2. Пишет новый индекс / alias в Vector DB.  
-3. После green eval на staging Argo переключает alias `product-kb-prod` → новый `index_version`.  
-4. Rollback индекса = переключение alias назад (без даунтайма Ranker).
+1. The Airflow task `embed_catalog` reads the curated PIM layer from S3 (hw-5).  
+2. It writes a new index / alias to the Vector DB.  
+3. After a green eval on staging, Argo switches the `product-kb-prod` alias → the new `index_version`.  
+4. An index rollback = switching the alias back (no Ranker downtime).
 
-### Ручные действия (минимум)
+### Manual Actions (Minimum)
 
-| Действие | Когда |
+| Action | When |
 | -------- | ----- |
-| Merge PR манифестов | Только если включён branch protection (policy), не «кнопка деплоя» |
-| Approve major model | Опционально для `stage: Production` при скачке метрик offline |
-| Incident rollback | Обычно **авто** по метрикам; ручной — override в Argo Rollouts |
+| Merging the manifest PR | Only if branch protection (policy) is enabled, not a "deploy button" |
+| Approving a major model | Optional for `stage: Production` on a jump in offline metrics |
+| Incident rollback | Usually **automatic** by metrics; manual is an override in Argo Rollouts |
 
-Повседневный путь «новый датасет → новая модель в canary» — **без** ручного SSH/kubectl.
+The everyday path "new dataset → new model in canary" has **no** manual SSH/kubectl.
 
 ---
 
 ## 4. Release Strategy — Canary
 
-Стратегия по идее [Canary Release](https://martinfowler.com/bliki/CanaryRelease.html): новая версия сначала на малый % пользователей, затем расширение; при проблемах — возврат трафика на stable.
+The strategy follows the idea of [Canary Release](https://martinfowler.com/bliki/CanaryRelease.html): the new version first goes to a small % of users, then expands; if problems appear, traffic returns to stable.
 
-### Переключение трафика
+### Traffic Switching
 
-Инструмент: **Argo Rollouts** (или Istio/Envoy weight) перед AI Service Service.
+Tool: **Argo Rollouts** (or Istio/Envoy weight) in front of the AI Service Service.
 
-| Шаг | Доля трафика на canary | Условие перехода |
+| Step | Share of traffic on canary | Transition condition |
 | --- | ---------------------- | ---------------- |
-| 0 | 0% (только pod ready + smoke) | Readiness + synthetic check |
-| 1 | **1%** | 15–30 мин, метрики в норме |
-| 2 | **5%** | ещё 30–60 мин |
-| 3 | **25%** (опц.) | business KPI без регрессии |
+| 0 | 0% (pod ready + smoke only) | Readiness + synthetic check |
+| 1 | **1%** | 15–30 min, metrics normal |
+| 2 | **5%** | another 30–60 min |
+| 3 | **25%** (optional) | business KPI without regression |
 | 4 | **100%** | promote; old ReplicaSet scale-down |
 
-Для RetailPartnerX canary режется на уровне **Backend → AI Service** (header/`user_id` hash или случайный %), чтобы карточка товара и чат видели одну версию в рамках сессии.
+For RetailPartnerX, the canary is split at the **Backend → AI Service** level (header/`user_id` hash or a random %), so the product page and chat see one version within a session.
 
-### Метрики отката (rollback)
+### Rollback Metrics
 
-Автоматический rollback (traffic → 0% canary, scale down new RS), если за окно наблюдения:
+Automatic rollback (traffic → 0% canary, scale down the new RS) if, during the observation window:
 
-| Класс | Метрика | Порог (ориентир MVP) | Источник |
+| Class | Metric | Threshold (MVP reference) | Source |
 | ----- | ------- | -------------------- | -------- |
 | **Reliability** | HTTP 5xx rate | > 2× baseline staging/prod | Prometheus |
-| **Latency** | p95 `POST /get_recommendation` | > SLO-бюджета / > +30% vs baseline | Prometheus (hw-2 NFR) |
-| **Saturation** | GPU/CPU queue depth | устойчивый рост + таймауты | hw-6 / hw-7 |
-| **AI quality** | Faithfulness / Answer Relevancy (online sample или shadow) | ниже CI-порога (напр. Faithfulness &lt; 0.85) | Langfuse + eval job (hw-6) |
-| **Business** | CTR блока «С этим покупают» / add-to-cart rate | статистически значимое падение vs control | CDP / Grafana |
+| **Latency** | p95 `POST /get_recommendation` | > SLO budget / > +30% vs baseline | Prometheus (hw-2 NFR) |
+| **Saturation** | GPU/CPU queue depth | sustained growth + timeouts | hw-6 / hw-7 |
+| **AI quality** | Faithfulness / Answer Relevancy (online sample or shadow) | below the CI threshold (e.g. Faithfulness &lt; 0.85) | Langfuse + eval job (hw-6) |
+| **Business** | CTR of the "Frequently bought together" block / add-to-cart rate | statistically significant drop vs control | CDP / Grafana |
 
-При откате **модель** и **index alias** остаются на предыдущих `Production` версиях в Registry (не удаляем артефакт — только снимаем traffic и откатываем GitOps pointer).
+On rollback, the **model** and **index alias** stay on the previous `Production` versions in the Registry (we do not delete the artifact — we only remove traffic and roll back the GitOps pointer).
 
-### Почему не только Blue-Green
+### Why Not Only Blue-Green
 
-Blue-Green даёт быстрый cutover, но сразу 100% риска на новой модели/RAG-индексе. Для AI-сервиса с риском галлюцинаций и drift (**R8**, hw-1/hw-6) Canary предпочтительнее; Blue-Green оставляем как запасной вариант для чисто инфраструктурных релизов без смены модели.
+Blue-Green gives a fast cutover but puts 100% of the risk on the new model/RAG index at once. For an AI service with hallucination and drift risks (**R8**, hw-1/hw-6), Canary is preferable; Blue-Green remains a fallback for purely infrastructure releases without a model change.
 
 ---
 
-## 5. Сводка автоматизации
+## 5. Automation Summary
 
-| Контур | Триггер | Результат | Ручное |
+| Loop | Trigger | Result | Manual |
 | ------ | ------- | --------- | ------ |
 | Infra | Merge Terraform | VPC, K8s, S3 | Review plan |
 | App CI/CD | Commit app | Image → staging → canary prod | Optional approve |
-| MLOps | Новый curated dataset | Retrain → Registry → Vector DB → CD | Optional model stage |
-| Rollback | Breach метрик | Traffic 100% → stable | Только override |
+| MLOps | New curated dataset | Retrain → Registry → Vector DB → CD | Optional model stage |
+| Rollback | Metric breach | Traffic 100% → stable | Override only |
 
-**Итог:** код и модель связаны через Model Registry + GitOps values; безопасность релиза — тесты + Canary; автоматизация — Airflow + CI + Argo CD/Rollouts.
+**Bottom line:** code and model are linked through the Model Registry + GitOps values; release safety comes from tests + Canary; automation comes from Airflow + CI + Argo CD/Rollouts.
 
-> **Сокращения:** [Глоссарий](../Glossary.md)
+> **Abbreviations:** [Glossary](../Glossary.md)

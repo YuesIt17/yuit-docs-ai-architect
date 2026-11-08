@@ -1,69 +1,69 @@
-# Домашнее задание hw-10 — RetailPartnerX
+# Assignment hw-10 — RetailPartnerX
 
-**FinOps и Governance: управление стоимостью и этикой AI**
+**FinOps and Governance: managing the cost and ethics of AI**
 
-> **Сокращения:** [Глоссарий](Glossary.md) · **Артефакты:** [docs/](docs/)
+> **Abbreviations:** [Glossary](Glossary.md) · **Artifacts:** [docs/](docs/)
 
-## Цель
+## Goal
 
-Разработать **Model Card** для AI-системы RetailPartnerX и **FinOps-отчёт** с анализом превышения облачного бюджета на 50% и планом Cost Optimization.
+Develop a **Model Card** for the RetailPartnerX AI system and a **FinOps report** analyzing a 50% cloud budget overrun with a Cost Optimization plan.
 
-## Контекст и преемственность
+## Context and Continuity
 
-| ДЗ | Артефакт | Связь с hw-10 |
+| Assignment | Artifact | Link to hw-10 |
 | -- | -------- | ------------- |
-| [hw-1](../hw-1/RetailPartnerX_AI_Strategy.md) | Риски R1–R8, GDPR/152-ФЗ | Bias / fairness ↔ R1, R4, R6; этика рекомендаций |
-| [hw-2](../hw-2/diagrams/README.md) | Ranker → Top-K → LLM | Routing: «умная» модель не на каждый запрос |
-| [hw-3](../hw-3/docs/agents.md) | Multi-agent + Policy Analyst | Intended use / limitations; audit решений агентов |
-| [hw-4](../hw-4/docs/adr-001-llm-hosting.md) | SaaS → self-hosted roadmap | Cost envelope и vendor / residency trade-offs |
-| [hw-5](../hw-5/docs/data-pipeline.md) | Kafka → S3 → Feature Store | Training data, skew, TTL логов и сырья |
-| [hw-6](../hw-6/docs/quality-assurance.md) | Guardrails, Langfuse, eval | Audit trail решений; cost-метрики |
-| [hw-7](../hw-7/docs/inference-sizing.md) | 2×A100 INT4 + vLLM ~464k ₽/мес | Базовый GPU OpEx для FinOps-сценария |
-| [hw-8](../hw-8/docs/delivery-pipeline.md) | Canary, Model Registry | Версии модели в Model Card / реестре |
-| [hw-9](../hw-9/docs/high-load-architecture.md) | Semantic Cache, KEDA | Снижение LLM RPS = снижение OpEx |
+| [hw-1](../hw-1/RetailPartnerX_AI_Strategy.md) | Risks R1–R8, GDPR/152-FZ | Bias / fairness ↔ R1, R4, R6; recommendation ethics |
+| [hw-2](../hw-2/diagrams/README.md) | Ranker → Top-K → LLM | Routing: the "smart" model is not for every request |
+| [hw-3](../hw-3/docs/agents.md) | Multi-agent + Policy Analyst | Intended use / limitations; audit of agent decisions |
+| [hw-4](../hw-4/docs/adr-001-llm-hosting.md) | SaaS → self-hosted roadmap | Cost envelope and vendor / residency trade-offs |
+| [hw-5](../hw-5/docs/data-pipeline.md) | Kafka → S3 → Feature Store | Training data, skew, TTL of logs and raw data |
+| [hw-6](../hw-6/docs/quality-assurance.md) | Guardrails, Langfuse, eval | Decision audit trail; cost metrics |
+| [hw-7](../hw-7/docs/inference-sizing.md) | 2×A100 INT4 + vLLM ~464k ₽/month | Base GPU OpEx for the FinOps scenario |
+| [hw-8](../hw-8/docs/delivery-pipeline.md) | Canary, Model Registry | Model versions in the Model Card / registry |
+| [hw-9](../hw-9/docs/high-load-architecture.md) | Semantic Cache, KEDA | Lower LLM RPS = lower OpEx |
 
-**Задача:** для RetailPartnerX (рекомендации + shopping assistant) закрыть контур **Governance (Model Card + audit)** и **FinOps (overrun + optimization)**, чтобы этика и unit economics были явными архитектурными артефактами, а не «устным договором».
+**Task:** for RetailPartnerX (recommendations + shopping assistant), close the **Governance (Model Card + audit)** and **FinOps (overrun + optimization)** loops so that ethics and unit economics are explicit architecture artifacts rather than a "verbal agreement".
 
-Тема курса сохранена; шаблоны Hugging Face Model Cards и Mitchell et al., 2018 адаптированы под систему RetailPartnerX, а не под абстрактную модель на Hub.
+The course topic is preserved; the Hugging Face Model Cards and Mitchell et al., 2018 templates are adapted to the RetailPartnerX system rather than an abstract model on the Hub.
 
-## Шаги выполнения (артефакты решения)
+## Steps (Solution Artifacts)
 
-| Шаг ДЗ | Документ / файл |
+| Assignment step | Document / file |
 | ------ | --------------- |
 | 1. Model Card (Intended Use, Bias, Fairness) | [docs/model-card-and-finops.md §1](docs/model-card-and-finops.md#L23) |
-| 2. Audit logging решений AI | [docs/model-card-and-finops.md §1.6](docs/model-card-and-finops.md#L178) |
-| 3. Анализ счёта (+50% к бюджету) | [docs/model-card-and-finops.md §2.1–2.2](docs/model-card-and-finops.md#L253) |
-| 4. План Cost Optimization | [docs/model-card-and-finops.md §2.3–2.5](docs/model-card-and-finops.md#L294) |
+| 2. Audit logging of AI decisions | [docs/model-card-and-finops.md §1.6](docs/model-card-and-finops.md#L178) |
+| 3. Bill analysis (+50% over budget) | [docs/model-card-and-finops.md §2.1–2.2](docs/model-card-and-finops.md#L253) |
+| 4. Cost Optimization plan | [docs/model-card-and-finops.md §2.3–2.5](docs/model-card-and-finops.md#L294) |
 
-## Формат сдачи
+## Submission Format
 
-| Артефакт | Путь |
+| Artifact | Path |
 | -------- | ---- |
-| Model Card + FinOps-отчёт с планом действий | [docs/model-card-and-finops.md](docs/model-card-and-finops.md) |
+| Model Card + FinOps report with an action plan | [docs/model-card-and-finops.md](docs/model-card-and-finops.md) |
 
-Доступ по ссылке не требуется: артефакт в репозитории.
+Link access is not required: the artifact is in the repository.
 
-## Критерии самопроверки
+## Self-Check Criteria
 
-| Критерий | Как закрыто |
+| Criterion | How it is met |
 | -------- | ----------- |
-| Этика | Model Card по структуре HF/Mitchell: use/limitations, данные, bias, fairness — [§1](docs/model-card-and-finops.md#L23) |
-| Экономика | Конкретные техмеры (Spot, distillation, TTL, routing, cache) с оценкой ₽ — [§2.3](docs/model-card-and-finops.md#L294) |
-| Зрелость | Явный баланс цена ↔ качество и когда *не* экономить — [§2.5](docs/model-card-and-finops.md#L346) |
+| Ethics | Model Card following the HF/Mitchell structure: use/limitations, data, bias, fairness — [§1](docs/model-card-and-finops.md#L23) |
+| Economics | Specific technical measures (Spot, distillation, TTL, routing, cache) with ₽ estimates — [§2.3](docs/model-card-and-finops.md#L294) |
+| Maturity | An explicit cost ↔ quality balance and when *not* to save — [§2.5](docs/model-card-and-finops.md#L346) |
 
-Статус «Принято», если все три критерия выполнены.
+Status "Accepted" if all three criteria are met.
 
-## Полезные материалы
+## Useful Materials
 
-| Материал | Описание |
+| Material | Description |
 | -------- | -------- |
-| [Hugging Face — Model Cards](https://huggingface.co/docs/hub/model-cards) | Метаданные + текст карточки модели |
-| [Mitchell et al. — Model Cards for Model Reporting](https://arxiv.org/abs/1810.03993) | Исходный фреймворк transparent model reporting |
+| [Hugging Face — Model Cards](https://huggingface.co/docs/hub/model-cards) | Metadata + model card text |
+| [Mitchell et al. — Model Cards for Model Reporting](https://arxiv.org/abs/1810.03993) | The original framework for transparent model reporting |
 | [FinOps Framework](https://www.finops.org/framework/) | Principles, Domains, Capabilities (Inform → Optimize → Operate) |
 
-## Компетенции
+## Competencies
 
-Принимать архитектурные решения с учётом экономической эффективности и стратегических целей бизнеса:
+Make architecture decisions that account for economic efficiency and strategic business goals:
 
-- проектировать Model Card и архитектуру логирования решений AI для аудита;
-- анализировать облачные счета и предлагать архитектурные изменения для снижения затрат.
+- design a Model Card and the logging architecture of AI decisions for audit;
+- analyze cloud bills and propose architecture changes to reduce costs.

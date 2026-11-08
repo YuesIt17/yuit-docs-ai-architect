@@ -1,206 +1,206 @@
-# Глоссарий сокращений
+# Glossary of Abbreviations
 
-Справочник терминов и аббревиатур, используемых в материалах домашнего задания по многоуровневому проектированию (C4 Model, диаграммы, OpenAPI).
+Reference of terms and abbreviations used in the multi-level design assignment materials (C4 Model, diagrams, OpenAPI).
 
 ---
 
-## C4 Model и уровни абстракции
+## C4 Model and Abstraction Levels
 
-| Сокращение            | Расшифровка                           | Кратко                                                                                                      |
+| Abbreviation | Expansion | In short |
 | --------------------- | ------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| **C4**                | Context, Containers, Components, Code | Методология визуализации архитектуры на четырёх уровнях детализации                                         |
-| **C1**                | Context diagram                       | Система в окружении: пользователи, внешние системы, границы                                                 |
-| **C2**                | Container diagram                     | Крупные deployable-единицы: сервисы, БД, фронт, связи между ними                                            |
-| **C3**                | Component diagram                     | Внутренняя структура одного контейнера (модули, слои)                                                       |
-| **C4 (Code)**         | Code diagram                          | Уровень классов/модулей кода; на этапе архитектурного описания редко используют                             |
-| **Context Diagram**   | Диаграмма контекста                   | То же, что C1: «кто с кем взаимодействует» вокруг системы                                                   |
-| **Container Diagram** | Диаграмма контейнеров                 | То же, что C2: приложения и хранилища в составе системы                                                     |
-| **Component Diagram** | Диаграмма компонентов                 | То же, что C3: детализация внутри выбранного контейнера                                                     |
-| **Sequence Diagram**  | Диаграмма последовательности          | Порядок сообщений/вызовов между участниками во времени                                                      |
-| **LLD**               | Low-Level Design                      | Низкоуровневое проектирование: C3, API, контракты интеграции                                                |
-| **HLD**               | High-Level Design                     | Высокоуровневая архитектура (часто C1–C2)                                                                   |
-| **NFR**               | Non-Functional Requirements           | Нефункциональные требования: latency, SLA, безопасность, compliance (см. также [hw-1](../hw-1/Glossary.md)) |
-| **deployable unit**   | Разворачиваемая единица               | В C4 «контейнер» = отдельно деплоимое приложение или БД, **не** Docker-контейнер                            |
-| **happy path**        | Успешный сценарий                     | Основная цепочка без ошибок — достаточно для одной Sequence-диаграммы                                       |
+| **C4** | Context, Containers, Components, Code | A method for visualizing architecture at four levels of detail |
+| **C1** | Context diagram | The system in its environment: users, external systems, boundaries |
+| **C2** | Container diagram | Large deployable units: services, DBs, frontend, and the links between them |
+| **C3** | Component diagram | The internal structure of one container (modules, layers) |
+| **C4 (Code)** | Code diagram | The class/module level of code; rarely used at the architecture description stage |
+| **Context Diagram** | Context diagram | Same as C1: "who interacts with whom" around the system |
+| **Container Diagram** | Container diagram | Same as C2: the applications and stores in the system |
+| **Component Diagram** | Component diagram | Same as C3: detail inside the chosen container |
+| **Sequence Diagram** | Sequence diagram | The order of messages/calls between participants over time |
+| **LLD** | Low-Level Design | Low-level design: C3, API, integration contracts |
+| **HLD** | High-Level Design | High-level architecture (often C1–C2) |
+| **NFR** | Non-Functional Requirements | Non-functional requirements: latency, SLA, security, compliance (see also [hw-1](../hw-1/Glossary.md)) |
+| **deployable unit** | Deployable unit | In C4, a "container" is a separately deployed application or DB, **not** a Docker container |
+| **happy path** | Successful scenario | The main chain without errors — enough for one Sequence diagram |
 
 ---
 
-## Методические пояснения к диаграммам
+## Method Notes on the Diagrams
 
-Одна система рисуется на **разных «зумах»** (как карта: страна → город → дом). На каждом уровне — свои объекты; **не смешивайте** на одной картинке пользователя, модули внутри AI Service и таблицы в БД.
+One system is drawn at **different "zoom levels"** (like a map: country → city → house). Each level has its own objects; **do not mix** the user, modules inside the AI Service and DB tables in one picture.
 
-**Связь артефактов:** C2 (контейнеры) → C3 (внутри AI Service) → Sequence (один сценарий во времени) → OpenAPI (контракт Backend ↔ AI Service). Имена участников и компонентов должны **совпадать** между диаграммами.
+**How the artifacts connect:** C2 (containers) → C3 (inside the AI Service) → Sequence (one scenario over time) → OpenAPI (Backend ↔ AI Service contract). Participant and component names must **match** across diagrams.
 
-### Уровни C4 — на какой вопрос отвечает
+### C4 Levels — Which Question Each Answers
 
-| Уровень | Вопрос                                            | Что рисуем (RetailPartnerX)                            | Чего не рисуем                                       |
+| Level | Question | What we draw (RetailPartnerX) | What we do not draw |
 | ------- | ------------------------------------------------- | ------------------------------------------------------ | ---------------------------------------------------- |
-| **C1**  | Кто снаружи и с кем система связана?              | Покупатель, PIM, CRM, один блок «Система рекомендаций» | PostgreSQL, классы, эндпоинты                        |
-| **C2**  | Из каких **крупных** частей состоит наша система? | Frontend, Backend, AI Service, Vector DB, SQL DB       | Controller, RAG Manager внутри AI                    |
-| **C3**  | Из чего состоит **один** контейнер (AI Service)?  | Controller, RAG Manager, LLM Client и т.д.             | Весь Frontend как «компонент» AI                     |
-| **C4**  | Классы и код                                      | —                                                      | На этапе архитектурного описания **редко требуется** |
+| **C1** | Who is outside and what is the system connected to? | Customer, PIM, CRM, one "Recommendation system" block | PostgreSQL, classes, endpoints |
+| **C2** | Which **large** parts does our system consist of? | Frontend, Backend, AI Service, Vector DB, SQL DB | Controller, RAG Manager inside AI |
+| **C3** | What does **one** container (AI Service) consist of? | Controller, RAG Manager, LLM Client, etc. | The whole Frontend as an AI "component" |
+| **C4** | Classes and code | — | **Rarely required** at the architecture description stage |
 
-### C1 — Context (диаграмма контекста)
+### C1 — Context (Context Diagram)
 
-**Аудитория:** заказчик, менеджер, участники проекта без архитектурного бэкграунда.
+**Audience:** the client, a manager, project participants without an architecture background.
 
-Прямоугольник — ваша система; вокруг — **люди** и **внешние** системы (PIM, платежи). Стрелки с подписями: «просматривает рекомендации», «получает каталог». C1 часто оформляют отдельно как «обложку» перед C2.
+A rectangle is your system; around it are **people** and **external** systems (PIM, payments). Arrows carry labels: "views recommendations", "receives the catalog". C1 is often drawn separately as a "cover" before C2.
 
 ### C2 — Container
 
-**Аудитория:** архитектор, backend, DevOps.
+**Audience:** architect, backend, DevOps.
 
-Каждый блок — **отдельно разворачиваемое** приложение или хранилище. Стрелки — **сетевые вызовы** (REST, gRPC), не абстрактное «данные текут».
+Each block is a **separately deployed** application or store. Arrows are **network calls** (REST, gRPC), not an abstract "data flows".
 
-Пример цепочки: `Покупатель → Frontend → Backend → AI Service`; Backend и AI Service — к своим БД.
+Example chain: `Customer → Frontend → Backend → AI Service`; the Backend and AI Service connect to their own DBs.
 
-**Типичная ошибка:** нарисовать RAG Manager на C2 — это уже **C3**.
+**Typical mistake:** drawing the RAG Manager on C2 — that is already **C3**.
 
 ### C3 — Component
 
-**Правило:** один прямоугольник с C2 (обычно **AI Service**) «увеличиваем» — видны **модули внутри**.
+**Rule:** "zoom in" on one rectangle from C2 (usually the **AI Service**) so the **modules inside** become visible.
 
-**Аудитория:** разработчики AI Service, ревью LLD.
+**Audience:** AI Service developers, LLD review.
 
-Для recsys без LLM компоненты из README можно заменить на: Ranker, Feature Loader, Cache — логика та же. Внешние контейнеры (Frontend, SQL DB) на C3 **не раскрывают**, только связь «вызывает по API».
+For a recsys without an LLM, the README components can be replaced with Ranker, Feature Loader, Cache — the logic is the same. External containers (Frontend, SQL DB) are **not expanded** on C3, only the "calls via API" link.
 
-### Sequence — диаграмма последовательности
+### Sequence — Sequence Diagram
 
 | C2 / C3                        | Sequence                                  |
 | ------------------------------ | ----------------------------------------- |
-| **Структура** — что существует | **Сценарий** — что происходит по шагам    |
-| Все контейнеры сразу           | Один путь, например «запрос рекомендации» |
+| **Structure** — what exists | **Scenario** — what happens step by step |
+| All containers at once | One path, for example "recommendation request" |
 
-Участники сверху вниз (**lifeline**): Пользователь → Frontend → Backend → AI Service → (при необходимости) SQL DB / Vector DB.
+Participants from the top down (**lifeline**): User → Frontend → Backend → AI Service → (if needed) SQL DB / Vector DB.
 
-Пример шагов: открыл карточку → Frontend запросил Backend → Backend `POST /get_recommendation` → AI Service прочитал кэш/признаки → ответ → UI показал ленту «С этим покупают».
+Example steps: opened the product page → Frontend called the Backend → Backend `POST /get_recommendation` → AI Service read the cache/features → response → the UI showed the "Frequently bought together" feed.
 
-Каждый компонент с **C3** должен появиться в цепочке. Один **happy path** достаточно; ошибки (503) — отдельная диаграмма по желанию.
+Every component from **C3** must appear in the chain. One **happy path** is enough; errors (503) can be a separate diagram if desired.
 
-### HLD и LLD
+### HLD and LLD
 
 |                     | HLD                                      | LLD                         |
 | ------------------- | ---------------------------------------- | --------------------------- |
-| Смысл               | Из чего состоит и как связано            | Как реализуем и интегрируем |
-| Обычно              | C1, C2, NFR (latency, SLA, безопасность) | C3, Sequence, OpenAPI       |
-| Архитектурный пакет | C2 (+ C1 по желанию)                     | C3 + Sequence + OpenAPI     |
+| Meaning | What it consists of and how it connects | How we implement and integrate |
+| Usually | C1, C2, NFR (latency, SLA, security) | C3, Sequence, OpenAPI |
+| Architecture package | C2 (+ C1 if desired) | C3 + Sequence + OpenAPI |
 
-### Шпаргалка: что на какой диаграмме
+### Cheat Sheet: What Goes on Which Diagram
 
-| Элемент                |   C1    |        C2        |    C3    |  Sequence   |
+| Element | C1 | C2 | C3 | Sequence |
 | ---------------------- | :-----: | :--------------: | :------: | :---------: |
-| Покупатель             |    ✓    |       ✓\*        |    ✗     |      ✓      |
-| Frontend / Backend     | граница |        ✓         |    ✗     |      ✓      |
-| AI Service целиком     |    ✗    |        ✓         | раскрыть |      ✓      |
-| Controller (внутри AI) |    ✗    |        ✗         |    ✓     |      ✓      |
-| SQL DB                 |    ✗    |        ✓         |  вызов   |      ✓      |
-| `/get_recommendation`  |    ✗    | подпись на связи |    ✗     | ✓ + OpenAPI |
+| Customer | ✓ | ✓\* | ✗ | ✓ |
+| Frontend / Backend | boundary | ✓ | ✗ | ✓ |
+| Whole AI Service | ✗ | ✓ | expand | ✓ |
+| Controller (inside AI) | ✗ | ✗ | ✓ | ✓ |
+| SQL DB | ✗ | ✓ | call | ✓ |
+| `/get_recommendation` | ✗ | label on the link | ✗ | ✓ + OpenAPI |
 
-\* на C2 покупателя иногда не рисуют — достаточно Frontend.
+\* the customer is sometimes omitted on C2 — the Frontend is enough.
 
-### Рекомендуемый состав артефактов и связность
+### Recommended Set of Artifacts and Consistency
 
-1. **C2** — 5 контейнеров из [README.md](README.md), подписи на стрелках.
-2. **C3** — только AI Service, 4–6 компонентов.
-3. **Sequence** — 8–15 шагов, те же имена, что на C3.
-4. **OpenAPI** — только контракт **Backend → AI Service**.
+1. **C2** — 5 containers from [README.md](README.md), labels on the arrows.
+2. **C3** — only the AI Service, 4–6 components.
+3. **Sequence** — 8–15 steps, the same names as on C3.
+4. **OpenAPI** — only the **Backend → AI Service** contract.
 
-**Проверка связности:** шаг Sequence «Backend → AI Service» = стрелка на C2 = на C3 **Controller** принимает вызов = операция в OpenAPI.
+**Consistency check:** the Sequence step "Backend → AI Service" = the arrow on C2 = the **Controller** on C3 receives the call = the operation in OpenAPI.
 
-### Типичные ошибки при построении диаграмм
+### Typical Diagramming Mistakes
 
-- Смешать уровни C2 и C3 на одной схеме.
-- Sequence на 5 сценариев сразу — разбейте на отдельные диаграммы.
-- OpenAPI на весь сайт вместо интеграции Backend ↔ AI Service.
-- Путать **Container (C4)** с Docker — в C4 это любой deployable (сервис, БД, SPA).
+- Mixing the C2 and C3 levels on one diagram.
+- A Sequence with 5 scenarios at once — split it into separate diagrams.
+- OpenAPI for the whole site instead of the Backend ↔ AI Service integration.
+- Confusing a **Container (C4)** with Docker — in C4 it is any deployable (service, DB, SPA).
 
 ---
 
-## Контейнеры и компоненты (референсная схема)
+## Containers and Components (Reference Diagram)
 
-| Сокращение                  | Расшифровка                    | Кратко                                                                |
+| Abbreviation | Expansion | In short |
 | --------------------------- | ------------------------------ | --------------------------------------------------------------------- |
-| **Frontend**                | —                              | Клиентский слой (веб, мобильное приложение)                           |
-| **Backend**                 | —                              | Сервер приложения: оркестрация, бизнес-логика, вызов AI Service       |
-| **AI Service**              | —                              | Сервис рекомендаций / RAG / LLM: отдельный deployable-контейнер       |
-| **Vector DB**               | Vector Database                | БД эмбеддингов для семантического поиска (RAG, similarity)            |
-| **SQL DB**                  | Relational Database            | Реляционное хранилище: каталог, заказы, профили, метаданные           |
-| **Controller**              | —                              | Слой приёма HTTP/gRPC-запросов в AI Service                           |
-| **RAG**                     | Retrieval-Augmented Generation | Поиск контекста в базе знаний + генерация ответа LLM                  |
-| **RAG Manager**             | —                              | Оркестрация retrieval: запрос к Vector DB, сбор контекста             |
-| **LLM Client**              | —                              | Клиент к провайдеру LLM (OpenAI, локальная модель и т.д.)             |
-| **Prompt Template Factory** | —                              | Шаблоны промптов: сборка system/user prompt из параметров             |
-| **Ranker**                  | —                              | Альтернатива LLM в recsys: ранжирование кандидатов по модели/правилам |
-| **Feature Loader**          | —                              | Загрузка признаков пользователя/товара из кэша или feature store      |
-| **embedding**               | —                              | Векторное представление текста/товара для поиска в Vector DB          |
+| **Frontend** | — | The client layer (web, mobile app) |
+| **Backend** | — | The application server: orchestration, business logic, calling the AI Service |
+| **AI Service** | — | Recommendation / RAG / LLM service: a separate deployable container |
+| **Vector DB** | Vector Database | A DB of embeddings for semantic search (RAG, similarity) |
+| **SQL DB** | Relational Database | Relational store: catalog, orders, profiles, metadata |
+| **Controller** | — | The layer that receives HTTP/gRPC requests in the AI Service |
+| **RAG** | Retrieval-Augmented Generation | Finding context in a knowledge base + LLM answer generation |
+| **RAG Manager** | — | Retrieval orchestration: querying the Vector DB, assembling context |
+| **LLM Client** | — | A client for the LLM provider (OpenAI, a local model, etc.) |
+| **Prompt Template Factory** | — | Prompt templates: building the system/user prompt from parameters |
+| **Ranker** | — | An alternative to an LLM in recsys: ranking candidates by a model/rules |
+| **Feature Loader** | — | Loading user/product features from a cache or feature store |
+| **embedding** | — | A vector representation of text/a product for search in the Vector DB |
 
 ---
 
-## Внешние системы заказчика (RetailPartnerX)
+## Client External Systems (RetailPartnerX)
 
-| Сокращение | Расшифровка                    | Кратко                                                                                                                                                                                                                   |
+| Abbreviation | Expansion | In short |
 | ---------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **PIM**    | Product Information Management | Мастер-каталог товаров: **SKU**, атрибуты, остатки. **Внешняя** система заказчика (серый блок на C1/C2), не входит в «Систему рекомендаций». Backend загружает каталог по **REST/API**; на C3 и Sequence не раскрывается |
+| **PIM** | Product Information Management | The master product catalog: **SKU**, attributes, stock. An **external** client system (gray block on C1/C2), not part of the "Recommendation system". The Backend loads the catalog via **REST/API**; it is not expanded on C3 or the Sequence |
 
 ---
 
-## API и спецификации
+## API and Specifications
 
-| Сокращение             | Расшифровка                       | Кратко                                                        |
+| Abbreviation | Expansion | In short |
 | ---------------------- | --------------------------------- | ------------------------------------------------------------- |
-| **API**                | Application Programming Interface | Контракт взаимодействия между сервисами                       |
-| **OpenAPI**            | —                                 | Стандарт описания REST API (ранее Swagger Specification)      |
-| **Swagger**            | —                                 | Экосистема/редакторы вокруг OpenAPI; спецификация — YAML/JSON |
-| **REST**               | Representational State Transfer   | Стиль API: ресурсы, HTTP-методы, коды ответов                 |
-| **endpoint**           | —                                 | Точка доступа API, например `POST /get_recommendation`        |
-| **request / response** | —                                 | Тело и заголовки запроса и ответа; задаются схемами в OpenAPI |
-| **schema**             | JSON Schema (в OpenAPI)           | Типы полей, обязательность, примеры в спецификации            |
-| **HTTP status codes**  | —                                 | 200, 400, 404, 500 и др. — должны быть описаны в API Spec     |
-| **YAML**               | YAML Ain't Markup Language        | Формат файла спецификации OpenAPI                             |
-| **JSON**               | JavaScript Object Notation        | Альтернативный формат спецификации или примеров               |
-| **Petstore**           | Swagger Petstore                  | Учебный пример OpenAPI для ориентира по структуре             |
+| **API** | Application Programming Interface | The interaction contract between services |
+| **OpenAPI** | — | The standard for describing REST APIs (formerly Swagger Specification) |
+| **Swagger** | — | The ecosystem/editors around OpenAPI; the specification is YAML/JSON |
+| **REST** | Representational State Transfer | API style: resources, HTTP methods, response codes |
+| **endpoint** | — | An API access point, for example `POST /get_recommendation` |
+| **request / response** | — | Request and response body and headers; defined by schemas in OpenAPI |
+| **schema** | JSON Schema (in OpenAPI) | Field types, required fields, examples in the specification |
+| **HTTP status codes** | — | 200, 400, 404, 500, etc. — must be described in the API Spec |
+| **YAML** | YAML Ain't Markup Language | The OpenAPI specification file format |
+| **JSON** | JavaScript Object Notation | An alternative format for the specification or examples |
+| **Petstore** | Swagger Petstore | An educational OpenAPI example to use as a structural reference |
 
 ---
 
-## Интеграция и взаимодействие
+## Integration and Interaction
 
-| Сокращение               | Расшифровка      | Кратко                                                                  |
+| Abbreviation | Expansion | In short |
 | ------------------------ | ---------------- | ----------------------------------------------------------------------- |
-| **sync call**            | Синхронный вызов | Backend ждёт ответ AI Service в рамках одного запроса пользователя      |
-| **async**                | Асинхронный      | Ответ через очередь/колбэк (на Sequence Diagram — отдельные lifelines)  |
-| **lifeline**             | —                | Участник на Sequence Diagram (актор, сервис, БД)                        |
-| **message**              | —                | Стрелка вызова/ответа между участниками на диаграмме последовательности |
-| **integration contract** | —                | Согласованный API + модели данных между Backend и AI Service            |
+| **sync call** | Synchronous call | The Backend waits for the AI Service response within one user request |
+| **async** | Asynchronous | Response via a queue/callback (separate lifelines on the Sequence diagram) |
+| **lifeline** | — | A participant on the Sequence diagram (actor, service, DB) |
+| **message** | — | A call/response arrow between participants on the sequence diagram |
+| **integration contract** | — | The agreed API + data models between the Backend and AI Service |
 
 ---
 
-## AI / ML (в контексте архитектуры)
+## AI / ML (in the Architecture Context)
 
-| Сокращение        | Расшифровка             | Кратко                                                            |
+| Abbreviation | Expansion | In short |
 | ----------------- | ----------------------- | ----------------------------------------------------------------- |
-| **AI**            | Artificial Intelligence | ИИ-сервис в составе системы (рекомендации, RAG)                   |
-| **LLM**           | Large Language Model    | Большая языковая модель (вызов из LLM Client)                     |
-| **recsys**        | Recommender System      | Рекомендательная система — предмет сценария «запрос рекомендации» |
-| **inference**     | —                       | Получение предсказания/рекомендации от модели в runtime           |
-| **hallucination** | —                       | Недостоверный вывод LLM; риск при проектировании RAG и промптов   |
+| **AI** | Artificial Intelligence | The AI service in the system (recommendations, RAG) |
+| **LLM** | Large Language Model | A large language model (called from the LLM Client) |
+| **recsys** | Recommender System | A recommender system — the subject of the "recommendation request" scenario |
+| **inference** | — | Getting a prediction/recommendation from the model at runtime |
+| **hallucination** | — | Unreliable LLM output; a risk when designing RAG and prompts |
 
 ---
 
-## Инструменты
+## Tools
 
-| Сокращение      | Расшифровка      | Кратко                                          |
+| Abbreviation | Expansion | In short |
 | --------------- | ---------------- | ----------------------------------------------- |
-| **Draw.io**     | app.diagrams.net | Редактор диаграмм (C2, C3, Sequence)            |
-| **Structurizr** | —                | Инструмент и DSL для C4-диаграмм                |
-| **Holst**       | —                | Онлайн-доска для схем и совместной работы       |
-| **Gist**        | GitHub Gist      | Хостинг фрагмента OpenAPI (YAML/JSON) по ссылке |
+| **Draw.io** | app.diagrams.net | A diagram editor (C2, C3, Sequence) |
+| **Structurizr** | — | A tool and DSL for C4 diagrams |
+| **Holst** | — | An online whiteboard for diagrams and collaboration |
+| **Gist** | GitHub Gist | Hosting an OpenAPI fragment (YAML/JSON) by link |
 
 ---
 
-## Связь с глоссарием hw-1 (общие термины)
+## Link to the hw-1 Glossary (Common Terms)
 
-Термины этапов **PoC**, **MVP**, **Production**, контрактов **T&M**, **FP**, метрик **NDCG**, **KPI**, а также **CDP**, **CRM**, **CMS** и др. — в [Glossary.md](../hw-1/Glossary.md) первого домашнего задания.
+Terms for the **PoC**, **MVP**, **Production** stages, **T&M**, **FP** contracts, **NDCG**, **KPI** metrics, as well as **CDP**, **CRM**, **CMS**, etc., are in the [Glossary.md](../hw-1/Glossary.md) of the first assignment.
 
 ---
 
-_Версия: 1.2 — добавлен раздел «Внешние системы заказчика (RetailPartnerX)» с термином PIM_
+_Version: 1.2 — added the "Client External Systems (RetailPartnerX)" section with the PIM term_

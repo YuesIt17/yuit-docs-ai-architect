@@ -1,6 +1,6 @@
-# Terraform sketch — RetailPartnerX platform (учебный псевдокод)
-# Не для реального apply: иллюстрация ресурсов из hw-8 §1.
-# Провайдер условный (yandex / aws) — в кейсе достаточно структуры модулей.
+# Terraform sketch — RetailPartnerX platform (educational pseudocode)
+# Not for a real apply: an illustration of the resources from hw-8 §1.
+# The provider is nominal (yandex / aws) — the module structure is enough for this case.
 
 terraform {
   required_version = ">= 1.5.0"

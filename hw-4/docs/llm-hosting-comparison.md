@@ -1,31 +1,31 @@
-# Сравнение хостинга LLM: SaaS vs Self-hosted
+# LLM Hosting Comparison: SaaS vs Self-hosted
 
-**Проект:** RetailPartnerX — персональный шопинг-ассистент (чат, [hw-3](../../hw-3/README.md))  
-**Этап:** PoC / MVP  
-**Альтернативы:** проприетарная облачная LLM (SaaS) vs Open-Source (Llama 3) на своих серверах (Self-hosted)
+**Project:** RetailPartnerX — personal shopping assistant (chat, [hw-3](../../hw-3/README.md))  
+**Stage:** PoC / MVP  
+**Alternatives:** a proprietary cloud LLM (SaaS) vs open-source (Llama 3) on our own servers (Self-hosted)
 
-Связанные риски из [AI-стратегии](../../hw-1/RetailPartnerX_AI_Strategy.md): **R6** (ПДн / GDPR / 152-ФЗ), **R7** (vendor lock-in), **R8** (галлюцинации — закрываются RAG/guardrails, не выбором хостинга).
+Related risks from the [AI strategy](../../hw-1/RetailPartnerX_AI_Strategy.md): **R6** (personal data / GDPR / 152-FZ), **R7** (vendor lock-in), **R8** (hallucinations — addressed by RAG/guardrails, not by the hosting choice).
 
-Опора по стоимости compute: [Cloud vs On-prem LLM costs (a16z)](https://a16z.com/navigating-the-high-cost-of-ai-compute/).
+Compute cost reference: [Cloud vs On-prem LLM costs (a16z)](https://a16z.com/navigating-the-high-cost-of-ai-compute/).
 
-## Критерии
+## Criteria
 
-| Критерий | SaaS (облачная frontier LLM) | Self-hosted (Llama 3 и аналоги) | Важность критерия на MVP |
+| Criterion | SaaS (cloud frontier LLM) | Self-hosted (Llama 3 and similar) | Criterion importance for the MVP |
 | -------- | ---------------------------- | ------------------------------- | ------------------------ |
-| **Стоимость** | OpEx за токены; на малом объёме пилота дешевле отсутствия idle GPU | CapEx GPU + электроэнергия + простой железа при низкой утилизации | высокий |
-| **Privacy** | Промпты и ответы у вендора; нужен DPA, минимизация ПДн, запрет сырых ID в логах | Данные остаются в периметре заказчика — сильнее для жёсткого data residency | высокий (риск R6: GDPR / 152-ФЗ / ПДн) |
-| **Качество ответов** | Frontier-модели: лучше instruction following, structured output для агентов hw-3 | Отставание без fine-tune/оценки; выше риск деградации UX ассистента | высокий |
-| **Latency** | RTT до API + очередь провайдера; в hw-2 уже заложены Top-K и кэш до LLM | Потенциально ниже сетевой хвост; cold start GPU и очередь на своём железе | средний (p95) |
-| **Сложность поддержки** | SLA вендора, обновления модели «из коробки» | Нужна GPU/MLOps-команда: деплой, мониторинг, патчи, capacity planning | высокий на MVP |
+| **Cost** | Token OpEx; at small pilot volume, cheaper thanks to no idle GPUs | GPU CapEx + electricity + idle hardware at low utilization | high |
+| **Privacy** | Prompts and responses are with the vendor; requires a DPA, personal data minimization, no raw IDs in logs | Data stays inside the client's perimeter — stronger for strict data residency | high (risk R6: GDPR / 152-FZ / personal data) |
+| **Answer quality** | Frontier models: better instruction following and structured output for the hw-3 agents | Lags without fine-tuning/evaluation; higher risk of degrading the assistant UX | high |
+| **Latency** | RTT to the API + provider queue; hw-2 already includes Top-K and a cache before the LLM | Potentially lower network tail; GPU cold start and queueing on our own hardware | medium (p95) |
+| **Support complexity** | Vendor SLA, model updates "out of the box" | Requires a GPU/MLOps team: deployment, monitoring, patches, capacity planning | high for the MVP |
 
-## Взвешенный вывод
+## Weighted Conclusion
 
-На этапе **PoC/MVP** побеждает **SaaS**:
+At the **PoC/MVP** stage, **SaaS** wins:
 
-1. Нет GPU CapEx при непредсказуемой нагрузке пилота (см. a16z: on-prem выгоден при стабильно высокой утилизации).
-2. Качество frontier-модели критично для мультиагентного сценария (парсинг ограничений, синтез ответа) — см. [hw-3](../../hw-3/README.md).
-3. Команда фокусируется на RAG, политиках и агентах, а не на эксплуатации inference.
-4. Privacy закрывается процессом (DPA, минимизация ПДн), а не полным on-prem — приемлемо для MVP при GDPR/152-ФЗ; при ужесточении residency — эскалация на Self-hosted.
-5. **R7** митигируется абстракцией **LLM Client** ([hw-2](../../hw-2/diagrams/README.md)) и явным пунктом roadmap: Self-hosted при росте unit-cost или требовании Legal.
+1. No GPU CapEx under unpredictable pilot load (see a16z: on-prem pays off at consistently high utilization).
+2. Frontier model quality is critical for the multi-agent scenario (constraint parsing, answer synthesis) — see [hw-3](../../hw-3/README.md).
+3. The team focuses on RAG, policies and agents, not on operating inference.
+4. Privacy is addressed by process (DPA, personal data minimization), not by full on-prem — acceptable for the MVP under GDPR/152-FZ; if residency requirements tighten, escalate to Self-hosted.
+5. **R7** is mitigated by the **LLM Client** abstraction ([hw-2](../../hw-2/diagrams/README.md)) and an explicit roadmap item: Self-hosted if unit-cost grows or Legal requires it.
 
-**Решение зафиксировано в** [adr-001-llm-hosting.md](adr-001-llm-hosting.md).
+**The decision is recorded in** [adr-001-llm-hosting.md](adr-001-llm-hosting.md).
