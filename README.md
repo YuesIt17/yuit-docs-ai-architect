@@ -8,9 +8,9 @@
 
 ## Project Overview
 
-**RetailPartnerX** is a fictional FMCG retailer with omnichannel sales. The client states the goal as "personal recommendations like Tesco / Carrefour", but without KPIs, data boundaries or channels. The case works through the architecture of an AI-native system: from the program and risks to C4, API, agentic RAG, data pipeline, production readiness and inference capacity / cost.
+**RetailPartnerX** is a fictional FMCG retailer with omnichannel sales. The client states the goal as "personal recommendations like Tesco / Carrefour", but without KPIs, data boundaries or channels. The case works through the architecture of an AI-native system: from the program and risks to C4, API, agentic RAG, data pipeline, production readiness, inference capacity / cost, delivery automation, high-load design and FinOps governance.
 
-The repository evolves step by step through course modules (`hw-1` … `hw-7`) as a single architecture case study. The physical folder names are kept for the course submission process.
+The repository evolves step by step through course modules (`hw-1` … `hw-10`) as a single architecture case study. The physical folder names are kept for the course submission process.
 
 **What is here:** architecture design, a LangGraph prototype (stub, no API keys), experiments and coursework. **What is not here:** a production deployment, real load, a running Kafka / Vector DB / observability stack.
 
@@ -28,6 +28,9 @@ The repository evolves step by step through course modules (`hw-1` … `hw-7`) a
 | **Data Architecture** | Kafka → Spark → S3 → Feature Store / Vector DB, anti-skew governance |
 | **Production Readiness** | Security layer, RAG evaluation strategy, observability dashboard design |
 | **Capacity & Cost** | VRAM/GPU sizing Llama-3-70B @ 1000 RPM; Yandex / Cloud.ru / AWS / GCP; INT4 + vLLM |
+| **Delivery & MLOps** | Terraform, GitOps (Argo CD), MLOps retrain loop, Canary with metric-based rollback |
+| **High Load** | Design target of 10k RPS: Semantic Cache, KEDA, queue-based async, edge |
+| **Governance & FinOps** | Model Card, bias and fairness, AI decision audit, cost optimization plan |
 
 ---
 
@@ -60,6 +63,9 @@ Shopping assistant in the app chat: the Orchestrator coordinates 6 specialized a
 | [hw-5](hw-5/) | Data pipeline, Feature Store | [data-pipeline.md](hw-5/docs/data-pipeline.md), [diagram](hw-5/diagrams/data-pipeline.png) |
 | [hw-6](hw-6/) | Security, Evaluation, Observability | [quality-assurance.md](hw-6/docs/quality-assurance.md), [security-layer.png](hw-6/diagrams/security-layer.png) |
 | [hw-7](hw-7/) | Inference sizing & cloud cost | [inference-sizing.md](hw-7/docs/inference-sizing.md), [recommendation.md](hw-7/docs/recommendation.md) |
+| [hw-8](hw-8/) | IaC, CI/CD, MLOps, Canary | [delivery-pipeline.md](hw-8/docs/delivery-pipeline.md), [diagram](hw-8/diagrams/cicd-mlops-pipeline.png) |
+| [hw-9](hw-9/) | High load, caching, async | [high-load-architecture.md](hw-9/docs/high-load-architecture.md), [diagram](hw-9/diagrams/high-load-architecture.png) |
+| [hw-10](hw-10/) | Model Card, FinOps | [model-card-and-finops.md](hw-10/docs/model-card-and-finops.md) |
 
 ---
 
@@ -88,7 +94,10 @@ Shopping assistant in the app chat: the Orchestrator coordinates 6 specialized a
 | **Observability** | Planned | Prometheus, Tempo, Langfuse, Grafana dashboard spec | [hw-6 §3](hw-6/docs/quality-assurance.md) |
 | **Data** | Architecture design | Ingestion, Feature Store, anti-skew, index versioning | [hw-5](hw-5/docs/data-pipeline.md) |
 | **Capacity / Cost** | Architecture design | VRAM + KV, GPU fit, comparison of 4 clouds, INT4/vLLM | [hw-7](hw-7/docs/inference-sizing.md) |
-| **Platform** | Not implemented | Deployment, K8s, CI/CD — outside the repository scope | — |
+| **Delivery** | Architecture design | Terraform sketch, GitOps, MLOps retrain loop, Canary with rollback metrics | [hw-8](hw-8/docs/delivery-pipeline.md) |
+| **Scalability** | Architecture design | Multi-tier and Semantic Cache, HPA + KEDA, queue-based async, backpressure | [hw-9](hw-9/docs/high-load-architecture.md) |
+| **Governance** | Architecture design | Model Card, bias and fairness metrics, decision audit log, FinOps plan | [hw-10](hw-10/docs/model-card-and-finops.md) |
+| **Platform** | Not implemented | A running deployment — outside the repository scope; delivery is designed in hw-8 | — |
 
 ---
 
@@ -112,7 +121,7 @@ RetailPartnerX is an **educational architecture case study** developed as part o
 
 The repository contains:
 
-- architecture design (C4, ADR, data pipeline, security/eval/observability, inference sizing)
+- architecture design (C4, ADR, data pipeline, security/eval/observability, inference sizing, delivery, high load, FinOps)
 - a LangGraph prototype (stub, keyword RAG, 7 pytest tests, no LLM API keys)
 - coursework artifacts in `hw-*`
 
@@ -140,6 +149,6 @@ Professional focus:
 | Resource | Description |
 |--------|----------|
 | [portfolio/index.html](https://yuesit17.github.io/yuit-docs-ai-architect/portfolio/) | HTML presentation for architecture review (GitHub Pages) |
-| [hw-1 … hw-7](#architecture-journey) | Evidence by module |
+| [hw-1 … hw-10](#architecture-journey) | Evidence by module |
 | [docs/interview/INTERVIEW-SUMMARY.md](docs/interview/INTERVIEW-SUMMARY.md) | Short interview cheat sheet |
 | [docs/interview/ARCHITECTURE-INTERVIEW-CHEATSHEET.md](docs/interview/ARCHITECTURE-INTERVIEW-CHEATSHEET.md) | General Solution Architect topics |
