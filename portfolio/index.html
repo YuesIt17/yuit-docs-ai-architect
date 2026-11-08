@@ -60,7 +60,7 @@
       <p class="section__label">Executive Summary</p>
       <h2 class="section__title">What this case covers</h2>
       <p class="section__lead">
-        RetailPartnerX, an FMCG retailer, wants personalized recommendations and conversational commerce, but the requirements are vague: no KPIs, data boundaries or channels. The case works through the full architecture lifecycle, from discovery and the contract model to C4, agentic RAG, the data pipeline and production-readiness design.
+        RetailPartnerX, an FMCG retailer, wants personalized recommendations and conversational commerce, but the requirements are vague: no KPIs, data boundaries or channels. The case works through the full architecture lifecycle, from discovery and the contract model to C4, agentic RAG, the data pipeline, production readiness, inference sizing, delivery automation, high-load design and FinOps governance.
       </p>
       <div class="card-grid">
         <article class="card">
@@ -69,7 +69,7 @@
         </article>
         <article class="card">
           <h3 class="card__title">Architecture design</h3>
-          <p>C4 (C1–C3), Sequence, OpenAPI, multi-agent RAG, ADR LLM hosting, data pipeline, security/eval/observability: ~85% of the artifacts.</p>
+          <p>C4 (C1–C3), Sequence, OpenAPI, multi-agent RAG, ADR LLM hosting, data pipeline, security/eval/observability, inference sizing, CI/CD and MLOps, high-load design, Model Card and FinOps: most of the artifacts.</p>
         </article>
         <article class="card">
           <h3 class="card__title">Prototype</h3>
@@ -77,7 +77,7 @@
         </article>
         <article class="card">
           <h3 class="card__title">What this is not</h3>
-          <p>A production deployment. There is no running Kafka, Spark, Pinecone, Prometheus or Ragas CI. No numeric latency SLO is set until MVP measurements exist.</p>
+          <p>A production deployment. There is no running Kafka, Spark, Pinecone, Prometheus, Ragas CI, Terraform, Argo CD or KEDA. hw-2 sets no numeric latency SLO until MVP measurements exist; the 10k RPS and p95 &lt; 200 ms figures in hw-9 are design targets, not measurements.</p>
         </article>
       </div>
     </section>
@@ -124,6 +124,30 @@
           <h3 class="timeline__title"><a href="../hw-6/docs/quality-assurance.md">Production readiness</a></h3>
           <p class="timeline__desc">Security layer, RAG evaluation strategy, observability design</p>
           <p class="timeline__evidence"><a href="../hw-6/diagrams/security-layer.png">Security diagram →</a></p>
+        </div>
+        <div class="timeline__item">
+          <div class="timeline__step">hw-7</div>
+          <h3 class="timeline__title"><a href="../hw-7/docs/inference-sizing.md">Inference sizing and cost</a></h3>
+          <p class="timeline__desc">VRAM and GPU sizing for Llama-3-70B @ 1000 RPM across 4 clouds; INT4 + vLLM</p>
+          <p class="timeline__evidence"><a href="../hw-7/docs/recommendation.md">Recommendation →</a></p>
+        </div>
+        <div class="timeline__item">
+          <div class="timeline__step">hw-8</div>
+          <h3 class="timeline__title"><a href="../hw-8/docs/delivery-pipeline.md">Delivery automation</a></h3>
+          <p class="timeline__desc">Terraform, GitOps, MLOps retrain loop, Canary with metric-based rollback</p>
+          <p class="timeline__evidence"><a href="../hw-8/diagrams/cicd-mlops-pipeline.png">CI/CD + MLOps diagram →</a></p>
+        </div>
+        <div class="timeline__item">
+          <div class="timeline__step">hw-9</div>
+          <h3 class="timeline__title"><a href="../hw-9/docs/high-load-architecture.md">High-load architecture</a></h3>
+          <p class="timeline__desc">Design target of 10k RPS: Semantic Cache, KEDA, queue-based async, edge</p>
+          <p class="timeline__evidence"><a href="../hw-9/diagrams/high-load-architecture.png">High-load diagram →</a></p>
+        </div>
+        <div class="timeline__item">
+          <div class="timeline__step">hw-10</div>
+          <h3 class="timeline__title"><a href="../hw-10/docs/model-card-and-finops.md">FinOps and governance</a></h3>
+          <p class="timeline__desc">Model Card, bias and fairness, AI decision audit, cost optimization plan</p>
+          <p class="timeline__evidence"><a href="../hw-10/docs/model-card-and-finops.md">Model Card + FinOps →</a></p>
         </div>
       </div>
     </section>
@@ -253,6 +277,10 @@
         <div class="capability-item"><span class="capability-item__name">Evaluation (RAG)</span><span class="status-tag status-tag--planned">Planned</span></div>
         <div class="capability-item"><span class="capability-item__name">Observability</span><span class="status-tag status-tag--planned">Planned</span></div>
         <div class="capability-item"><span class="capability-item__name">Reliability patterns</span><span class="status-tag status-tag--studied">Studied + Design</span></div>
+        <div class="capability-item"><span class="capability-item__name">Inference Sizing / Cost</span><span class="status-tag status-tag--design">Architecture Design</span></div>
+        <div class="capability-item"><span class="capability-item__name">CI/CD / MLOps</span><span class="status-tag status-tag--design">Architecture Design</span></div>
+        <div class="capability-item"><span class="capability-item__name">High-Load / Scaling</span><span class="status-tag status-tag--design">Architecture Design</span></div>
+        <div class="capability-item"><span class="capability-item__name">Model Governance / FinOps</span><span class="status-tag status-tag--design">Architecture Design</span></div>
         <div class="capability-item"><span class="capability-item__name">Platform / Deployment</span><span class="status-tag status-tag--none">Not evidenced</span></div>
       </div>
     </section>
@@ -305,9 +333,33 @@
               <td><a href="../hw-5/docs/data-pipeline.md">data-pipeline.md</a></td>
             </tr>
             <tr>
+              <td>Capacity / Cost</td>
+              <td><span class="status-tag status-tag--design">Architecture Design</span></td>
+              <td>VRAM + KV Cache sizing, GPU fit, 4-cloud comparison, INT4 + vLLM</td>
+              <td><a href="../hw-7/docs/inference-sizing.md">inference-sizing.md</a></td>
+            </tr>
+            <tr>
+              <td>Delivery</td>
+              <td><span class="status-tag status-tag--design">Architecture Design</span></td>
+              <td>Terraform sketch, GitOps, MLOps retrain loop, Canary with rollback metrics</td>
+              <td><a href="../hw-8/docs/delivery-pipeline.md">delivery-pipeline.md</a></td>
+            </tr>
+            <tr>
+              <td>Scalability</td>
+              <td><span class="status-tag status-tag--design">Architecture Design</span></td>
+              <td>Multi-tier and Semantic Cache, HPA + KEDA, queue-based async, backpressure</td>
+              <td><a href="../hw-9/docs/high-load-architecture.md">high-load-architecture.md</a></td>
+            </tr>
+            <tr>
+              <td>Governance</td>
+              <td><span class="status-tag status-tag--design">Architecture Design</span></td>
+              <td>Model Card, bias and fairness metrics, decision audit log, FinOps plan</td>
+              <td><a href="../hw-10/docs/model-card-and-finops.md">model-card-and-finops.md</a></td>
+            </tr>
+            <tr>
               <td>Platform</td>
               <td><span class="status-tag status-tag--none">Not evidenced</span></td>
-              <td>Deployment, K8s, CI/CD: out of scope for this repository</td>
+              <td>A running deployment: out of scope for this repository; delivery is designed in hw-8</td>
               <td>—</td>
             </tr>
           </tbody>
@@ -401,6 +453,30 @@
               <td>quality-assurance.md, security-layer</td>
               <td><a href="../hw-6/docs/quality-assurance.md">QA doc</a></td>
             </tr>
+            <tr>
+              <td>hw-7</td>
+              <td>Inference sizing, cloud cost</td>
+              <td>inference-sizing.md, recommendation.md</td>
+              <td><a href="../hw-7/docs/inference-sizing.md">inference-sizing.md</a></td>
+            </tr>
+            <tr>
+              <td>hw-8</td>
+              <td>IaC, CI/CD, MLOps, Canary</td>
+              <td>delivery-pipeline.md, terraform-sketch.tf, CI/CD diagram</td>
+              <td><a href="../hw-8/docs/delivery-pipeline.md">delivery-pipeline.md</a></td>
+            </tr>
+            <tr>
+              <td>hw-9</td>
+              <td>High load, caching, async</td>
+              <td>high-load-architecture.md, high-load diagram</td>
+              <td><a href="../hw-9/docs/high-load-architecture.md">high-load-architecture.md</a></td>
+            </tr>
+            <tr>
+              <td>hw-10</td>
+              <td>Model Card, FinOps</td>
+              <td>model-card-and-finops.md</td>
+              <td><a href="../hw-10/docs/model-card-and-finops.md">model-card-and-finops.md</a></td>
+            </tr>
           </tbody>
         </table>
       </div>
@@ -422,6 +498,14 @@
         <figure class="diagram-block">
           <img src="../hw-2/diagrams/sequence-get-recommendation.png" alt="Sequence get recommendation" loading="lazy">
           <figcaption class="diagram-block__caption"><a href="../hw-2/diagrams/sequence-get-recommendation.png">Sequence — get recommendation</a></figcaption>
+        </figure>
+        <figure class="diagram-block">
+          <img src="../hw-8/diagrams/cicd-mlops-pipeline.png" alt="CI/CD and MLOps pipeline" loading="lazy">
+          <figcaption class="diagram-block__caption"><a href="../hw-8/diagrams/cicd-mlops-pipeline.png">CI/CD + MLOps pipeline</a></figcaption>
+        </figure>
+        <figure class="diagram-block">
+          <img src="../hw-9/diagrams/high-load-architecture.png" alt="High-load architecture" loading="lazy">
+          <figcaption class="diagram-block__caption"><a href="../hw-9/diagrams/high-load-architecture.png">High-load architecture</a></figcaption>
         </figure>
       </div>
     </section>
