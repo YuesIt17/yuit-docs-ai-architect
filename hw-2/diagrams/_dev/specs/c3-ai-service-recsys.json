@@ -5,7 +5,7 @@
   "nodes": [
     {
       "id": "boundary",
-      "label": "AI Service — рекомендации + LLM",
+      "label": "AI Service — recommendations + LLM",
       "style": "boundary",
       "x": 20,
       "y": 20,
@@ -127,7 +127,7 @@
     {
       "from": "ctrl",
       "to": "router",
-      "label": "Маршрутизация",
+      "label": "Routing",
       "parent": "boundary",
       "exitX": 1,
       "exitY": 0.5,
@@ -138,7 +138,7 @@
     {
       "from": "router",
       "to": "loader",
-      "label": "Кандидаты",
+      "label": "Candidates",
       "parent": "boundary",
       "exitX": 1,
       "exitY": 0.5,
@@ -149,7 +149,7 @@
     {
       "from": "loader",
       "to": "ranker",
-      "label": "Кандидаты",
+      "label": "Candidates",
       "parent": "boundary",
       "exitX": 1,
       "exitY": 0.5,
@@ -160,7 +160,7 @@
     {
       "from": "router",
       "to": "rag",
-      "label": "Контекст",
+      "label": "Context",
       "parent": "boundary",
       "exitX": 0.75,
       "exitY": 1,
@@ -183,7 +183,7 @@
     {
       "from": "rag",
       "to": "prompts",
-      "label": "Контекст",
+      "label": "Context",
       "parent": "boundary",
       "exitX": 1,
       "exitY": 0.5,

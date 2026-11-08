@@ -5,7 +5,7 @@
   "nodes": [
     {
       "id": "shopper",
-      "label": "Покупатель",
+      "label": "Shopper",
       "style": "person",
       "x": 30,
       "y": 320,
@@ -23,7 +23,7 @@
     },
     {
       "id": "fe",
-      "label": "Frontend\nЧат в приложении",
+      "label": "Frontend\nIn-app chat",
       "style": "container",
       "x": 30,
       "y": 50,
@@ -33,7 +33,7 @@
     },
     {
       "id": "be",
-      "label": "Backend\nBFF, сессия чата",
+      "label": "Backend\nBFF, chat session",
       "style": "container",
       "x": 220,
       "y": 50,
@@ -53,7 +53,7 @@
     },
     {
       "id": "orch",
-      "label": "Orchestrator\n(Менеджер)",
+      "label": "Orchestrator\n(Manager)",
       "style": "component",
       "x": 30,
       "y": 45,
@@ -73,7 +73,7 @@
     },
     {
       "id": "search",
-      "label": "Catalog Searcher\n(Поисковик)",
+      "label": "Catalog Searcher\n(Searcher)",
       "style": "component",
       "x": 30,
       "y": 150,
@@ -103,7 +103,7 @@
     },
     {
       "id": "basket",
-      "label": "Basket Assembler\n(Сборщик)",
+      "label": "Basket Assembler\n(Assembler)",
       "style": "component",
       "x": 540,
       "y": 150,
@@ -133,7 +133,7 @@
     },
     {
       "id": "sql",
-      "label": "SQL DB\nцены, акции, наличие",
+      "label": "SQL DB\nprices, promotions, availability",
       "style": "db",
       "x": 250,
       "y": 500,
@@ -153,7 +153,7 @@
     },
     {
       "id": "pim",
-      "label": "PIM\nКаталог",
+      "label": "PIM\nCatalog",
       "style": "external",
       "x": 680,
       "y": 500,
