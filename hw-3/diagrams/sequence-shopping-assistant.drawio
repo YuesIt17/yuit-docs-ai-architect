@@ -6,7 +6,7 @@
       <root>
         <mxCell id="0"/>
         <mxCell id="1" parent="0"/>
-        <mxCell id="2" value="Покупатель" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#08427B;fontColor=#ffffff;" vertex="1" parent="1">
+        <mxCell id="2" value="Customer" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#08427B;fontColor=#ffffff;" vertex="1" parent="1">
           <mxGeometry x="30" y="22" width="95" height="60" as="geometry"/>
         </mxCell>
         <mxCell id="3" value="" style="fillColor=none;strokeColor=#6c8ebf;dashed=1;dashPattern=1 4;html=1;" vertex="1" parent="1">
@@ -66,7 +66,7 @@
         <mxCell id="21" value="" style="fillColor=none;strokeColor=#6c8ebf;dashed=1;dashPattern=1 4;html=1;" vertex="1" parent="1">
           <mxGeometry x="1066.5" y="82" width="2" height="820" as="geometry"/>
         </mxCell>
-        <mxCell id="22" value="Ужин без глютена до 2000" style="endArrow=block;html=1;strokeColor=#333333;fontColor=#333333;fontSize=11;verticalAlign=bottom;labelBackgroundColor=#ffffff;" edge="1" parent="1">
+        <mxCell id="22" value="Gluten-free dinner up to 2000" style="endArrow=block;html=1;strokeColor=#333333;fontColor=#333333;fontSize=11;verticalAlign=bottom;labelBackgroundColor=#ffffff;" edge="1" parent="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="77.5" y="120" as="sourcePoint"/>
             <mxPoint x="187.5" y="120" as="targetPoint"/>
@@ -171,7 +171,7 @@
             <mxPoint x="187.5" y="868" as="targetPoint"/>
           </mxGeometry>
         </mxCell>
-        <mxCell id="40" value="корзина в чате" style="endArrow=open;html=1;dashed=1;dashPattern=8 8;strokeColor=#333333;fontColor=#333333;fontSize=11;verticalAlign=bottom;labelBackgroundColor=#ffffff;" edge="1" parent="1">
+        <mxCell id="40" value="cart in chat" style="endArrow=open;html=1;dashed=1;dashPattern=8 8;strokeColor=#333333;fontColor=#333333;fontSize=11;verticalAlign=bottom;labelBackgroundColor=#ffffff;" edge="1" parent="1">
           <mxGeometry relative="1" as="geometry">
             <mxPoint x="187.5" y="912" as="sourcePoint"/>
             <mxPoint x="77.5" y="912" as="targetPoint"/>

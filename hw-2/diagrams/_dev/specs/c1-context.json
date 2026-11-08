@@ -5,7 +5,7 @@
   "nodes": [
     {
       "id": "shopper",
-      "label": "Покупатель\nСайт / приложение",
+      "label": "Customer\nWebsite / app",
       "style": "person",
       "x": 40,
       "y": 200,
@@ -14,7 +14,7 @@
     },
     {
       "id": "recsys",
-      "label": "Система персональных\nрекомендаций\nРанжирование SKU",
+      "label": "Personal recommendation\nsystem\nSKU ranking",
       "style": "system",
       "x": 400,
       "y": 220,
@@ -23,7 +23,7 @@
     },
     {
       "id": "pim",
-      "label": "PIM\nКаталог, SKU",
+      "label": "PIM\nCatalog, SKU",
       "style": "external",
       "x": 860,
       "y": 110,
@@ -32,7 +32,7 @@
     },
     {
       "id": "cdp",
-      "label": "CDP / CRM\nПрофиль, события",
+      "label": "CDP / CRM\nProfile, events",
       "style": "external",
       "x": 860,
       "y": 235,
@@ -41,7 +41,7 @@
     },
     {
       "id": "loyalty",
-      "label": "Программа лояльности",
+      "label": "Loyalty program",
       "style": "external",
       "x": 860,
       "y": 370,
@@ -53,7 +53,7 @@
     {
       "from": "shopper",
       "to": "recsys",
-      "label": "Просмотр рекомендаций [HTTPS]",
+      "label": "Views recommendations [HTTPS]",
       "exitX": 1,
       "exitY": 0.5,
       "entryX": 0,
@@ -63,7 +63,7 @@
     {
       "from": "recsys",
       "to": "pim",
-      "label": "Каталог и остатки [API]",
+      "label": "Catalog and stock [API]",
       "exitX": 1,
       "exitY": 0.25,
       "entryX": 0,
@@ -74,7 +74,7 @@
     {
       "from": "recsys",
       "to": "cdp",
-      "label": "События и профиль [API/stream]",
+      "label": "Events and profile [API/stream]",
       "exitX": 1,
       "exitY": 0.5,
       "entryX": 0,
@@ -84,7 +84,7 @@
     {
       "from": "recsys",
       "to": "loyalty",
-      "label": "Идентификация [API]",
+      "label": "Identification [API]",
       "exitX": 1,
       "exitY": 0.75,
       "entryX": 0,

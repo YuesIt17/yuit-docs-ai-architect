@@ -1,155 +1,155 @@
-# Глоссарий hw-7
+# hw-7 Glossary
 
-Термины **sizing** (расчёт ресурсов) и **инференса** LLM для RetailPartnerX.  
-SaaS vs self-hosted, TCO/OpEx в контексте ADR — [hw-4/Glossary.md](../hw-4/Glossary.md).  
+Terms for LLM **sizing** (resource calculation) and **inference** for RetailPartnerX.  
+SaaS vs self-hosted, TCO/OpEx in the ADR context — [hw-4/Glossary.md](../hw-4/Glossary.md).  
 NFR / latency — [hw-2/Glossary.md](../hw-2/Glossary.md).
 
-Расчёты: [inference-sizing.md](docs/inference-sizing.md).
+Calculations: [inference-sizing.md](docs/inference-sizing.md).
 
 ---
 
-## Память и форматы чисел
+## Memory and Number Formats
 
 ### VRAM (Video RAM)
 
-Память на видеокарте, в которой во время инференса лежат:
+Memory on the graphics card that holds, during inference:
 
-1. **веса модели** (parameters);
-2. **KV Cache** по активным запросам;
-3. **overhead** — буферы CUDA, активации, фрагментация.
+1. the **model weights** (parameters);
+2. the **KV Cache** for active requests;
+3. **overhead** — CUDA buffers, activations, fragmentation.
 
-Именно VRAM чаще всего ограничивает, «влезет ли» Llama-3-70B на A100 / L4 / T4. В hw-7:  
+VRAM is most often what limits whether Llama-3-70B "fits" on an A100 / L4 / T4. In hw-7:  
 `VRAM ≈ Weights + KV + overhead`.
 
 ### FP16 (Half precision)
 
-Формат числа: **2 байта** на параметр (вдвое меньше FP32).  
-Для Llama-3-70B веса ≈ **70B × 2 ≈ 140 GB** — одна карта A100 80GB не вмещает модель без разрезания на несколько GPU.
+Number format: **2 bytes** per parameter (half of FP32).  
+For Llama-3-70B the weights are ≈ **70B × 2 ≈ 140 GB** — a single A100 80GB cannot hold the model without splitting it across several GPUs.
 
-Плюс: выше качество / проще отладка. Минус: дорого по памяти и аренде GPU при высокой нагрузке.
+Pro: higher quality / easier debugging. Con: expensive in memory and GPU rental under high load.
 
 ### INT4 (4-bit quantization)
 
-Сжатие весов до **~0.5 байта** на параметр (квантование).  
-Веса Llama-3-70B ≈ **35 GB** вместо 140 GB — модель чаще влезает в 1–2× A100.
+Compressing weights to **~0.5 bytes** per parameter (quantization).  
+Llama-3-70B weights are ≈ **35 GB** instead of 140 GB — the model more often fits on 1–2× A100.
 
-Плюс: меньше VRAM → меньше/дешевле GPU. Минус: небольшое падение качества; для serving обычно берут готовые схемы **AWQ / GPTQ**, а не «сырой» INT4.
+Pro: less VRAM → fewer/cheaper GPUs. Con: a small quality drop; for serving, ready-made **AWQ / GPTQ** schemes are usually used rather than "raw" INT4.
 
 ### KV Cache (Key–Value Cache)
 
-При генерации текста attention повторно использует уже посчитанные ключи (K) и значения (V) прошлых токенов. Их хранят в VRAM как **KV Cache**, чтобы не пересчитывать всё с нуля.
+During text generation, attention reuses the already computed keys (K) and values (V) of previous tokens. They are kept in VRAM as the **KV Cache** so that everything does not have to be recomputed from scratch.
 
-Размер растёт почти линейно с:
+Its size grows almost linearly with:
 
-- длиной контекста (`seq_len`);
-- числом одновременных запросов (`concurrent`).
+- context length (`seq_len`);
+- the number of simultaneous requests (`concurrent`).
 
-В hw-7 при 2048 токенах и ~67 concurrent KV ≈ **43 GB** — иногда больше, чем веса INT4. Поэтому одного «модель влезла» мало: нужен запас под KV.
+In hw-7, at 2048 tokens and ~67 concurrent, KV ≈ **43 GB** — sometimes more than the INT4 weights. So "the model fits" alone is not enough: headroom for KV is needed.
 
 ### GQA (Grouped-Query Attention)
 
-Вариант attention, где несколько query-голов делят общие KV-головы. У Llama-3-70B **8 KV heads** вместо полного набора — KV Cache заметно компактнее, чем у старых моделей с Multi-Head Attention (MHA).
+An attention variant where several query heads share common KV heads. Llama-3-70B has **8 KV heads** instead of a full set — the KV Cache is noticeably more compact than in older models with Multi-Head Attention (MHA).
 
-Без GQA расчёт памяти под concurrent был бы ещё жёстче.
+Without GQA, the memory calculation for concurrent requests would be even tighter.
 
 ### Overhead
 
-Запас VRAM сверх весов и KV: ядра CUDA, временные тензоры, выравнивание страниц. В расчёте hw-7 заложено **~5 GB** на реплику как упрощённый запас.
+VRAM headroom beyond the weights and KV: CUDA cores, temporary tensors, page alignment. The hw-7 calculation assumes **~5 GB** per replica as a simplified margin.
 
 ---
 
-## Параллелизм и железо
+## Parallelism and Hardware
 
 ### TP (Tensor Parallelism)
 
-Разрез **одной** модели по нескольким GPU: слои/матрицы считаются совместно (нужна быстрая связь, напр. NVLink).  
-Пример: FP16 140 GB → минимум **2–3× A100**, потому что веса не помещаются на одну карту.
+Splitting **one** model across several GPUs: layers/matrices are computed jointly (requires a fast interconnect, e.g. NVLink).  
+Example: FP16 140 GB → at least **2–3× A100**, because the weights do not fit on one card.
 
-Не путать с **репликами** (несколько копий модели для роста RPM) — в hw-7 сценарий B как раз «2 шарды × 2 GPU».
+Not to be confused with **replicas** (several copies of the model to grow RPM) — hw-7 scenario B is exactly "2 shards × 2 GPUs".
 
 ### A100 / L4 / T4 (NVIDIA GPU)
 
-| Карта | Типичный VRAM | Для Llama-3-70B @ 1000 RPM |
+| Card | Typical VRAM | For Llama-3-70B @ 1000 RPM |
 | ----- | ------------- | -------------------------- |
-| **A100** | 40 или **80 GB** | основной выбор (рекомендация: 2×80 GB INT4) |
-| **L4** | **24 GB** | только кластер (≥4 карт), слабее по memory bandwidth |
-| **T4** | **16 GB** | для 70B на целевой нагрузке **не рекомендуем** |
+| **A100** | 40 or **80 GB** | the main choice (recommendation: 2×80 GB INT4) |
+| **L4** | **24 GB** | cluster only (≥4 cards), weaker memory bandwidth |
+| **T4** | **16 GB** | **not recommended** for 70B at the target load |
 
-Чем меньше VRAM и bandwidth, тем больше карт и сложнее уложиться в latency.
+The less VRAM and bandwidth, the more cards are needed and the harder it is to meet latency.
 
-### Utilization (утилизация)
+### Utilization
 
-Доля времени/ресурса GPU, которая реально занята полезной работой.  
-Без batching GPU часто простаивает между одиночными запросами → платите за карту, а токены/сек низкие. Continuous batching и vLLM как раз поднимают utilization.
+The share of GPU time/resources actually doing useful work.  
+Without batching, the GPU often sits idle between single requests → you pay for the card while tokens/sec stay low. Continuous batching and vLLM raise utilization.
 
 ---
 
-## Нагрузка и serving
+## Load and Serving
 
 ### RPM / RPS
 
-- **RPM** — Requests Per Minute (запросов в минуту). Задание: **1000 RPM**.
+- **RPM** — Requests Per Minute. The assignment target: **1000 RPM**.
 - **RPS** — Requests Per Second ≈ RPM / 60 → **≈ 16.7 RPS**.
 
-Связка с concurrent (Little’s law):  
-`concurrent ≈ RPS × latency_сек`  
-(в hw-7: 16.7 × 4 ≈ **67** одновременных запросов в полёте).
+Link to concurrency (Little’s law):  
+`concurrent ≈ RPS × latency_sec`  
+(in hw-7: 16.7 × 4 ≈ **67** simultaneous in-flight requests).
 
 ### Batching (continuous / dynamic)
 
-Сборка нескольких запросов пользователей в один (или непрерывный) проход по модели, вместо «один запрос — один idle GPU».
+Combining several user requests into one (or a continuous) pass through the model, instead of "one request — one idle GPU".
 
-Эффект: выше utilization и throughput (токены/сек), меньше GPU на тот же RPM. В оценке hw-7 — порядка **+1.5–3×** к throughput vs naive.
+Effect: higher utilization and throughput (tokens/sec), fewer GPUs for the same RPM. The hw-7 estimate is about **+1.5–3×** throughput vs naive.
 
 ### vLLM
 
-Open-source **serving-движок** для LLM (не сама модель). Даёт continuous batching и **PagedAttention**, удобен для prod-инференса (в т.ч. с AWQ/GPTQ).
+An open-source **serving engine** for LLMs (not the model itself). Provides continuous batching and **PagedAttention**, convenient for prod inference (including with AWQ/GPTQ).
 
-В рекомендации hw-7: **Llama-3-70B INT4 + vLLM** на 2× A100.
+The hw-7 recommendation: **Llama-3-70B INT4 + vLLM** on 2× A100.
 
 ### PagedAttention
 
-Техника управления KV Cache по аналогии с virtual memory / paging: меньше **фрагментации** памяти, на ту же VRAM помещается больше concurrent-запросов (ориентир **+20–40%**).
+A technique for managing the KV Cache by analogy with virtual memory / paging: less memory **fragmentation**, so more concurrent requests fit in the same VRAM (reference: **+20–40%**).
 
-Именно поэтому INT4 + vLLM позволяет обойтись **2× A100**, а не раздувать число реплик «на всякий случай».
+This is why INT4 + vLLM can make do with **2× A100** instead of inflating the replica count "just in case".
 
 ### AWQ / GPTQ
 
-Практичные схемы **weight-only** квантования в INT4 (веса сжаты, вычисления часто в более высокой точности). Хорошо поддерживаются vLLM / TGI — это то, что обычно имеют в виду под «INT4 в проде», а не абстрактный 4-bit.
+Practical **weight-only** quantization schemes in INT4 (weights are compressed, computation often runs at a higher precision). Well supported by vLLM / TGI — this is what people usually mean by "INT4 in prod", not an abstract 4-bit.
 
 ---
 
-## Стоимость
+## Cost
 
 ### OpEx (Operating Expenditure)
 
-Операционные расходы: помесячная **аренда GPU** в облаке, трафик, сопровождение.  
-В hw-7 сравниваем в основном GPU·часы (Yandex, Cloud.ru, AWS, GCP).
+Operating expenses: monthly cloud **GPU rental**, traffic, support.  
+hw-7 mainly compares GPU·hours (Yandex, Cloud.ru, AWS, GCP).
 
 ### TCO (Total Cost of Ownership)
 
-Полная стоимость владения: OpEx + люди (MLOps) + простой/квоты + риски (152-ФЗ, vendor lock-in).  
-См. также [hw-4](../hw-4/Glossary.md): TCO — аргумент, когда self-hosted начинает выигрывать у SaaS при росте RPM.
+Total cost of ownership: OpEx + people (MLOps) + downtime/quotas + risks (152-FZ, vendor lock-in).  
+See also [hw-4](../hw-4/Glossary.md): TCO is the argument for when self-hosted starts to beat SaaS as RPM grows.
 
-### On-demand (в облаке)
+### On-demand (in the Cloud)
 
-Оплата GPU **по факту использования** без долгосрочного reserved/CUD. Удобно для оценки в ДЗ; в проде часто дешевле Reserved / Spot / CUD при стабильной нагрузке.
+Paying for GPUs **by actual usage** without long-term reserved/CUD. Convenient for estimates in the assignment; in prod, Reserved / Spot / CUD are often cheaper under stable load.
 
 ---
 
-## Быстрый указатель
+## Quick Index
 
-| Термин | Одной фразой |
+| Term | In one phrase |
 | ------ | ------------ |
-| VRAM | Память GPU: веса + KV + overhead |
-| FP16 | 2 B/param → ~140 GB весов у 70B |
-| INT4 | ~0.5 B/param → ~35 GB весов |
-| KV Cache | Кэш attention; растёт с длиной и concurrent |
-| GQA | Меньше KV heads → компактнее cache |
-| TP | Одна модель на нескольких GPU |
-| RPM / RPS | 1000/мин ≈ 16.7/сек |
-| Batching | Несколько запросов → выше util |
-| vLLM | Serving с PagedAttention |
-| AWQ/GPTQ | INT4 для продакшен-инференса |
-| OpEx / TCO | Аренда GPU / полная стоимость |
+| VRAM | GPU memory: weights + KV + overhead |
+| FP16 | 2 B/param → ~140 GB of weights for 70B |
+| INT4 | ~0.5 B/param → ~35 GB of weights |
+| KV Cache | Attention cache; grows with length and concurrency |
+| GQA | Fewer KV heads → more compact cache |
+| TP | One model on several GPUs |
+| RPM / RPS | 1000/min ≈ 16.7/sec |
+| Batching | Several requests → higher utilization |
+| vLLM | Serving with PagedAttention |
+| AWQ/GPTQ | INT4 for production inference |
+| OpEx / TCO | GPU rental / total cost |
 | A100 / L4 / T4 | 80·40 / 24 / 16 GB VRAM |

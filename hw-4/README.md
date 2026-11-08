@@ -1,64 +1,64 @@
-# Домашнее задание hw-4 — RetailPartnerX
+# Assignment hw-4 — RetailPartnerX
 
-**Фиксация архитектурных решений (ADR) и подготовка к защите**
+**Recording architecture decisions (ADR) and preparing to defend them**
 
-> **Сокращения:** [Глоссарий](Glossary.md) · **Артефакты:** [docs/](docs/)
+> **Abbreviations:** [Glossary](Glossary.md) · **Artifacts:** [docs/](docs/)
 
-## Цель
+## Goal
 
-Зафиксировать архитектурное решение о выборе способа хостинга LLM (SaaS vs Self-hosted) в формате ADR для обоснования перед техническим руководством (CTO).
+Record the architecture decision on how to host the LLM (SaaS vs Self-hosted) in ADR format to justify it to technical leadership (CTO).
 
-## Контекст и преемственность
+## Context and Continuity
 
-| ДЗ                                            | Артефакт                       | Связь с hw-4                                              |
+| Assignment | Artifact | Link to hw-4 |
 | --------------------------------------------- | ------------------------------ | --------------------------------------------------------- |
-| [hw-1](../hw-1/RetailPartnerX_AI_Strategy.md) | AI-стратегия рекомендаций      | Риски R6 (ПДн), R7 (vendor lock-in), R8 (галлюцинации)    |
-| [hw-2](../hw-2/diagrams/README.md)            | C4, Sequence, OpenAPI          | LLM Client в AI Service, p95 latency / NFR                |
-| [hw-3](../hw-3/README.md)                     | Мультиагентный RAG-ассистент   | Чат-помощник зависит от LLM; нужен выбор модели/хостинга  |
+| [hw-1](../hw-1/RetailPartnerX_AI_Strategy.md) | AI recommendation strategy | Risks R6 (personal data), R7 (vendor lock-in), R8 (hallucinations) |
+| [hw-2](../hw-2/diagrams/README.md) | C4, Sequence, OpenAPI | LLM Client in the AI Service, p95 latency / NFR |
+| [hw-3](../hw-3/README.md) | Multi-agent RAG assistant | The chat assistant depends on the LLM; a model/hosting choice is needed |
 
-**Задача:** для RetailPartnerX (персональный шопинг-ассистент в чате приложения) выбрать, где хостить LLM: проприетарная облачная модель (SaaS, напр. GPT) или Open-Source модель (напр. Llama 3) на своих серверах (Self-hosted).
+**Task:** for RetailPartnerX (a personal shopping assistant in the app chat), choose where to host the LLM: a proprietary cloud model (SaaS, e.g. GPT) or an open-source model (e.g. Llama 3) on our own servers (Self-hosted).
 
-Тема заменяет абстрактный шаблон «любой проект», сохраняя структуру ДЗ (анализ → ADR → pitch).
+The topic replaces the abstract "any project" template while keeping the assignment structure (analysis → ADR → pitch).
 
-## Шаги выполнения (артефакты решения)
+## Steps (Solution Artifacts)
 
-| Шаг ДЗ              | Документ / файл                                                                 |
+| Assignment step | Document / file |
 | ------------------- | ------------------------------------------------------------------------------- |
-| 1. Анализ критериев | [docs/llm-hosting-comparison.md](docs/llm-hosting-comparison.md) — Стоимость, Privacy, Качество, Latency, Поддержка |
-| 2. Решение + ADR    | [docs/adr-001-llm-hosting.md](docs/adr-001-llm-hosting.md) — Title, Status, Context, Decision, Consequences (Pros/Cons) |
-| 3. Pitch для CTO    | [docs/cto-pitch.md](docs/cto-pitch.md) — 1 абзац, почему решение верно в текущих условиях |
+| 1. Criteria analysis | [docs/llm-hosting-comparison.md](docs/llm-hosting-comparison.md) — Cost, Privacy, Quality, Latency, Support |
+| 2. Decision + ADR | [docs/adr-001-llm-hosting.md](docs/adr-001-llm-hosting.md) — Title, Status, Context, Decision, Consequences (Pros/Cons) |
+| 3. CTO pitch | [docs/cto-pitch.md](docs/cto-pitch.md) — 1 paragraph on why the decision is right under current conditions |
 
-## Формат сдачи
+## Submission Format
 
-| Артефакт                         | Путь                                                                   |
+| Artifact | Path |
 | -------------------------------- | ---------------------------------------------------------------------- |
-| Сравнение SaaS vs Self-hosted    | [docs/llm-hosting-comparison.md](docs/llm-hosting-comparison.md)       |
+| SaaS vs Self-hosted comparison | [docs/llm-hosting-comparison.md](docs/llm-hosting-comparison.md) |
 | ADR (Markdown)                   | [docs/adr-001-llm-hosting.md](docs/adr-001-llm-hosting.md)             |
-| Pitch для CTO                    | [docs/cto-pitch.md](docs/cto-pitch.md)                                 |
+| CTO pitch | [docs/cto-pitch.md](docs/cto-pitch.md) |
 
-Шаблоны ADR: [architecture-decision-record](https://github.com/architecture-decision-record/architecture-decision-record) · [MADR](https://adr.github.io/madr/).
+ADR templates: [architecture-decision-record](https://github.com/architecture-decision-record/architecture-decision-record) · [MADR](https://adr.github.io/madr/).
 
-## Критерии самопроверки
+## Self-Check Criteria
 
-| Критерий      | Как закрыто                                                                                          |
+| Criterion | How it is met |
 | ------------- | ---------------------------------------------------------------------------------------------------- |
-| Структура ADR | Стандартный формат: Title, Status, Context, Decision, Consequences — [docs/adr-001-llm-hosting.md](docs/adr-001-llm-hosting.md) |
-| Аргументация  | Выбор обоснован фактами (таблица критериев) — [docs/llm-hosting-comparison.md](docs/llm-hosting-comparison.md) |
-| Честность     | В Consequences указаны минусы и trade-offs принятого решения                                         |
+| ADR structure | Standard format: Title, Status, Context, Decision, Consequences — [docs/adr-001-llm-hosting.md](docs/adr-001-llm-hosting.md) |
+| Reasoning | The choice is backed by facts (criteria table) — [docs/llm-hosting-comparison.md](docs/llm-hosting-comparison.md) |
+| Honesty | Consequences list the downsides and trade-offs of the decision |
 
-Статус «Принято», если все три критерия выполнены.
+Status "Accepted" if all three criteria are met.
 
-## Полезные материалы
+## Useful Materials
 
-| Материал                                                                                         | Описание                                      |
+| Material | Description |
 | ------------------------------------------------------------------------------------------------ | --------------------------------------------- |
-| [Architecture Decision Record](https://github.com/architecture-decision-record/architecture-decision-record) | Обзор практики ADR                  |
-| [MADR](https://adr.github.io/madr/)                                                              | Markdown-шаблон Architectural Decision Records |
-| [Cloud vs On-prem LLM costs (a16z)](https://a16z.com/navigating-the-high-cost-of-ai-compute/)     | Стоимость облака vs on-prem compute            |
+| [Architecture Decision Record](https://github.com/architecture-decision-record/architecture-decision-record) | Overview of the ADR practice |
+| [MADR](https://adr.github.io/madr/) | Markdown template for Architectural Decision Records |
+| [Cloud vs On-prem LLM costs (a16z)](https://a16z.com/navigating-the-high-cost-of-ai-compute/) | Cloud vs on-prem compute costs |
 
-## Компетенции
+## Competencies
 
-Разрабатывать, документировать и верифицировать архитектуру AI-решений на различных уровнях детализации:
+Develop, document and verify the architecture of AI solutions at different levels of detail:
 
-- составлять Architecture Decision Records (ADR) для обоснования ключевых архитектурных решений;
-- аргументированно защищать архитектурные решения (самопроверка / подготовка к ревью).
+- write Architecture Decision Records (ADRs) to justify key architecture decisions;
+- defend architecture decisions with reasoned arguments (self-check / review preparation).

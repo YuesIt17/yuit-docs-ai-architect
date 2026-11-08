@@ -1,140 +1,140 @@
-# Саммари для собеседования — Solution Architect (AI / Retail)
+# Interview Summary — Solution Architect (AI / Retail)
 
-> Краткая шпаргалка по кейсу **RetailPartnerX** (hw-1 + hw-2). Полные артефакты: [hw-1](../hw-1/RetailPartnerX_AI_Strategy.md), [hw-2](../hw-2/README.md).  
-> Общие темы архитектуры: [ARCHITECTURE-INTERVIEW-CHEATSHEET.md](ARCHITECTURE-INTERVIEW-CHEATSHEET.md).
-
----
-
-## 30 секунд — кто я и о чём кейс
-
-Архитектор решений в интеграторе. Клиент — FMCG-ритейлер, хочет персональные рекомендации «как у Tesco / X5», без KPI и границ данных. Моя задача: **снять неопределённость**, выбрать **контракт по этапам**, закрыть **AI-риски** и дать **архитектуру + API** для интеграции.
+> A short cheat sheet on the **RetailPartnerX** case (hw-1 + hw-2). Full artifacts: [hw-1](../hw-1/RetailPartnerX_AI_Strategy.md), [hw-2](../hw-2/README.md).  
+> General architecture topics: [ARCHITECTURE-INTERVIEW-CHEATSHEET.md](ARCHITECTURE-INTERVIEW-CHEATSHEET.md).
 
 ---
 
-## Контекст заказчика
+## 30 Seconds — Who I Am and What the Case Is About
+
+Solution architect at an integrator. The client is an FMCG retailer that wants personal recommendations "like Tesco / X5", without KPIs or data boundaries. My task: **remove uncertainty**, choose a **stage-by-stage contract**, cover **AI risks** and deliver the **architecture + API** for integration.
+
+---
+
+## Client Context
 
 | | |
 |--|--|
-| **Бизнес** | Международный grocery / FMCG, omnichannel |
-| **Цель** | Персонализированные рекомендации SKU |
-| **Проблема** | Размытые требования, нет метрик успеха, неизвестно качество данных |
-| **Внешний контур** | PIM (каталог), CDP/CRM (события), лояльность (customer ID) |
-| **Регуляторика** | GDPR, 152-ФЗ, согласия на ПДн |
+| **Business** | International grocery / FMCG, omnichannel |
+| **Goal** | Personalized SKU recommendations |
+| **Problem** | Vague requirements, no success metrics, unknown data quality |
+| **External landscape** | PIM (catalog), CDP/CRM (events), loyalty (customer ID) |
+| **Regulation** | GDPR, 152-FZ, consent for personal data |
 
 ---
 
-## Мой подход (3 опоры)
+## My Approach (3 Pillars)
 
-1. **Discovery** — 5–7 вопросов клиенту (KPI, каналы, данные, cold start, системы, NFR, governance).
-2. **Поэтапная поставка** — PoC → MVP → Production (~10 мес.), измеримый DoD на каждом этапе.
-3. **Контракт под риск** — не чистый FP на старте; гибрид после проверки гипотезы.
+1. **Discovery** — 5–7 questions for the client (KPIs, channels, data, cold start, systems, NFR, governance).
+2. **Staged delivery** — PoC → MVP → Production (~10 months), a measurable DoD at each stage.
+3. **Contract matched to risk** — not pure FP at the start; a hybrid after the hypothesis is tested.
 
 ---
 
-## Контрактная модель (что сказать на собесе)
+## Contract Model (What to Say in an Interview)
 
-| Этап | Модель | Почему |
+| Stage | Model | Why |
 |------|--------|--------|
-| **PoC** (4–6 нед.) | **T&M with cap** | Высокая неопределённость; платим за проверку гипотезы, не за «чёрный ящик» |
-| **MVP** | **Гибрид:** FP на интеграцию/UI + T&M на ML/данные | Предсказуемость «коробки», гибкость там, где идут итерации модели |
-| **Production** | Рамочный **FP + SLA + ретейнер** | MLOps, retrain, масштаб |
+| **PoC** (4–6 weeks) | **T&M with cap** | High uncertainty; we pay for testing a hypothesis, not for a "black box" |
+| **MVP** | **Hybrid:** FP for integration/UI + T&M for ML/data | Predictability for the "boxed" part, flexibility where the model iterates |
+| **Production** | Framework **FP + SLA + retainer** | MLOps, retrain, scale |
 
-**CR-триггеры (примеры):** новый источник событий, смена KPI, >2 touchpoints, рост каталога >30%, ужесточение latency >20%.
+**CR triggers (examples):** a new event source, a KPI change, >2 touchpoints, catalog growth >30%, latency tightened by >20%.
 
 ---
 
-## Roadmap и DoD (коротко)
+## Roadmap and DoD (Brief)
 
-| Веха | Срок | Успех (DoD) |
+| Milestone | Timing | Success (DoD) |
 |------|------|-------------|
-| Discovery | нед. 0–2 | Charter PoC, матрица ответов |
-| PoC | нед. 3–8 | Offline-метрики (NDCG@10, HitRate@10) vs baseline → **go/no-go** |
-| MVP | мес. 3–6 | 1 канал в prod, A/B или shadow, мониторинг KPI |
-| Production | мес. 7–10 | Все touchpoints, MLOps, SLO (latency, uptime) |
+| Discovery | wk 0–2 | PoC charter, answer matrix |
+| PoC | wk 3–8 | Offline metrics (NDCG@10, HitRate@10) vs baseline → **go/no-go** |
+| MVP | mo 3–6 | 1 channel in prod, A/B or shadow, KPI monitoring |
+| Production | mo 7–10 | All touchpoints, MLOps, SLO (latency, uptime) |
 
-**MVP-сценарий в архитектуре:** блок «С этим покупают» на **карточке товара**.
+**MVP scenario in the architecture:** the "Frequently bought together" block on the **product page**.
 
 ---
 
-## Архитектура (hw-2)
+## Architecture (hw-2)
 
-### C2 — контейнеры
+### C2 — Containers
 
-`Покупатель` → **Frontend** → **Backend (BFF)** → **AI Service**  
-Параллельно: Backend ↔ **SQL DB**, AI Service ↔ **SQL** + **Redis**; каталог из **PIM**; **Vector DB** — опционально / future RAG.
+`Customer` → **Frontend** → **Backend (BFF)** → **AI Service**  
+In parallel: Backend ↔ **SQL DB**, AI Service ↔ **SQL** + **Redis**; catalog from **PIM**; **Vector DB** — optional / future RAG.
 
-### C3 — AI Service (MVP = recsys, не RAG)
+### C3 — AI Service (MVP = recsys, Not RAG)
 
-Цепочка синхронного запроса:
+The synchronous request chain:
 
-`Controller` → `Router` → `Loader` → `Ranker` → `Builder` → ответ  
-Данные: **Redis** (кэш кандидатов), **SQL** (история).
+`Controller` → `Router` → `Loader` → `Ranker` → `Builder` → response  
+Data: **Redis** (candidate cache), **SQL** (history).
 
-**Future (Prod):** отдельная C3 с RAG Manager, LLM Client, Prompt Factory, Vector DB — **не в MVP Sequence/API**.
+**Future (Prod):** a separate C3 with RAG Manager, LLM Client, Prompt Factory, Vector DB — **not in the MVP Sequence/API**.
 
 ### API
 
 `POST /get_recommendation` — Backend → AI Service  
-Тело: `user_id`, `context` (product_page / checkout), `product_id`, `limit`  
-Целевой **p95 latency ~250 ms**; коды 400 / 404 / 503 / 500.
+Body: `user_id`, `context` (product_page / checkout), `product_id`, `limit`  
+Target **p95 latency ~250 ms**; codes 400 / 404 / 503 / 500.
 
 ---
 
-## Топ-риски AI (что помню без шпаргалки)
+## Top AI Risks (What I Remember Without Notes)
 
-| Риск | Митигация |
+| Risk | Mitigation |
 |------|-----------|
-| Плохие/неполные события | Data audit в PoC, единый customer ID |
+| Poor/incomplete events | Data audit in the PoC, unified customer ID |
 | Cold start (user/SKU) | Popularity + content-based fallback |
-| Drift модели | Мониторинг offline/online, регламент retrain |
-| Нерелевантные рекомендации | Blocklists, фильтры, human-in-the-loop на пилоте |
-| Latency в пик | Кэш Redis, autoscaling, нагрузочные тесты |
-| Compliance (GDPR/152-ФЗ) | Privacy review, минимизация ПДн, DPIA |
-| GenAI (future) | Guardrails, без автопубликации, абстракция провайдера |
+| Model drift | Offline/online monitoring, retrain procedure |
+| Irrelevant recommendations | Blocklists, filters, human-in-the-loop in the pilot |
+| Latency at peak | Redis cache, autoscaling, load tests |
+| Compliance (GDPR/152-FZ) | Privacy review, personal data minimization, DPIA |
+| GenAI (future) | Guardrails, no auto-publishing, provider abstraction |
 
 ---
 
-## Вопросы, которые я задам интервьюеру / заказчику
+## Questions I Will Ask the Interviewer / Client
 
-- Какой **primary KPI** закрывает PoC? (CTR, конверсия, AOV, доля выручки с блока)
-- Где **первый touchpoint** в MVP — только карточка или ещё корзина/push?
-- Есть ли **единый ID** между online и offline?
-- Какие **NFR**: p95 latency, SLA, explainability?
-- Кто **владелец продукта** и как принимаем A/B?
-
----
-
-## Типичные вопросы на собесе — короткие ответы
-
-**Почему не FP с первого дня?**  
-Нет зафиксированных KPI, не проверены данные и алгоритм — FP приведёт к CR-войнам.
-
-**Почему recsys в MVP, а не LLM/RAG?**  
-Меньше риск (галлюцинации, latency, стоимость); ценность FMCG-recsys доказывается классическим ранжированием; RAG — этап Prod при явном use case.
-
-**Как Backend не зависит от ML-деталей?**  
-Контракт OpenAPI + BFF; внутри AI Service — сменяемые Loader/Ranker без смены API.
-
-**Что в PoC go/no-go?**  
-Offline-метрики на hold-out ≥ baseline **или** явный no-go с причинами (данные, coverage).
+- Which **primary KPI** closes the PoC? (CTR, conversion, AOV, share of revenue from the block)
+- Where is the **first touchpoint** in the MVP — only the product page, or also cart/push?
+- Is there a **unified ID** between online and offline?
+- Which **NFRs**: p95 latency, SLA, explainability?
+- Who is the **product owner** and how do we accept A/B results?
 
 ---
 
-## Артефакты в репозитории
+## Typical Interview Questions — Short Answers
 
-| Что | Где |
+**Why not FP from day one?**  
+There are no fixed KPIs, and the data and algorithm are unverified — FP would lead to CR wars.
+
+**Why recsys in the MVP and not LLM/RAG?**  
+Lower risk (hallucinations, latency, cost); the value of FMCG recsys is proven by classic ranking; RAG is a Prod stage with an explicit use case.
+
+**How is the Backend independent of ML details?**  
+OpenAPI contract + BFF; inside the AI Service, Loader/Ranker are replaceable without changing the API.
+
+**What is the PoC go/no-go?**  
+Offline metrics on a hold-out ≥ baseline **or** an explicit no-go with reasons (data, coverage).
+
+---
+
+## Artifacts in the Repository
+
+| What | Where |
 |-----|-----|
-| Стратегия, контракт, риски, roadmap | [hw-1/RetailPartnerX_AI_Strategy.md](../hw-1/RetailPartnerX_AI_Strategy.md) |
+| Strategy, contract, risks, roadmap | [hw-1/RetailPartnerX_AI_Strategy.md](../hw-1/RetailPartnerX_AI_Strategy.md) |
 | C4 + Sequence (Draw.io) | [hw-2/diagrams/](../hw-2/diagrams/) |
 | OpenAPI | [hw-2/openapi/recommendation-api.yaml](../hw-2/openapi/recommendation-api.yaml) |
-| Термины (C4, NFR, метрики) | [hw-2/Glossary.md](../hw-2/Glossary.md) |
-| HTML-презентация кейса | [GitHub Pages](https://yuesit17.github.io/yuit-docs-ai-architect/portfolio/) |
+| Terms (C4, NFR, metrics) | [hw-2/Glossary.md](../hw-2/Glossary.md) |
+| HTML presentation of the case | [GitHub Pages](https://yuesit17.github.io/yuit-docs-ai-architect/portfolio/) |
 
 ---
 
-## Перед встречей (чеклист)
+## Before the Meeting (Checklist)
 
-- [ ] Проговорить вслух: контракт PoC/MVP/Prod + один риск с митигацией  
-- [ ] Нарисовать на доске C2 (5 контейнеров) и путь запроса до Ranker  
-- [ ] Вспомнить один вопрос клиенту и один CR-триггер  
-- [ ] Открыть Sequence + фрагмент OpenAPI на случай deep-dive
+- [ ] Say out loud: PoC/MVP/Prod contract + one risk with its mitigation  
+- [ ] Draw C2 on a whiteboard (5 containers) and the request path to the Ranker  
+- [ ] Recall one question for the client and one CR trigger  
+- [ ] Open the Sequence + an OpenAPI fragment in case of a deep dive

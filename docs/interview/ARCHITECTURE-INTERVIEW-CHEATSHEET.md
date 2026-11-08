@@ -1,200 +1,200 @@
-# Шпаргалка — общие вопросы по архитектуре
+# Cheat Sheet — General Architecture Questions
 
-> Универсальные темы для собеседования **Solution / Enterprise Architect**. Кейс RetailPartnerX: [INTERVIEW-SUMMARY.md](INTERVIEW-SUMMARY.md).
+> Universal interview topics for a **Solution / Enterprise Architect**. RetailPartnerX case: [INTERVIEW-SUMMARY.md](INTERVIEW-SUMMARY.md).
 
 ---
 
-## Роль архитектора решений
+## The Solution Architect Role
 
-| Делает | Не делает (обычно) |
+| Does | Does not do (usually) |
 |--------|---------------------|
-| Связывает бизнес-цели и техническое решение | Пишет весь код продукта |
-| Фиксирует границы систем, NFR, риски | Подменяет product owner в приоритизации фич |
-| Выбирает стиль интеграции, контракты API | Выбирает за заказчика бюджет без trade-off |
-| Документирует решения (C4, ADR) | «Серебряная пуля» без контекста |
+| Connects business goals and the technical solution | Write all the product code |
+| Defines system boundaries, NFRs, risks | Replace the product owner in feature prioritization |
+| Chooses the integration style and API contracts | Choose the client's budget without a trade-off |
+| Documents decisions (C4, ADR) | Offer a "silver bullet" without context |
 
-**Формула ответа:** контекст → ограничения → варианты → trade-off → рекомендация → риски.
+**Answer formula:** context → constraints → options → trade-off → recommendation → risks.
 
 ---
 
-## C4 Model (уровни)
+## C4 Model (Levels)
 
-| Уровень | Вопрос | Аудитория |
+| Level | Question | Audience |
 |---------|--------|-----------|
-| **C1 Context** | С кем система взаимодействует снаружи? | Бизнес, стейкхолдеры |
-| **C2 Container** | Из каких deployable-частей состоит? | Разработка, DevOps |
-| **C3 Component** | Как устроен один контейнер внутри? | Команда сервиса |
-| **C4 Code** | Классы/модули (редко на собесе) | Разработчики |
+| **C1 Context** | Who does the system interact with outside? | Business, stakeholders |
+| **C2 Container** | Which deployable parts does it consist of? | Development, DevOps |
+| **C3 Component** | How does one container work inside? | Service team |
+| **C4 Code** | Classes/modules (rare in interviews) | Developers |
 
-**Sequence** — один сценарий во времени; **Deployment** — где что крутится (K8s, регионы).
+**Sequence** — one scenario over time; **Deployment** — what runs where (K8s, regions).
 
 ---
 
-## NFR — нефункциональные требования
+## NFR — Non-Functional Requirements
 
-Всегда уточняй **метрику и SLO**, не «должно быть быстро».
+Always clarify the **metric and SLO**, not "it should be fast".
 
-| Атрибут | Примеры метрик | Рычаги |
+| Attribute | Example metrics | Levers |
 |---------|----------------|--------|
-| **Производительность** | p95 latency, RPS, throughput | Кэш, индексы, async, CDN |
-| **Масштабируемость** | Горизонтальное масштабирование под нагрузкой | Stateless, очереди, шардирование |
-| **Доступность** | Uptime %, MTTR, RTO/RPO | Реплики, health checks, DR |
-| **Надёжность** | Error rate, идемпотентность | Retry с backoff, circuit breaker |
-| **Безопасность** | OWASP, шифрование, аудит | IAM, mTLS, secrets manager |
-| **Сопровождаемость** | Time to deploy, MTTR | Observability, IaC, ADR |
-| **Стоимость** | Cost per request / TB | Right-sizing, serverless vs always-on |
+| **Performance** | p95 latency, RPS, throughput | Cache, indexes, async, CDN |
+| **Scalability** | Horizontal scaling under load | Stateless, queues, sharding |
+| **Availability** | Uptime %, MTTR, RTO/RPO | Replicas, health checks, DR |
+| **Reliability** | Error rate, idempotency | Retry with backoff, circuit breaker |
+| **Security** | OWASP, encryption, audit | IAM, mTLS, secrets manager |
+| **Maintainability** | Time to deploy, MTTR | Observability, IaC, ADR |
+| **Cost** | Cost per request / TB | Right-sizing, serverless vs always-on |
 
-**SLA** — обещание клиенту; **SLO** — внутренняя цель; **SLI** — измеряемый индикатор.
+**SLA** — a promise to the client; **SLO** — an internal target; **SLI** — the measured indicator.
 
 ---
 
-## Монолит vs микросервисы
+## Monolith vs Microservices
 
-| | Монолит / modular monolith | Микросервисы |
+| | Monolith / modular monolith | Microservices |
 |--|---------------------------|--------------|
-| **Когда** | MVP, малый домен, одна команда | Несколько команд, независимые релизы, разный масштаб |
-| **Плюсы** | Простой деплой, транзакции, отладка | Изоляция сбоев, масштаб по сервису |
-| **Минусы** | Рост кодовой базы, coupling | Сеть, распределённые транзакции, observability |
-| **На собесе** | «Начну с чётких модулей; выделю сервис, когда боль от границы > боль от сети» | |
+| **When** | MVP, small domain, one team | Several teams, independent releases, different scale |
+| **Pros** | Simple deployment, transactions, debugging | Failure isolation, per-service scaling |
+| **Cons** | Codebase growth, coupling | Network, distributed transactions, observability |
+| **In an interview** | "I will start with clear modules and extract a service when the pain of the boundary exceeds the pain of the network" | |
 
-**Modular monolith** — один деплой, жёсткие границы модулей (частый разумный ответ для MVP).
+**Modular monolith** — one deployment with strict module boundaries (often a sensible answer for an MVP).
 
 ---
 
-## Синхрон vs асинхрон
+## Synchronous vs Asynchronous
 
-| Синхрон (REST/gRPC) | Асинхрон (очередь, event bus) |
+| Synchronous (REST/gRPC) | Asynchronous (queue, event bus) |
 |---------------------|-------------------------------|
-| Нужен ответ сразу (UI, чекаут) | Допустима задержка (аналитика, retrain, email) |
-| Проще для клиента | Слабая связанность, буфер пиков |
-| Каскадные сбои при цепочке | Сложнее: идемпотентность, ordering, DLQ |
+| An immediate response is needed (UI, checkout) | Delay is acceptable (analytics, retrain, email) |
+| Simpler for the client | Loose coupling, buffers peaks |
+| Cascading failures along a chain | Harder: idempotency, ordering, DLQ |
 
-**Паттерн:** sync на критическом пути пользователя + async для всего остального.
+**Pattern:** sync on the critical user path + async for everything else.
 
 ---
 
-## API и интеграции
+## APIs and Integrations
 
-| Тема | Коротко |
+| Topic | In short |
 |------|---------|
-| **REST** | Ресурсы, HTTP-глаголы, коды ошибок, версионирование (`/v1`) |
-| **Контракт** | OpenAPI — источник правды для Backend ↔ сервис |
-| **Идемпотентность** | Повтор POST не дублирует эффект (`Idempotency-Key`) |
-| **Версионирование** | URL или header; breaking change → новая major |
-| **BFF** | Backend for Frontend — агрегирует вызовы под UI |
-| **Anti-corruption layer** | Адаптер между вашей моделью и legacy/PIM |
+| **REST** | Resources, HTTP verbs, error codes, versioning (`/v1`) |
+| **Contract** | OpenAPI is the source of truth for Backend ↔ service |
+| **Idempotency** | A repeated POST does not duplicate the effect (`Idempotency-Key`) |
+| **Versioning** | URL or header; breaking change → new major version |
+| **BFF** | Backend for Frontend — aggregates calls for the UI |
+| **Anti-corruption layer** | An adapter between your model and legacy/PIM |
 
-**Интеграции:** API (online), события (реактивно), batch/ETL (отчёты, ML offline).
+**Integrations:** API (online), events (reactive), batch/ETL (reports, offline ML).
 
 ---
 
-## Данные
+## Data
 
-| Вопрос | Направление ответа |
+| Question | Direction of the answer |
 |--------|-------------------|
-| SQL vs NoSQL | SQL — транзакции, связи; NoSQL — гибкая схема, огромный объём, KV/document |
-| Кэш | Redis: hot data, сессии, кэш рекомендаций; TTL + инвалидация |
-| CQRS | Разделение read/write моделей при разной нагрузке |
-| Event sourcing | История как поток событий (сложно, не «по умолчанию») |
-| CAP | В распределённой системе нельзя одновременно всё; выбираем CP или AP под сценарий |
-| ACID vs BASE | Банк/заказ — ACID; высокая доступность аналитики — eventual consistency |
+| SQL vs NoSQL | SQL — transactions, relations; NoSQL — flexible schema, huge volume, KV/document |
+| Cache | Redis: hot data, sessions, recommendation cache; TTL + invalidation |
+| CQRS | Separate read/write models under different loads |
+| Event sourcing | History as a stream of events (complex, not a default) |
+| CAP | A distributed system cannot have everything at once; choose CP or AP per scenario |
+| ACID vs BASE | Bank/order — ACID; highly available analytics — eventual consistency |
 
 ---
 
-## Надёжность и отказоустойчивость
+## Reliability and Fault Tolerance
 
-| Паттерн | Суть |
+| Pattern | Essence |
 |---------|------|
-| **Timeout** | Не ждать вечно зависший вызов |
-| **Retry** | Только на идемпотентных / с лимитом |
-| **Circuit breaker** | Быстрый fail при деградации зависимости |
-| **Bulkhead** | Изоляция пулов (не уронить всё из-за одного сервиса) |
-| **Graceful degradation** | Без рекомендаций — показать популярное, не 500 |
-| **Health check** | Liveness / readiness для оркестратора |
+| **Timeout** | Do not wait forever on a hung call |
+| **Retry** | Only on idempotent calls / with a limit |
+| **Circuit breaker** | Fail fast when a dependency degrades |
+| **Bulkhead** | Pool isolation (one service must not bring everything down) |
+| **Graceful degradation** | No recommendations — show popular items, not a 500 |
+| **Health check** | Liveness / readiness for the orchestrator |
 
 ---
 
-## Безопасность (базовый уровень)
+## Security (Basics)
 
-- **Authentication** — кто ты (OAuth2, OIDC, JWT).
-- **Authorization** — что тебе можно (RBAC, ABAC).
-- **Secrets** — не в коде; vault / env в runtime.
-- **ПДн** — минимизация, шифрование at rest / in transit, согласия, срок хранения.
-- **Defense in depth** — периметр + сеть + приложение + аудит.
+- **Authentication** — who you are (OAuth2, OIDC, JWT).
+- **Authorization** — what you may do (RBAC, ABAC).
+- **Secrets** — not in the code; vault / env at runtime.
+- **Personal data** — minimization, encryption at rest / in transit, consent, retention period.
+- **Defense in depth** — perimeter + network + application + audit.
 
 ---
 
 ## Observability
 
-| Столп | Зачем |
+| Pillar | Why |
 |-------|-------|
-| **Logs** | Разбор инцидента post-factum |
-| **Metrics** | Алерты, SLO, дашборды |
-| **Traces** | Цепочка запроса через микросервисы |
+| **Logs** | Post-factum incident analysis |
+| **Metrics** | Alerts, SLOs, dashboards |
+| **Traces** | The request chain across microservices |
 
-**Три вопроса при инциденте:** что сломалось → когда → что изменилось (деплой, конфиг, нагрузка).
+**Three questions in an incident:** what broke → when → what changed (deployment, config, load).
 
 ---
 
 ## ADR — Architecture Decision Record
 
-Короткий шаблон (1 страница на решение):
+A short template (1 page per decision):
 
-1. **Контекст** — какая проблема  
-2. **Решение** — что выбрали  
-3. **Альтернативы** — что отвергли  
-4. **Последствия** — плюсы, минусы, долг  
+1. **Context** — what the problem is  
+2. **Decision** — what we chose  
+3. **Alternatives** — what we rejected  
+4. **Consequences** — pros, cons, debt  
 
-Показывает зрелость: решения осознанные, а не «так принято».
-
----
-
-## Типичные вопросы на собесе — шаблоны ответов
-
-**Как проектируете систему с нуля?**  
-Stakeholders → use cases → NFR → C1/C2 → критический путь → PoC рисковых зон → API/данные → roadmap.
-
-**Как выбираете между X и Y?**  
-Критерии из NFR и команды → 2–3 варианта → таблица trade-off → решение + что пересмотрим через N месяцев.
-
-**Как обеспечиваете масштабирование?**  
-Сначала измерить bottleneck; stateless app; кэш; read replicas; async; только потом шардирование.
-
-**Как мигрируете legacy?**  
-Strangler fig — новый контур вокруг старого; по доменам; dual write / read только когда нужно.
-
-**Что такое хорошая архитектура?**  
-Решает бизнес-задачу в рамках ограничений; изменяемая; наблюдаемая; команда может поддерживать.
-
-**Где AI в архитектуре?**  
-Отдельный сервис с контрактом; offline train / online inference; мониторинг drift; fallback без модели; compliance на ПДн.
+It shows maturity: decisions are deliberate, not "that's how it's done".
 
 ---
 
-## Анти-паттерны (уместно назвать)
+## Typical Interview Questions — Answer Templates
 
-- **Big ball of mud** — нет границ модулей  
-- **Distributed monolith** — микросервисы с жёсткой связностью и общей БД  
-- **Resume-driven architecture** — Kafka/K8s «потому что модно»  
-- **Golden hammer** — один стек на всё  
-- **Архитектура без NFR** — «нарисовали красивые кубики»
+**How do you design a system from scratch?**  
+Stakeholders → use cases → NFR → C1/C2 → critical path → PoC of risky areas → API/data → roadmap.
+
+**How do you choose between X and Y?**  
+Criteria from the NFRs and the team → 2–3 options → trade-off table → decision + what we will revisit in N months.
+
+**How do you ensure scalability?**  
+Measure the bottleneck first; stateless app; cache; read replicas; async; only then sharding.
+
+**How do you migrate legacy?**  
+Strangler fig — a new layer around the old one; domain by domain; dual write / read only when needed.
+
+**What is good architecture?**  
+It solves the business problem within the constraints; it is changeable and observable; the team can maintain it.
+
+**Where does AI fit in the architecture?**  
+A separate service with a contract; offline training / online inference; drift monitoring; a fallback without the model; compliance for personal data.
 
 ---
 
-## Красные флаги требований (что спросить)
+## Anti-Patterns (Worth Naming)
 
-- Нет KPI / Definition of Done  
-- «Как у Amazon» без объёма и бюджета  
-- Все NFR одновременно максимальные (быстро, дёшево, 100% uptime)  
-- Неясный владелец данных и интеграций  
-- FP-контракт при высокой неопределённости  
+- **Big ball of mud** — no module boundaries  
+- **Distributed monolith** — microservices with tight coupling and a shared DB  
+- **Resume-driven architecture** — Kafka/K8s "because it's trendy"  
+- **Golden hammer** — one stack for everything  
+- **Architecture without NFRs** — "we drew some nice boxes"
 
 ---
 
-## Перед собесом (2 минуты)
+## Requirement Red Flags (What to Ask)
 
-- [ ] Один пример **trade-off** из своего опыта (даже учебного кейса)  
-- [ ] Нарисовать **C2** из памяти: клиент → UI → API → сервис → БД  
-- [ ] Назвать 3 **NFR** с метриками (latency, availability, security)  
-- [ ] Один паттерн надёжности (circuit breaker / graceful degradation)  
-- [ ] Открыть [INTERVIEW-SUMMARY.md](INTERVIEW-SUMMARY.md) — если спросят про AI-проект
+- No KPIs / Definition of Done  
+- "Like Amazon" without volume or budget  
+- All NFRs maxed out at once (fast, cheap, 100% uptime)  
+- Unclear owner of data and integrations  
+- An FP contract under high uncertainty  
+
+---
+
+## Before the Interview (2 Minutes)
+
+- [ ] One **trade-off** example from your experience (even an educational case)  
+- [ ] Draw **C2** from memory: client → UI → API → service → DB  
+- [ ] Name 3 **NFRs** with metrics (latency, availability, security)  
+- [ ] One reliability pattern (circuit breaker / graceful degradation)  
+- [ ] Open [INTERVIEW-SUMMARY.md](INTERVIEW-SUMMARY.md) — in case they ask about an AI project

@@ -1,71 +1,71 @@
 # Inference sizing — Llama-3-70B @ 1000 RPM
 
-> **RetailPartnerX** · учебный capacity / cost для self-hosted shopping assistant  
-> Краткий вывод: [recommendation.md](recommendation.md) · ADR: [hw-4](../../hw-4/docs/adr-001-llm-hosting.md)
+> **RetailPartnerX** · educational capacity / cost estimate for a self-hosted shopping assistant  
+> Short conclusion: [recommendation.md](recommendation.md) · ADR: [hw-4](../../hw-4/docs/adr-001-llm-hosting.md)
 
-## TL;DR — рекомендация
+## TL;DR — Recommendation
 
 | | |
 | --- | --- |
-| **Стек** | Llama-3-70B **INT4** (AWQ/GPTQ) + **vLLM** |
-| **Железо** | **2× NVIDIA A100 80GB** |
-| **Облако** | **Yandex Cloud** или **Cloud.ru** (~463–464k ₽/мес GPU) |
-| **Почему не GCP** | A100 80GB ~**1.5×** дороже (~704k ₽ за 2×) |
-| **Почему не AWS «в лоб»** | цена per-GPU близка, но A100 часто только **пакетом 8×** (~1.9M ₽) |
-| **Не брать** | **T4** под 70B @ 1000 RPM; FP16 — только для eval |
+| **Stack** | Llama-3-70B **INT4** (AWQ/GPTQ) + **vLLM** |
+| **Hardware** | **2× NVIDIA A100 80GB** |
+| **Cloud** | **Yandex Cloud** or **Cloud.ru** (~463–464k ₽/month GPU) |
+| **Why not GCP** | A100 80GB is ~**1.5×** more expensive (~704k ₽ for 2×) |
+| **Why not plain AWS** | The per-GPU price is close, but A100 often comes only as an **8× bundle** (~1.9M ₽) |
+| **Do not use** | **T4** for 70B @ 1000 RPM; FP16 — only for eval |
 
-## Карта решения
+## Decision Map
 
-Цепочка sizing (цифры — в таблицах ниже):
+The sizing chain (figures are in the tables below):
 
 ```mermaid
 flowchart TD
-  load["Нагрузка: 1000 RPM"] --> concurrent["Concurrent ≈ 67<br/>RPS × latency"]
+  load["Load: 1000 RPM"] --> concurrent["Concurrent ≈ 67<br/>RPS × latency"]
   concurrent --> vram["VRAM = Weights + KV + overhead"]
   vram --> prec{"Precision?"}
   prec -->|FP16 ~188 GB| fp16["≥ 3× A100 80GB"]
   prec -->|INT4 ~83 GB| int4["1–2× A100 80GB"]
   int4 --> opt{"Serving?"}
-  opt -->|naive / лишние реплики| scenB["Сценарий B: 4× A100"]
-  opt -->|vLLM + batching| scenC["Сценарий C: 2× A100"]
-  fp16 --> scenA["Сценарий A: 3× A100"]
-  scenA --> clouds["Облака: Yandex / Cloud.ru / AWS / GCP"]
+  opt -->|naive / extra replicas| scenB["Scenario B: 4× A100"]
+  opt -->|vLLM + batching| scenC["Scenario C: 2× A100"]
+  fp16 --> scenA["Scenario A: 3× A100"]
+  scenA --> clouds["Clouds: Yandex / Cloud.ru / AWS / GCP"]
   scenB --> clouds
   scenC --> clouds
-  clouds --> pick{"152-ФЗ / TCO?"}
-  pick -->|RetailPartnerX| ru["Yandex или Cloud.ru<br/>~463k ₽/мес"]
-  pick -->|multi-cloud| global["AWS per-GPU ≈ RU<br/>GCP ~1.5× дороже"]
-  ru --> done["Рекомендация: INT4 + vLLM<br/>2× A100 80GB"]
+  clouds --> pick{"152-FZ / TCO?"}
+  pick -->|RetailPartnerX| ru["Yandex or Cloud.ru<br/>~463k ₽/month"]
+  pick -->|multi-cloud| global["AWS per-GPU ≈ RU<br/>GCP ~1.5× more expensive"]
+  ru --> done["Recommendation: INT4 + vLLM<br/>2× A100 80GB"]
   global --> done
 ```
 
 ---
 
-## Содержание
+## Contents
 
-1. [Допущения](#1-допущения)
+1. [Assumptions](#1-assumptions)
 2. [VRAM](#2-vram--weights--kv-cache--overhead)
-3. [Подбор GPU](#3-подбор-gpu)
-4. [Сценарии для стоимости](#4-сценарии-для-стоимости)
-5. [Облака: прайс](#5-облака-прайс)
-6. [Стоимость сценариев](#6-стоимость-сценариев-мес)
-7. [Оптимизации](#7-оптимизации-batching--vllm)
-8. [Источники](#8-источники)
+3. [GPU Selection](#3-gpu-selection)
+4. [Cost Scenarios](#4-cost-scenarios)
+5. [Clouds: Pricing](#5-clouds-pricing)
+6. [Scenario Cost](#6-scenario-cost--month)
+7. [Optimizations](#7-optimizations-batching--vllm)
+8. [Sources](#8-sources)
 
-Цены — ориентир **авг 2026**, on-demand, **только GPU** (без дисков/egress). FX: **1 USD = 95 ₽**. Месяц = **730** ч.
+Prices are a reference for **Aug 2026**, on-demand, **GPU only** (no disks/egress). FX: **1 USD = 95 ₽**. A month = **730** h.
 
 ---
 
-## 1. Допущения
+## 1. Assumptions
 
-| Параметр | Значение | Зачем |
+| Parameter | Value | Why |
 | -------- | -------- | ----- |
-| Модель | Meta Llama-3-70B Instruct | Self-hosted из ADR-001 roadmap |
-| Нагрузка | **1000 RPM** ≈ **16.7 RPS** | Задание |
-| `seq_len` | **2048** токенов | prompt + RAG + ответ |
-| p95 latency | **~4 с** | класс NFR hw-2 |
+| Model | Meta Llama-3-70B Instruct | Self-hosted from the ADR-001 roadmap |
+| Load | **1000 RPM** ≈ **16.7 RPS** | The assignment |
+| `seq_len` | **2048** tokens | prompt + RAG + answer |
+| p95 latency | **~4 s** | hw-2 NFR class |
 | Concurrent | **≈ 67** | Little: `RPS × latency` |
-| Overhead | **5 GB** / реплика | CUDA / activations |
+| Overhead | **5 GB** / replica | CUDA / activations |
 
 **KV Cache (GQA):** `n_layers=80`, `n_kv_heads=8`, `head_dim=128`  
 → `2 × 80 × 8 × 128 × 2 B = 327 680 B` ≈ **0.3125 MB / token**
@@ -80,172 +80,172 @@ KV_GB      = (0.3125 / 1024) × seq_len × concurrent
 VRAM_GB    = Weights_GB + KV_GB + Overhead_GB
 ```
 
-### Веса
+### Weights
 
-| Precision | Байт / param | Weights |
+| Precision | Bytes / param | Weights |
 | --------- | ------------ | ------- |
 | **FP16** | 2 | **140.0 GB** |
 | **INT4** | 0.5 | **35.0 GB** |
 
-### KV при seq_len=2048, concurrent=67
+### KV at seq_len=2048, concurrent=67
 
-| Метрика | Расчёт | Итог |
+| Metric | Calculation | Result |
 | ------- | ------ | ---- |
-| На 1 запрос | 2048 × 0.3125 MB | **0.64 GB** |
-| На 67 concurrent | 67 × 0.64 | **≈ 42.9 GB** |
+| Per request | 2048 × 0.3125 MB | **0.64 GB** |
+| For 67 concurrent | 67 × 0.64 | **≈ 42.9 GB** |
 
-### Итого
+### Total
 
-| Режим | Weights | KV | Overhead | **Σ VRAM** |
+| Mode | Weights | KV | Overhead | **Σ VRAM** |
 | ----- | -------: | --: | --------: | ---------: |
 | FP16 | 140.0 | 42.9 | 5.0 | **≈ 187.9 GB** |
 | INT4 | 35.0 | 42.9 | 5.0 | **≈ 82.9 GB** |
 
-> **INT4** режет веса в **4×**, но KV при высокой concurrency остаётся крупным. PagedAttention / KV FP8 дают доп. запас (см. §7).
+> **INT4** cuts the weights by **4×**, but KV stays large at high concurrency. PagedAttention / KV FP8 give extra headroom (see §7).
 
 ---
 
-## 3. Подбор GPU
+## 3. GPU Selection
 
-| GPU | VRAM | Роль |
+| GPU | VRAM | Role |
 | --- | ---- | ---- |
-| A100 80GB | 80 GB | основной candidate |
+| A100 80GB | 80 GB | main candidate |
 | A100 40GB | 40 GB | INT4 + multi-GPU |
 | L4 | 24 GB | INT4, TP ≥ 2 |
-| T4 | 16 GB | не для 70B @ 1000 RPM |
+| T4 | 16 GB | not for 70B @ 1000 RPM |
 
-### FP16 (нужно ≈ 188 GB)
+### FP16 (≈ 188 GB Needed)
 
-| Конфиг | Σ VRAM | Статус | Комментарий |
+| Config | Σ VRAM | Status | Comment |
 | ------ | -----: | ------ | ----------- |
-| 2× A100 80GB | 160 GB | ❌ нет | не хватает ~28 GB на KV |
+| 2× A100 80GB | 160 GB | ❌ no | ~28 GB short for KV |
 | **3× A100 80GB** | 240 GB | ✅ OK | **baseline FP16** |
-| 4× A100 40GB | 160 GB | ❌ / впритык | как 2×80 |
-| L4 / T4 | — | ❌ | слишком много карт |
+| 4× A100 40GB | 160 GB | ❌ / very tight | same as 2×80 |
+| L4 / T4 | — | ❌ | too many cards |
 
-### INT4 (нужно ≈ 83 GB)
+### INT4 (≈ 83 GB Needed)
 
-| Конфиг | Σ VRAM | Статус | Комментарий |
+| Config | Σ VRAM | Status | Comment |
 | ------ | -----: | ------ | ----------- |
-| 1× A100 80GB | 80 GB | ⚠️ впритык | OK при concurrent ~55 или KV FP8 |
-| **2× A100 80GB** | 160 GB | ✅ **рекомендуем** | запас под batching |
+| 1× A100 80GB | 80 GB | ⚠️ very tight | OK at concurrent ~55 or with KV FP8 |
+| **2× A100 80GB** | 160 GB | ✅ **recommended** | headroom for batching |
 | 2× L4 | 48 GB | ❌ | 35 + 43 > 48 |
-| 4× L4 | 96 GB | ✅ альтернатива | ниже memory BW |
-| 6× T4 | 96 GB | ❌ не рекоменд. | слабый throughput |
+| 4× L4 | 96 GB | ✅ alternative | lower memory BW |
+| 6× T4 | 96 GB | ❌ not recommended | weak throughput |
 
-**Вывод:** FP16 → минимум **3× A100 80GB**. INT4 → **2× A100 80GB** для prod @ 1000 RPM.
+**Conclusion:** FP16 → at least **3× A100 80GB**. INT4 → **2× A100 80GB** for prod @ 1000 RPM.
 
-> VRAM necessary, но не sufficient: при ~200 output tok/req ориентир **~3300 tok/s** на кластер. С vLLM INT4 на 1–2×A100 типично **~800–1500 tok/s** → для 1000 RPM часто нужны 2–4 эффективные «слота», не одна карта впритык.
+> VRAM is necessary but not sufficient: at ~200 output tok/req, the reference is **~3300 tok/s** per cluster. With vLLM INT4 on 1–2×A100, typically **~800–1500 tok/s** → 1000 RPM often needs 2–4 effective "slots", not one tightly packed card.
 
 ---
 
-## 4. Сценарии для стоимости
+## 4. Cost Scenarios
 
-| ID | Сценарий | GPU | Назначение |
+| ID | Scenario | GPU | Purpose |
 | -- | -------- | --- | ---------- |
-| **A** | FP16 baseline | **3× A100 80GB** | память без сильного batching |
-| **B** | INT4 conservative | **4× A100** (2 шарды × 2) | перестраховка по throughput |
-| **C** | INT4 + vLLM | **2× A100 80GB** | **целевой** |
-| **D** | INT4 на L4 | **8× L4** | без A100 |
+| **A** | FP16 baseline | **3× A100 80GB** | memory without strong batching |
+| **B** | INT4 conservative | **4× A100** (2 shards × 2) | extra throughput safety |
+| **C** | INT4 + vLLM | **2× A100 80GB** | **target** |
+| **D** | INT4 on L4 | **8× L4** | without A100 |
 
 ---
 
-## 5. Облака: прайс
+## 5. Clouds: Pricing
 
-### Сводка — 1× A100 80GB / мес
+### Summary — 1× A100 80GB / Month
 
-| Облако | ≈ ₽ / GPU·мес | Относительно RU |
+| Cloud | ≈ ₽ / GPU·month | Relative to RU |
 | ------ | ------------: | --------------- |
 | Cloud.ru | **~232k** | baseline |
-| Yandex Cloud | **~232k** | паритет |
-| AWS (доля p4de ÷ 8) | **~238k** | ≈ то же |
+| Yandex Cloud | **~232k** | parity |
+| AWS (p4de share ÷ 8) | **~238k** | ≈ the same |
 | **GCP** (`a2-ultragpu-1g`) | **~352k** | **+~50%** |
 
 ### Yandex Cloud
 
-Источник: [Compute pricing](https://yandex.cloud/en/docs/compute/pricing)
+Source: [Compute pricing](https://yandex.cloud/en/docs/compute/pricing)
 
-| GPU | $/час | ≈ ₽/час | ≈ ₽/мес |
+| GPU | $/hour | ≈ ₽/hour | ≈ ₽/month |
 | --- | ----: | ------: | ------: |
 | A100 | **3.345** | 318 | **232 000** |
 | T4 | **0.576** | 55 | **40 000** |
-| L4 | — | — | нет в той же таблице |
+| L4 | — | — | not in the same table |
 
-### Cloud.ru (Evolution, с НДС)
+### Cloud.ru (Evolution, Including VAT)
 
-Источник: [GPU products](https://cloud.ru/products/vychislitelnyye-moschnosti-s-gpu)
+Source: [GPU products](https://cloud.ru/products/vychislitelnyye-moschnosti-s-gpu)
 
-| Конфиг | ₽/час | ≈ ₽/мес |
+| Config | ₽/hour | ≈ ₽/month |
 | ------ | ----: | ------: |
 | 1× A100 80GB | **317.20** | **231 600** |
 | 2× A100 80GB | **634.40** | **463 100** |
 | 1× A100 40GB | **256.20** | **187 000** |
-| L4 (оценка) | **~220** | **~160 600** |
+| L4 (estimate) | **~220** | **~160 600** |
 
 ### AWS (us-east-1)
 
-Источник: [EC2 on-demand](https://aws.amazon.com/ec2/pricing/on-demand/)
+Source: [EC2 on-demand](https://aws.amazon.com/ec2/pricing/on-demand/)
 
-| GPU | Ориентир | ≈ ₽/мес на 1 GPU |
+| GPU | Reference | ≈ ₽/month per GPU |
 | --- | -------- | ---------------: |
-| A100 80GB | $27.45 ÷ 8 (`p4de`) ≈ **$3.43**/GPU·ч | **~238 000** |
+| A100 80GB | $27.45 ÷ 8 (`p4de`) ≈ **$3.43**/GPU·h | **~238 000** |
 | A100 40GB | $21.96 ÷ 8 (`p4d`) ≈ **$2.75** | **~191 000** |
 | L4 | `g6.xlarge` **$0.80–0.98** | **~55–68k** |
 | T4 | `g4dn.xlarge` **~$0.53** | **~37 000** |
 
-> **Caveat:** A100 на AWS обычно **пакет 8 GPU**. Для «ровно 2×A100» — недогруз узла или другой SKU (L4 и т.п.).
+> **Caveat:** A100 on AWS usually comes as an **8-GPU bundle**. For "exactly 2×A100" — an underused node or another SKU (L4, etc.).
 
 ### Google Cloud
 
-Источник: [Accelerator-optimized](https://cloud.google.com/products/compute/pricing/accelerator-optimized)
+Source: [Accelerator-optimized](https://cloud.google.com/products/compute/pricing/accelerator-optimized)
 
-| GPU / VM | $/час | ≈ ₽/мес |
+| GPU / VM | $/hour | ≈ ₽/month |
 | -------- | ----: | ------: |
 | A100 80GB `a2-ultragpu-1g` | **~5.07** | **~352 000** |
 | A100 40GB `a2-highgpu-1g` | **~3.67** | **~255 000** |
 | L4 `g2-standard-4` | **~0.70** | **~49 000** |
 
-На GCP удобно взять **1× A100** без 8-GPU SKU, но **дороже** RU / AWS per-GPU.
+On GCP it is convenient to take **1× A100** without an 8-GPU SKU, but it is **more expensive** than RU / AWS per-GPU.
 
 ---
 
-## 6. Стоимость сценариев / мес
+## 6. Scenario Cost / Month
 
-| Сценарий | GPUs | Yandex | Cloud.ru | AWS* | GCP |
+| Scenario | GPUs | Yandex | Cloud.ru | AWS* | GCP |
 | -------- | ---: | -----: | -------: | ---: | --: |
 | A · FP16 | 3× A100 | **696k** | **695k** | **714k** | **1 056k** |
 | B · INT4 conservative | 4× A100 | **928k** | **926k** | **952k** | **1 408k** |
 | **C · INT4 + vLLM** | **2× A100** | **464k** | **463k** | **476k** | **704k** |
-| D · INT4 L4 | 8× L4 | н/д | **~1 285k** est. | **~440–544k** | **~392k** |
+| D · INT4 L4 | 8× L4 | n/a | **~1 285k** est. | **~440–544k** | **~392k** |
 
-\*AWS — *эффективная* доля GPU. Реальный минимум **8× A100** (p4de) для C ≈ **~1.9M ₽/мес**.
+\*AWS is the *effective* GPU share. The real minimum is **8× A100** (p4de), so C ≈ **~1.9M ₽/month**.
 
-**Выбор для RetailPartnerX:** Yandex ≈ Cloud.ru по цене; плюс **152-ФЗ / data residency**. AWS/GCP — если multi-cloud и нет требования резидентности.
+**Choice for RetailPartnerX:** Yandex ≈ Cloud.ru on price; plus **152-FZ / data residency**. AWS/GCP — if multi-cloud and there is no residency requirement.
 
 ---
 
-## 7. Оптимизации (Batching / vLLM)
+## 7. Optimizations (Batching / vLLM)
 
-| Техника | Эффект | Оценка |
+| Technique | Effect | Estimate |
 | ------- | ------ | ------ |
-| **INT4** (AWQ/GPTQ) | веса 140 → 35 GB | уход с 3×A100 FP16 на 2×A100 |
-| **Continuous batching** | выше GPU util | **+1.5–3×** throughput |
-| **vLLM PagedAttention** | меньше фрагментации KV | **+20–40%** concurrent |
-| **KV FP8** (опц.) | KV ÷ ~2 | ещё **+10–20%** запас |
+| **INT4** (AWQ/GPTQ) | weights 140 → 35 GB | move from 3×A100 FP16 to 2×A100 |
+| **Continuous batching** | higher GPU util | **+1.5–3×** throughput |
+| **vLLM PagedAttention** | less KV fragmentation | **+20–40%** concurrent |
+| **KV FP8** (optional) | KV ÷ ~2 | another **+10–20%** headroom |
 
-| Путь | GPU | ₽/мес (Cloud.ru) | vs A |
+| Path | GPU | ₽/month (Cloud.ru) | vs A |
 | ---- | --- | ---------------: | ---- |
 | A · FP16 | 3× A100 | ~695k | 100% |
 | **C · INT4 + vLLM** | **2× A100** | **~463k** | **≈ −33%** |
-| B · INT4 без vLLM | 4× A100 | ~926k | хуже |
+| B · INT4 without vLLM | 4× A100 | ~926k | worse |
 
-**Прогноз экономии:** C vs A → **~30–40% OpEx**; C vs B → до **~50%**.
+**Projected savings:** C vs A → **~30–40% OpEx**; C vs B → up to **~50%**.
 
 ---
 
-## 8. Источники
+## 8. Sources
 
-| Тема | Ссылка |
+| Topic | Link |
 | ---- | ------ |
 | VRAM calculator | [HF Space](https://huggingface.co/spaces/NyxKrage/LLM-Model-VRAM-Calculator) |
 | Llama 3.1 memory | [HF blog](https://huggingface.co/blog/llama31) |
@@ -256,8 +256,8 @@ VRAM_GB    = Weights_GB + KV_GB + Overhead_GB
 
 ---
 
-## Итог
+## Bottom Line
 
-Self-hosted **Llama-3-70B INT4 + vLLM** на **2× A100 80GB** в **Yandex Cloud / Cloud.ru** (~**0.46M ₽/мес** GPU) — рабочий TCO-якорь для пересмотра ADR-001 при росте нагрузки до 1000 RPM.
+Self-hosted **Llama-3-70B INT4 + vLLM** on **2× A100 80GB** in **Yandex Cloud / Cloud.ru** (~**0.46M ₽/month** GPU) is a working TCO anchor for revisiting ADR-001 as load grows to 1000 RPM.
 
-Дублирующий one-pager: [recommendation.md](recommendation.md).
+Duplicate one-pager: [recommendation.md](recommendation.md).

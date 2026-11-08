@@ -1,14 +1,14 @@
-# _dev — вспомогательные материалы hw-2
+# _dev — hw-2 Supporting Materials
 
-**Не для сдачи.** Здесь layout-specs, генератор и шаблоны.
+**Not for submission.** Layout specs, the generator and templates live here.
 
-| Путь | Назначение |
+| Path | Purpose |
 |------|------------|
-| [specs/](specs/) | JSON-снимки layout для Draw.io MCP |
-| [templates/](templates/) | Учебный пример RAG из текста ДЗ |
-| [generate_drawio.mjs](generate_drawio.mjs) | Обёртка CLI (`--hw hw-2`; frozen не перезаписывает `.drawio`) |
+| [specs/](specs/) | JSON layout snapshots for Draw.io MCP |
+| [templates/](templates/) | Educational RAG example from the assignment text |
+| [generate_drawio.mjs](generate_drawio.mjs) | CLI wrapper (`--hw hw-2`; frozen does not overwrite the `.drawio`) |
 
-Перегенерация одного файла (из корня репозитория):
+Regenerating one file (from the repository root):
 
 ```bash
 node tools/drawio-mcp/src/cli.mjs \
@@ -16,4 +16,4 @@ node tools/drawio-mcp/src/cli.mjs \
   --output hw-2/diagrams/c1-context.drawio
 ```
 
-Конвенции: [tools/drawio-mcp/CONVENTIONS.md](../../../tools/drawio-mcp/CONVENTIONS.md).
+Conventions: [tools/drawio-mcp/CONVENTIONS.md](../../../tools/drawio-mcp/CONVENTIONS.md).

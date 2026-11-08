@@ -1,21 +1,21 @@
-# Draw.io MCP — конвенции
+# Draw.io MCP — Conventions
 
-Соглашения для генератора `tools/drawio-mcp` и JSON-спеков в домашних заданиях.
+Conventions for the `tools/drawio-mcp` generator and JSON specs in the assignments.
 
-## Роли артефактов
+## Artifact Roles
 
-| Артефакт | Где | Source of truth |
+| Artifact | Where | Source of truth |
 |----------|-----|-----------------|
-| **Tool** (MCP, CLI, builder) | `tools/drawio-mcp/` | Код генератора |
-| **JSON spec** | `{hwId}/diagrams/_dev/specs/*.json` | Снимок/layout для перегенерации и MCP |
-| **`.drawio`** | `{hwId}/diagrams/drawio/*.drawio` | **Финальная сдача**; после ручной правки — главный артеfact |
-| **`manifest.json`** | `{hwId}/diagrams/_dev/specs/` | Список `frozen` + опциональная автогенерация |
+| **Tool** (MCP, CLI, builder) | `tools/drawio-mcp/` | Generator code |
+| **JSON spec** | `{hwId}/diagrams/_dev/specs/*.json` | Snapshot/layout for regeneration and MCP |
+| **`.drawio`** | `{hwId}/diagrams/drawio/*.drawio` | **Final submission**; after manual editing, the main artifact |
+| **`manifest.json`** | `{hwId}/diagrams/_dev/specs/` | `frozen` list + optional auto-generation |
 
-### hw-2: все диаграммы зафиксированы
+### hw-2: All Diagrams Are Frozen
 
-После ручного форматирования в diagrams.net **не перегенерировать** `.drawio` через CLI/MCP — только править файл в редакторе. Спеки синхронизированы со схемами как **документация layout**, не как обязательный пайплайн сборки.
+After manual formatting in diagrams.net, **do not regenerate** the `.drawio` through CLI/MCP — only edit the file in the editor. Specs are kept in sync with the diagrams as **layout documentation**, not as a mandatory build pipeline.
 
-## Структура spec (C4)
+## Spec Structure (C4)
 
 ```json
 {
@@ -51,54 +51,54 @@
 }
 ```
 
-### Стили узлов (`style`)
+### Node Styles (`style`)
 
-| Значение | C4 / Draw.io | Цвет |
+| Value | C4 / Draw.io | Color |
 |----------|--------------|------|
-| `person` | UML Actor | синий |
-| `system` | Система (C1) | синий блок |
-| `container` | Контейнер (C2) | синий блок |
-| `component` | Компонент (C3) | голубой блок |
-| `external` | Внешняя система | серый |
-| `db` | Цилиндр БД | синий |
-| `boundary` | Пунктирная рамка | без заливки |
-| `note` | Заметка (Sequence) | жёлтый |
+| `person` | UML Actor | blue |
+| `system` | System (C1) | blue block |
+| `container` | Container (C2) | blue block |
+| `component` | Component (C3) | light blue block |
+| `external` | External system | gray |
+| `db` | DB cylinder | blue |
+| `boundary` | Dashed frame | no fill |
+| `note` | Note (Sequence) | yellow |
 
-### Координаты
+### Coordinates
 
-- **`x`, `y`, `w`, `h`** — в пикселях, сетка Draw.io 10 px.
-- **Без `parent`** — координаты **абсолютные** (от листа).
-- **С `parent: "boundary"`** — координаты **относительно** родительской рамки (как в Draw.io).
-- После ручного редактирования округляйте до целых; дроби из Draw.io (напр. `79.2`) в spec → `79`.
+- **`x`, `y`, `w`, `h`** — in pixels, Draw.io grid of 10 px.
+- **Without `parent`** — coordinates are **absolute** (from the page).
+- **With `parent: "boundary"`** — coordinates are **relative** to the parent frame (as in Draw.io).
+- After manual editing, round to integers; fractions from Draw.io (e.g. `79.2`) become `79` in the spec.
 
-### Подписи
+### Labels
 
-- Перенос строки в JSON: `\n` → в XML станет `&#10;`.
-- **Не используйте** `<br>` в spec — ломает XML.
+- Line break in JSON: `\n` → becomes `&#10;` in XML.
+- **Do not use** `<br>` in a spec — it breaks the XML.
 
-## Маршрутизация рёбер
+## Edge Routing
 
-| Поле | Диапазон | Назначение |
+| Field | Range | Purpose |
 |------|----------|------------|
-| `exitX`, `exitY` | 0–1 | Точка выхода на грани source |
-| `entryX`, `entryY` | 0–1 | Точка входа на грани target |
-| `waypoints` | `[{x,y}, …]` | «Колeno» orthogonal-стрелки |
-| `labelOffset` | `{x,y}` | Сдвиг подписи от линии |
-| `parent` | id boundary | Ребро рисуется внутри рамки (C2/C3) |
+| `exitX`, `exitY` | 0–1 | Exit point on the source side |
+| `entryX`, `entryY` | 0–1 | Entry point on the target side |
+| `waypoints` | `[{x,y}, …]` | "Elbow" of an orthogonal arrow |
+| `labelOffset` | `{x,y}` | Label offset from the line |
+| `parent` | boundary id | The edge is drawn inside the frame (C2/C3) |
 
-### Правила вёрстки (RetailPartnerX)
+### Layout Rules (RetailPartnerX)
 
-1. **Горизонтальные связи** — подпись **над** линией: `labelOffset: { "y": -12 }`.
-2. **Вертикальные связи** (к БД) — подпись **сбоку**: `labelOffset: { "x": ±10–12, "y": 0 }`.
-3. **Длинные подписи** — увеличивайте зазор между блоками (`x`), не укорачивайте смысл без необходимости.
-4. **Возвратные стрелки** (Ответ, JSON response) — маршрут **сверху** или **слева** через `waypoints`, не через центр блоков.
-5. **Внешние системы** (PIM) — достаточный отступ от boundary; при необходимости `waypoints`.
-6. **`labelBackgroundColor`** — белый фон подписей включён в стиль edge генератора.
+1. **Horizontal links** — label **above** the line: `labelOffset: { "y": -12 }`.
+2. **Vertical links** (to a DB) — label **to the side**: `labelOffset: { "x": ±10–12, "y": 0 }`.
+3. **Long labels** — increase the gap between blocks (`x`), do not shorten the meaning unless necessary.
+4. **Return arrows** (Response, JSON response) — route **over the top** or **on the left** via `waypoints`, not through block centers.
+5. **External systems** (PIM) — enough clearance from the boundary; `waypoints` if needed.
+6. **`labelBackgroundColor`** — a white label background is included in the generator's edge style.
 
-### Ограничения генератора
+### Generator Limitations
 
-- Не все edge-конструкции Draw.io (floating `targetPoint`, `mxGeometry x=` как доля) экспортируются 1:1 — сложные правки остаются в `.drawio`.
-- Sequence: только равномерная сетка участников; тонкая подгонка — в редакторе.
+- Not all Draw.io edge constructs (floating `targetPoint`, `mxGeometry x=` as a fraction) export 1:1 — complex edits stay in the `.drawio`.
+- Sequence: only a uniform participant grid; fine tuning is done in the editor.
 
 ## Sequence spec
 
@@ -121,8 +121,8 @@
 }
 ```
 
-- `from` / `to` — индекс участника (0-based) или `id`.
-- `"return": true` — пунктирная обратная стрелка.
+- `from` / `to` — participant index (0-based) or `id`.
+- `"return": true` — dashed return arrow.
 
 ## Manifest
 
@@ -134,51 +134,51 @@
 }
 ```
 
-| Поле | Смысл |
+| Field | Meaning |
 |------|--------|
-| `frozen` | Файлы **не перезаписывать** при `generate_hw_diagrams` |
-| `diagrams` | Пары `{ spec, output }` для автогенерации (пусто = только ручные `.drawio`) |
+| `frozen` | Files that are **not overwritten** by `generate_hw_diagrams` |
+| `diagrams` | `{ spec, output }` pairs for auto-generation (empty = manual `.drawio` only) |
 
 ## Workflow
 
-### Новая диаграмма (hw-3+)
+### New Diagram (hw-3+)
 
-1. Написать JSON spec (или inline через MCP `generate_drawio`).
-2. Сгенерировать черновик `.drawio`.
-3. Довести в diagrams.net.
-4. **Синхронизировать spec** с финальными координатами (опционально, для наследования).
-5. Добавить в `frozen` после приёмки.
+1. Write a JSON spec (or inline via MCP `generate_drawio`).
+2. Generate a draft `.drawio`.
+3. Finish it in diagrams.net.
+4. **Sync the spec** with the final coordinates (optional, for reuse).
+5. Add it to `frozen` after acceptance.
 
-### Правка зафиксированной схемы (hw-2)
+### Editing a Frozen Diagram (hw-2)
 
-1. Редактировать **только** `.drawio`.
-2. При желании обновить spec «для истории» — перенести координаты из Draw.io в JSON **без** перегенерации.
+1. Edit **only** the `.drawio`.
+2. If desired, update the spec "for history" — carry the coordinates from Draw.io to JSON **without** regeneration.
 
 ## CLI / MCP
 
 ```bash
-# Один файл (не перезаписывать frozen без явного output)
+# One file (do not overwrite frozen without an explicit output)
 node src/cli.mjs --spec hw-2/diagrams/_dev/specs/c1-context.json \
   --output /tmp/preview.drawio
 
-# Пакет по manifest (hw-2: diagrams пуст — ничего не делает)
+# Batch by manifest (hw-2: diagrams is empty — does nothing)
 node src/cli.mjs --hw hw-2
 ```
 
 MCP tools: `generate_drawio`, `generate_hw_diagrams`, `export_drawio_png`, `list_hw_diagram_bundles`, `get_drawio_spec_schema`.
 
-## Именование файлов
+## File Naming
 
-| Уровень | Spec | Draw.io |
+| Level | Spec | Draw.io |
 |---------|------|---------|
 | C1 | `c1-context.json` | `c1-context.drawio` |
 | C2 | `c2-containers.json` | `c2-containers.drawio` |
 | C3 recsys | `c3-ai-service-recsys.json` | `c3-ai-service-recsys.drawio` |
-| C3 RAG (шаблон) | `_dev/templates/c3-ai-service-rag-future.json` | не сдаётся |
+| C3 RAG (template) | `_dev/templates/c3-ai-service-rag-future.json` | not submitted |
 | Sequence | `sequence-get-recommendation.json` | `sequence-get-recommendation.drawio` |
 
-## Связь с C4 hw-2
+## Link to C4 hw-2
 
-- **C3 recsys** + **Sequence** + **OpenAPI** — одна цепочка MVP (имена компонентов совпадают).
+- **C3 recsys** + **Sequence** + **OpenAPI** — one MVP chain (component names match).
 
-См. [hw-2/diagrams/README.md](../../hw-2/diagrams/README.md).
+See [hw-2/diagrams/README.md](../../hw-2/diagrams/README.md).

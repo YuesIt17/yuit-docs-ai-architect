@@ -1,28 +1,28 @@
-# Глоссарий hw-4
+# hw-4 Glossary
 
-Термины ADR и хостинга LLM для RetailPartnerX. Общие NFR, GDPR/152-ФЗ, ПДн — в [hw-1/Glossary.md](../hw-1/Glossary.md); LLM Client, RAG — в [hw-2/Glossary.md](../hw-2/Glossary.md).
+Terms for ADRs and LLM hosting for RetailPartnerX. General NFR, GDPR/152-FZ and personal data terms are in [hw-1/Glossary.md](../hw-1/Glossary.md); LLM Client and RAG are in [hw-2/Glossary.md](../hw-2/Glossary.md).
 
-| Термин | Расшифровка | Кратко |
+| Term | Expansion | In short |
 |--------|-------------|--------|
-| **ADR** | Architecture Decision Record | Короткий документ: контекст → решение → последствия |
-| **MADR** | Markdown ADR | Markdown-шаблон ADR ([madr](https://adr.github.io/madr/)) |
-| **SaaS LLM** | Software as a Service | Облачная проприетарная модель по API (напр. GPT) |
-| **Self-hosted** | On-prem / свой контур | Open-source модель (напр. Llama 3) на своих GPU/серверах |
-| **On-prem** | On-premises | Развёртывание в своём ЦОД/периметре (синоним self-hosted в контексте LLM) |
-| **LLM Client** | — | Компонент AI Service (hw-2): абстракция вызова провайдера LLM |
-| **Frontier-модель** | Frontier model | Топовая облачная LLM по качеству (instruction following, structured output) |
-| **RAG** | Retrieval-Augmented Generation | Поиск в базе знаний + генерация ответа LLM — см. [hw-2](../hw-2/Glossary.md) |
-| **DPA** | Data Processing Agreement | Договор обработки данных с облачным провайдером |
-| **Vendor lock-in** | Привязка к вендору | Зависимость от API/цен/квот одного поставщика (риск R7) |
-| **ПДн** | Персональные данные | Данные, идентифицирующие человека — см. [hw-1](../hw-1/Glossary.md); риск R6 |
-| **GDPR / 152-ФЗ** | — | Регуляторика ЕС / РФ по защите ПДн — см. [hw-1](../hw-1/Glossary.md) |
-| **OpEx** | Operating Expenditure | Операционные расходы (токены, подписка) |
-| **CapEx** | Capital Expenditure | Капитальные затраты (GPU, стойки, лицензии железа) |
-| **TCO** | Total Cost of Ownership | Полная стоимость владения (железо + люди + энергия vs токены) |
-| **Unit-cost** | Себестоимость единицы | Стоимость одного запроса/токена при текущем объёме |
-| **MLOps** | ML Operations | Эксплуатация ML/LLM: деплой, мониторинг, capacity, патчи |
-| **TTM** | Time to Market | Срок вывода пилота/MVP на рынок |
-| **PoC / MVP** | Proof of Concept / Minimum Viable Product | Пилот гипотезы → минимальный продукт в prod-канале |
-| **Day-1** | С первого дня | Решение «сразу при старте», без отложенного roadmap |
-| **Data residency** | Резидентность данных | Требование хранить/обрабатывать данные в заданной юрисдикции |
-| **Утилизация** | Utilization | Доля реально занятого GPU/железа; низкая — idle CapEx не окупается |
+| **ADR** | Architecture Decision Record | A short document: context → decision → consequences |
+| **MADR** | Markdown ADR | A Markdown ADR template ([madr](https://adr.github.io/madr/)) |
+| **SaaS LLM** | Software as a Service | A proprietary cloud model via API (e.g. GPT) |
+| **Self-hosted** | On-prem / own environment | An open-source model (e.g. Llama 3) on your own GPUs/servers |
+| **On-prem** | On-premises | Deployment in your own data center/perimeter (a synonym of self-hosted in the LLM context) |
+| **LLM Client** | — | An AI Service component (hw-2): abstraction over calling the LLM provider |
+| **Frontier model** | Frontier model | A top-quality cloud LLM (instruction following, structured output) |
+| **RAG** | Retrieval-Augmented Generation | Knowledge base search + LLM answer generation — see [hw-2](../hw-2/Glossary.md) |
+| **DPA** | Data Processing Agreement | A data processing agreement with the cloud provider |
+| **Vendor lock-in** | Vendor lock-in | Dependence on one supplier's API/prices/quotas (risk R7) |
+| **Personal data** | Personal data | Data that identifies a person — see [hw-1](../hw-1/Glossary.md); risk R6 |
+| **GDPR / 152-FZ** | — | EU / Russian personal data protection regulation — see [hw-1](../hw-1/Glossary.md) |
+| **OpEx** | Operating Expenditure | Operating expenses (tokens, subscription) |
+| **CapEx** | Capital Expenditure | Capital expenses (GPUs, racks, hardware licenses) |
+| **TCO** | Total Cost of Ownership | Full cost of ownership (hardware + people + power vs tokens) |
+| **Unit-cost** | Unit cost | The cost of one request/token at the current volume |
+| **MLOps** | ML Operations | Operating ML/LLM: deployment, monitoring, capacity, patches |
+| **TTM** | Time to Market | Time to bring a pilot/MVP to market |
+| **PoC / MVP** | Proof of Concept / Minimum Viable Product | A hypothesis pilot → a minimal product in a prod channel |
+| **Day-1** | From day one | A decision made "right at the start", not deferred to the roadmap |
+| **Data residency** | Data residency | A requirement to store/process data in a given jurisdiction |
+| **Utilization** | Utilization | The share of GPU/hardware actually in use; when low, idle CapEx does not pay off |

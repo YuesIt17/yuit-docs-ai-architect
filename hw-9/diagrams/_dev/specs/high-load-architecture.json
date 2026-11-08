@@ -14,7 +14,7 @@
     },
     {
       "id": "user",
-      "label": "Покупатель\nкарточка / чат",
+      "label": "Customer\nproduct page / chat",
       "style": "person",
       "x": 40,
       "y": 200,
