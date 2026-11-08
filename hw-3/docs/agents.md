@@ -1,48 +1,48 @@
-# Шаг 1: выбор паттернов и агентов
+# Step 1: Choosing Patterns and Agents
 
-Кейс: [RetailPartnerX AI Strategy](../../hw-1/RetailPartnerX_AI_Strategy.md) · архитектура: [hw-2](../../hw-2/diagrams/README.md)
+Case: [RetailPartnerX AI Strategy](../../hw-1/RetailPartnerX_AI_Strategy.md) · architecture: [hw-2](../../hw-2/diagrams/README.md)
 
-## Паттерн
+## Pattern
 
-**Supervisor / hierarchical multi-agent** — Orchestrator (Менеджер) координирует специализированных агентов. Каждый агент — отдельный узел LangGraph с чёткой зоной ответственности.
+**Supervisor / hierarchical multi-agent** — the Orchestrator (Manager) coordinates specialized agents. Each agent is a separate LangGraph node with a clear area of responsibility.
 
-## Mapping с шаблоном ДЗ (командировки → ритейл)
+## Mapping to the Assignment Template (Business Travel → Retail)
 
-| Шаблон ДЗ | Агент RetailPartnerX | Задача |
+| Assignment template | RetailPartnerX agent | Task |
 |-----------|---------------------|--------|
-| Менеджер | **Orchestrator** | План, делегирование, финальный ответ в чат |
-| Поисковик билетов | **Catalog Searcher** | Семантический поиск SKU в каталоге |
-| Аналитик бюджета | **Promo & Budget Analyst** | Акции, укладка в бюджет |
-| Бронировщик отелей | **Basket Assembler** | Сборка корзины, замены при OOS |
-| — (новый) | **Intent & Constraint Parser** | Извлечение сущностей из запроса |
-| Политика командировок (RAG) | **Policy Analyst** | RAG по Policy KB: аллергены, 18+, GDPR |
+| Manager | **Orchestrator** | Plan, delegation, final reply in the chat |
+| Ticket searcher | **Catalog Searcher** | Semantic SKU search in the catalog |
+| Budget analyst | **Promo & Budget Analyst** | Promotions, fitting the budget |
+| Hotel booker | **Basket Assembler** | Cart assembly, substitutions on OOS |
+| — (new) | **Intent & Constraint Parser** | Entity extraction from the request |
+| Travel policy (RAG) | **Policy Analyst** | RAG over the Policy KB: allergens, 18+, GDPR |
 
-## Декомпозиция агентов (SRP)
+## Agent Decomposition (SRP)
 
-| Агент | Ответственность (одна зона) | Инструменты / данные | Не делает |
+| Agent | Responsibility (one area) | Tools / data | Does not do |
 |-------|----------------------------|----------------------|-----------|
-| **Orchestrator** | Маршрутизация шагов, синтез ответа пользователю | LLM, LangGraph state | Поиск SKU, проверка политик |
-| **Intent & Constraint Parser** | NER: блюдо, персоны, диеты, бюджет, аллергены | LLM structured output | Поиск товаров |
-| **Catalog Searcher** | Семантический поиск и фильтрация SKU | Vector DB (`products`), SQL DB (цена, наличие) | Проверка compliance |
-| **Policy Analyst** | Валидация ограничений по политикам компании | **RAG** → Policy KB (`policies` collection) | Подбор акций |
-| **Promo & Budget Analyst** | Оптимизация набора под бюджет и промо | SQL DB (цены, акции), фрагменты RAG | Формирование корзины |
-| **Basket Assembler** | Итоговая корзина, substitutes | `POST /get_recommendation` (hw-2 API) как tool | Парсинг намерения |
+| **Orchestrator** | Step routing, synthesizing the reply to the user | LLM, LangGraph state | SKU search, policy checks |
+| **Intent & Constraint Parser** | NER: dish, persons, diets, budget, allergens | LLM structured output | Product search |
+| **Catalog Searcher** | Semantic SKU search and filtering | Vector DB (`products`), SQL DB (price, availability) | Compliance checks |
+| **Policy Analyst** | Validating constraints against company policies | **RAG** → Policy KB (`policies` collection) | Selecting promotions |
+| **Promo & Budget Analyst** | Optimizing the set for budget and promotions | SQL DB (prices, promotions), RAG fragments | Building the cart |
+| **Basket Assembler** | Final cart, substitutes | `POST /get_recommendation` (hw-2 API) as a tool | Intent parsing |
 
-## Почему не один монолитный агент
+## Why Not One Monolithic Agent
 
-1. **Разные источники данных** — каталог (vector + SQL) и политики (RAG) требуют разных retrieval-стратегий; смешение в одном промпте ухудшает точность и audit.
-2. **Compliance (hw-1, R4/R8)** — Policy Analyst изолирован: его можно тестировать и логировать отдельно; Orchestrator не публикует ответ без `policy_status=ok`.
-3. **Переиспользование hw-2** — Basket Assembler вызывает существующий recsys API без дублирования Ranker/RAG Manager.
+1. **Different data sources** — the catalog (vector + SQL) and policies (RAG) need different retrieval strategies; mixing them in one prompt hurts accuracy and audit.
+2. **Compliance (hw-1, R4/R8)** — the Policy Analyst is isolated: it can be tested and logged separately; the Orchestrator does not publish a reply without `policy_status=ok`.
+3. **Reuse of hw-2** — the Basket Assembler calls the existing recsys API without duplicating the Ranker/RAG Manager.
 
-## Guardrails (риски из hw-1)
+## Guardrails (Risks from hw-1)
 
-| Риск | Митигация агентом |
+| Risk | Agent mitigation |
 |------|-------------------|
-| **R4** — токсичные/запрещённые рекомендации | Policy Analyst: blocklists в Policy KB, отказ в рекомендации |
-| **R6** — GDPR / согласия | Policy Analyst: проверка `personalization_consent` перед персональными подборами |
-| **R8** — галлюцинации genAI | Ответ только на основе retrieval chunks + citations; fallback при низком score |
+| **R4** — toxic/prohibited recommendations | Policy Analyst: blocklists in the Policy KB, refusing the recommendation |
+| **R6** — GDPR / consent | Policy Analyst: checking `personalization_consent` before personal selections |
+| **R8** — genAI hallucinations | Replies based only on retrieval chunks + citations; fallback on a low score |
 
-## Поток делегирования (упрощённо)
+## Delegation Flow (Simplified)
 
 ```
 User message
@@ -55,4 +55,4 @@ User message
   → User response
 ```
 
-Parallel Catalog|Policy — целевая модель деплоя; прототип в [`code/`](../code/) следует sequence happy path (stub без API-ключей).
+Parallel Catalog|Policy is the target deployment model; the prototype in [`code/`](../code/) follows the sequence happy path (stub without API keys).

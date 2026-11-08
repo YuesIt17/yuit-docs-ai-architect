@@ -39,32 +39,32 @@ class AgentState(TypedDict):
 
 def parse_constraints(query: str) -> dict:
     persons = 4
-    match = re.search(r"(\d+)\s*челов", query.lower())
+    match = re.search(r"(\d+)\s*(?:people|person)", query.lower())
     if match:
         persons = int(match.group(1))
 
     budget = 2000
-    match = re.search(r"(\d+)\s*(?:₽|руб)", query.lower())
+    match = re.search(r"(\d+)\s*(?:₽|rub)", query.lower())
     if match:
         budget = int(match.group(1))
 
     return {
-        "dish": "паста" if "паст" in query.lower() else "ужин",
+        "dish": "pasta" if "pasta" in query.lower() else "dinner",
         "persons": persons,
         "budget": budget,
-        "gluten_free": "без глютена" in query.lower() or "gluten" in query.lower(),
+        "gluten_free": "gluten" in query.lower(),
     }
 
 
 def policy_rag_retrieve(query: str, top_k: int = 2) -> list[dict]:
-    tokens = set(re.findall(r"[а-яa-z0-9]+", query.lower()))
+    tokens = set(re.findall(r"[a-z0-9]+", query.lower()))
     scored: list[tuple[int, dict]] = []
     for chunk in POLICY_KB:
-        words = set(re.findall(r"[а-яa-z0-9]+", chunk["text"].lower()))
+        words = set(re.findall(r"[a-z0-9]+", chunk["text"].lower()))
         score = len(tokens & words)
-        if "глютен" in query.lower() and "глютен" in chunk["text"].lower():
+        if "gluten" in query.lower() and "gluten" in chunk["text"].lower():
             score += 2
-        if "акци" in query.lower() and "акци" in chunk["text"].lower():
+        if "promo" in query.lower() and "promo" in chunk["text"].lower():
             score += 2
         scored.append((score, chunk))
     scored.sort(key=lambda item: item[0], reverse=True)
@@ -85,8 +85,8 @@ def search_dinner_candidates(constraints: dict, catalog: pd.DataFrame | None = N
         df = df[df["gluten_free"]]
 
     categories = list(DINNER_CATEGORIES)
-    if constraints.get("dish") == "паста":
-        categories = ["паста", "соусы", "сыры"]
+    if constraints.get("dish") == "pasta":
+        categories = ["pasta", "sauces", "cheeses"]
 
     df = df[df["category"].isin(categories)]
     df = df.sort_values("price")
@@ -122,7 +122,7 @@ def apply_promos(candidates: list[dict], policy_chunks: list[dict]) -> tuple[lis
     for item in updated:
         if item["sku"] == "SKU-102":
             item["promo"] = "2+1"
-            notes.append("Акция 2+1 на соус томатный (POL-PROMO-01)")
+            notes.append("2+1 promotion on tomato sauce (POL-PROMO-01)")
             break
 
     return updated, notes
@@ -133,13 +133,13 @@ def mock_get_recommendation(candidates: list[dict]) -> list[dict]:
 
 
 def orchestrator_node(state: AgentState) -> AgentState:
-    log("Orchestrator", f"Получен запрос: {state['user_query']}")
+    log("Orchestrator", f"Received request: {state['user_query']}")
     return state
 
 
 def intent_parser_node(state: AgentState) -> AgentState:
     constraints = parse_constraints(state["user_query"])
-    log("IntentParser", f"Извлечены ограничения: {constraints}")
+    log("IntentParser", f"Extracted constraints: {constraints}")
     return {**state, "constraints": constraints}
 
 
@@ -165,13 +165,13 @@ def catalog_searcher_node(state: AgentState) -> AgentState:
     constraints = state["constraints"]
     log(
         "CatalogSearcher",
-        f"Ищу SKU: dish={constraints['dish']}, budget={constraints['budget']}, "
+        f"Searching SKUs: dish={constraints['dish']}, budget={constraints['budget']}, "
         f"gluten_free={constraints['gluten_free']}",
     )
     candidates = search_dinner_candidates(constraints)
     log(
         "CatalogSearcher",
-        f"Найдено {len(candidates)} SKU: {[item['sku'] for item in candidates]}",
+        f"Found {len(candidates)} SKUs: {[item['sku'] for item in candidates]}",
     )
     return {**state, "candidates": candidates}
 
@@ -196,17 +196,17 @@ def basket_assembler_node(state: AgentState) -> AgentState:
 
 def synthesize_node(state: AgentState) -> AgentState:
     if state["policy_verdict"] != "allow":
-        answer = "Не могу подобрать товары: нарушение политики компании."
+        answer = "Cannot select products: company policy violation."
     elif not state["cart"]:
-        answer = "Подходящих товаров не найдено. Уточните бюджет или ограничения."
+        answer = "No matching products found. Please refine your budget or constraints."
     else:
         lines = [f"• {item['title']} ({item['sku']}) — {item['price']} ₽" for item in state["cart"]]
         promo = "\n".join(state.get("promo_notes", []))
-        answer = "Корзина для ужина без глютена:\n" + "\n".join(lines)
+        answer = "Gluten-free dinner cart:\n" + "\n".join(lines)
         if promo:
             answer += "\n\n" + promo
 
-    log("Orchestrator", "Синтез финального ответа")
+    log("Orchestrator", "Synthesizing the final answer")
     log("Orchestrator", answer.replace("\n", " | "))
     return {**state, "final_answer": answer}
 

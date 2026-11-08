@@ -1,245 +1,245 @@
-# Стратегия внедрения AI-рекомендаций для RetailPartnerX
+# AI Recommendations Adoption Strategy for RetailPartnerX
 
-> **Сокращения:** [Глоссарий сокращений](Glossary.md) (T&M, FP, NDCG@10, SLA и др.)
+> **Abbreviations:** [Glossary of abbreviations](Glossary.md) (T&M, FP, NDCG@10, SLA, etc.)
 
-**Документ для согласования с заказчиком**  
-Роль: архитектор решений, компания-интегратор  
-Версия: 1.0
+**Document for alignment with the client**  
+Role: solution architect, systems integrator  
+Version: 1.0
 
 ---
 
 ## Executive Summary
 
-**RetailPartnerX** — международная компания в сфере розничной торговли продовольственными товарами, управляющая сетями магазинов. Заказчик хочет систему персонализированных рекомендаций, но формулирует требования как «хотим как у Tesco / Carrefour / X5 Digital», без конкретных KPI, границ данных и каналов.
+**RetailPartnerX** is an international grocery retail company operating store chains. The client wants a personalized recommendation system but states the requirements as "we want it like Tesco / Carrefour / X5 Digital", without specific KPIs, data boundaries or channels.
 
-Предлагаемый подход:
+Proposed approach:
 
-1. Снять неопределённость через **5–7 уточняющих вопросов** и discovery-workshop.
-2. Провести **PoC** по модели **T&M with cap** (4–6 недель).
-3. Выйти на **MVP** по **гибридной модели** (FP на интеграции и UI, T&M на ML/данные).
-4. Масштабировать в **Production** с рамочным FP/SLA и ретейнером на MLOps.
-5. Управлять **AI-специфичными рисками** через матрицу и план митигации.
+1. Remove uncertainty through **5–7 clarifying questions** and a discovery workshop.
+2. Run a **PoC** on a **T&M with cap** model (4–6 weeks).
+3. Move to an **MVP** on a **hybrid model** (FP for integrations and UI, T&M for ML/data).
+4. Scale to **Production** with a framework FP/SLA and an MLOps retainer.
+5. Manage **AI-specific risks** through a matrix and a mitigation plan.
 
-Горизонт программы: **~10 месяцев** до стабильного production-контура.
+Program horizon: **~10 months** to a stable production environment.
 
 ---
 
-## 1. Контекст и допущения
+## 1. Context and Assumptions
 
-| Параметр | Значение |
+| Parameter | Value |
 |----------|----------|
-| Заказчик | RetailPartnerX |
-| Цель | Персонализированные рекомендации товаров |
-| Исходные требования | Размытые, бенчмарк FMCG-ритейла (Tesco, Carrefour, X5 Digital) |
-| Каналы (допущение) | Сайт, приложение, email/push (уточнить) |
-| Команда интегратора | Архитектор, ML, data, backend, QA |
-| Регуляторика | GDPR, 152-ФЗ (РФ), согласия на обработку ПДн |
+| Client | RetailPartnerX |
+| Goal | Personalized product recommendations |
+| Initial requirements | Vague, FMCG retail benchmark (Tesco, Carrefour, X5 Digital) |
+| Channels (assumption) | Website, app, email/push (to be clarified) |
+| Integrator team | Architect, ML, data, backend, QA |
+| Regulation | GDPR, 152-FZ (Russia), consent to personal data processing |
 
 ---
 
-## 2. Уточняющие вопросы клиенту (снятие неопределённости)
+## 2. Clarifying Questions for the Client (Removing Uncertainty)
 
-| № | Вопрос | Зачем задаём | Влияние на проект |
+| # | Question | Why we ask | Project impact |
 |---|--------|--------------|-------------------|
-| 1 | **Какие KPI считаем успехом?** (CTR блока рекомендаций, конверсия в корзину/заказ, AOV, доля выручки с рекомендаций, retention) | Без метрик нельзя закрыть PoC и подписать FP на MVP | DoD PoC/MVP, контракт, приоритизация сценариев |
-| 2 | **Где показываем рекомендации?** (главная, карточка товара, корзина, каталог, push/email) | Определяет scope интеграций и нагрузку | Roadmap MVP/Prod, оценка FP |
-| 3 | **Какие данные доступны?** (события click/view/cart/purchase, единый customer ID, offline→online, глубина истории) | Качество данных — главный риск AI в ритейле | PoC: go/no-go; архитектура feature store |
-| 4 | **Как обрабатываем cold start?** (новые пользователи, гости, новые SKU, регионы) | Влияет на выбор алгоритмов и baseline | MVP: сценарии fallback; метрики coverage |
-| 5 | **Какие системы в контуре?** (PIM/каталог, CMS, CDP, CRM, anti-fraud, поиск) | Границы интеграции и ответственности сторон | FP scope, CR-триггеры |
-| 6 | **NFR и compliance:** latency (p95), SLA, explainability, GDPR / 152-ФЗ, хранение логов | Production-ready требования | Prod DoD, риски compliance |
-| 7 | **Кто владелец продукта и как принимаем модель?** (Product owner, комитет приёмки, A/B политика) | Governance и скорость релизов | Контракт, этап MVP pilot |
+| 1 | **Which KPIs define success?** (recommendation block CTR, conversion to cart/order, AOV, share of revenue from recommendations, retention) | Without metrics we cannot close the PoC or sign the MVP FP | PoC/MVP DoD, contract, scenario prioritization |
+| 2 | **Where do we show recommendations?** (home page, product page, cart, catalog, push/email) | Defines the integration scope and load | MVP/Prod roadmap, FP estimate |
+| 3 | **What data is available?** (click/view/cart/purchase events, unified customer ID, offline→online, history depth) | Data quality is the main AI risk in retail | PoC: go/no-go; feature store architecture |
+| 4 | **How do we handle cold start?** (new users, guests, new SKUs, regions) | Affects the choice of algorithms and baseline | MVP: fallback scenarios; coverage metrics |
+| 5 | **Which systems are in scope?** (PIM/catalog, CMS, CDP, CRM, anti-fraud, search) | Integration boundaries and each party's responsibilities | FP scope, CR triggers |
+| 6 | **NFR and compliance:** latency (p95), SLA, explainability, GDPR / 152-FZ, log retention | Production-readiness requirements | Prod DoD, compliance risks |
+| 7 | **Who owns the product and how do we accept the model?** (Product owner, acceptance committee, A/B policy) | Governance and release speed | Contract, MVP pilot stage |
 
-**Следующий шаг:** workshop 1–2 дня с RetailPartnerX → заполненная матрица ответов → уточнённый SOW PoC.
+**Next step:** a 1–2 day workshop with RetailPartnerX → completed answer matrix → refined PoC SOW.
 
 ---
 
-## 3. Контрактная модель
+## 3. Contract Model
 
-### 3.1. Уровень неопределённости
+### 3.1. Level of Uncertainty
 
-| Фактор | Статус |
+| Factor | Status |
 |--------|--------|
-| Бизнес-KPI | Не определены |
-| Scope каналов | Частично |
-| Качество/полнота данных | Не проверены |
-| Архитектура ML | Не выбрана |
-| Бенчмарк FMCG (Tesco / Carrefour / X5) | Не декомпозирован |
+| Business KPIs | Not defined |
+| Channel scope | Partial |
+| Data quality/completeness | Not verified |
+| ML architecture | Not chosen |
+| FMCG benchmark (Tesco / Carrefour / X5) | Not decomposed |
 
-**Вывод:** неопределённость **высокая** → чистый FP на весь проект **не рекомендуется**.
+**Conclusion:** uncertainty is **high** → pure FP for the whole project is **not recommended**.
 
-### 3.2. Модель по этапам
+### 3.2. Model by Stage
 
-| Этап | Модель | Scope (кратко) | Выгода RetailPartnerX | Выгода интегратора |
+| Stage | Model | Scope (brief) | Benefit to RetailPartnerX | Benefit to the integrator |
 |------|--------|----------------|------------------------|---------------------|
-| **PoC** | **T&M with cap** (потолок бюджета и срока) | 1–2 сценария, исторические данные, offline-метрики, отчёт go/no-go | Платит за проверку гипотезы, не за «чёрный ящик»; контроль cap | Не несёт риск неверной FP-оценки; гибкость итераций |
-| **MVP** | **Гибрид:** FP на фиксированный интеграционный и UI-scope + **T&M** на ML/данные | 1 канал в prod, A/B или shadow, мониторинг, baseline | Предсказуемость по «коробке»; гибкость там, где итерации модели | Справедливое распределение риска; маржа на FP-части |
-| **Production** | **Рамочный FP** на платформу + **SLA** + **ретейнер T&M** на retrain/улучшения | Все ключевые touchpoints, MLOps, SLO | Стабильная эксплуатация и масштаб | Долгосрочное сопровождение, CR на изменения |
+| **PoC** | **T&M with cap** (budget and time ceiling) | 1–2 scenarios, historical data, offline metrics, go/no-go report | Pays for testing a hypothesis, not for a "black box"; cap control | Bears no risk of a wrong FP estimate; iteration flexibility |
+| **MVP** | **Hybrid:** FP for the fixed integration and UI scope + **T&M** for ML/data | 1 channel in prod, A/B or shadow, monitoring, baseline | Predictability for the "boxed" part; flexibility where the model iterates | Fair risk distribution; margin on the FP part |
+| **Production** | **Framework FP** for the platform + **SLA** + **T&M retainer** for retraining/improvements | All key touchpoints, MLOps, SLO | Stable operation and scale | Long-term support, CRs for changes |
 
-### 3.3. Почему не чистый FP на старте
+### 3.3. Why Not Pure FP at the Start
 
-- Невозможно зафиксировать объём без аудита данных и пилотных метрик.
-- AI-проекты требуют итераций; FP без CR приводит к конфликтам scope.
-- PoC с cap снижает финансовый риск обеих сторон.
+- The volume cannot be fixed without a data audit and pilot metrics.
+- AI projects need iteration; FP without CRs leads to scope conflicts.
+- A capped PoC reduces the financial risk for both parties.
 
-### 3.4. Черновик Change Request (для FP-частей MVP/Prod)
+### 3.4. Draft Change Request (for the FP Parts of MVP/Prod)
 
-**CR инициируется**, если:
+**A CR is initiated** if:
 
-1. Добавлен новый источник событий или изменена схема ID клиента.
-2. Изменены целевые KPI (±1 основная метрика).
-3. Добавлено **>2** новых touchpoints или каналов.
-4. Объём каталога/SKU вырос **>30%** без согласованного retrain pipeline.
-5. Требования по latency/SLA ужесточены **>20%** от согласованного baseline.
-6. Новые регуляторные требования (GDPR, 152-ФЗ, cross-border data).
+1. A new event source is added or the customer ID schema changes.
+2. Target KPIs change (±1 primary metric).
+3. **>2** new touchpoints or channels are added.
+4. Catalog/SKU volume grows **>30%** without an agreed retrain pipeline.
+5. Latency/SLA requirements tighten by **>20%** from the agreed baseline.
+6. New regulatory requirements appear (GDPR, 152-FZ, cross-border data).
 
-**Процесс:** заявка → оценка impact (чел/дни, риск) → согласование доп. бюджета/срока → дополнение к SOW.
+**Process:** request → impact assessment (person-days, risk) → approval of additional budget/time → SOW amendment.
 
 ---
 
-## 4. Оценка рисков
+## 4. Risk Assessment
 
-Оценка **качественная** (шкала Н / С / В) по методике матрицы рисков из материалов курса (`docs/Risk_Matrix_Example.xlsx`).
+The assessment is **qualitative** (L / M / H scale), following the risk matrix method from the course materials (`docs/Risk_Matrix_Example.xlsx`).
 
-### 4.1. Расшифровка показателей P и I
+### 4.1. What P and I Mean
 
-| Показатель | Полное название | Что оцениваем | Как используется в документе |
+| Indicator | Full name | What we assess | How it is used in this document |
 |------------|-----------------|---------------|------------------------------|
-| **P** | Probability (вероятность) | Насколько **вероятно**, что риск проявится на данном этапе проекта | Строка матрицы 3×3 (§4.3) |
-| **I** | Impact (воздействие / ущерб) | Насколько **серьёзны последствия** для бизнеса, если риск уже случился | Столбец матрицы 3×3 (§4.3) |
-| **Уровень** | Risk priority (приоритет риска) | Итог для планирования митигации: **Н** — наблюдение, **С** — контроль, **В** — активная митигация | Ячейка на пересечении P и I; **не** среднее арифметическое P и I |
+| **P** | Probability | How **likely** the risk is to materialize at this project stage | Row of the 3×3 matrix (§4.3) |
+| **I** | Impact | How **serious the consequences** are for the business if the risk occurs | Column of the 3×3 matrix (§4.3) |
+| **Level** | Risk priority | The result for mitigation planning: **L** — monitor, **M** — control, **H** — active mitigation | Cell at the intersection of P and I; **not** the arithmetic mean of P and I |
 
-**Шкала Н / С / В — критерии для P (вероятность):**
+**L / M / H scale — criteria for P (probability):**
 
-| Значение | Критерий (вероятность наступления) |
+| Value | Criterion (likelihood of occurrence) |
 |----------|-----------------------------------|
-| **Н** | Маловероятно при принятых мерах; нет типовых предпосылок в отрасли |
-| **С** | Реалистично без специальных мер; встречается в похожих AI-проектах |
-| **В** | Высокая вероятность по умолчанию на этапе; почти неизбежно без митигации |
+| **L** | Unlikely given the measures taken; no typical precursors in the industry |
+| **M** | Realistic without special measures; seen in similar AI projects |
+| **H** | High probability by default at this stage; almost inevitable without mitigation |
 
-**Шкала Н / С / В — критерии для I (воздействие):**
+**L / M / H scale — criteria for I (impact):**
 
-| Значение | Критерий (последствия для бизнеса) |
+| Value | Criterion (business consequences) |
 |----------|-------------------------------------|
-| **Н** | Локальный сбой без влияния на KPI и compliance |
-| **С** | Деградация UX, задержки релиза, доп. затраты на доработку |
-| **В** | Срыв KPI, репутационный ущерб, штрафы, остановка пилота |
+| **L** | Local failure with no effect on KPIs or compliance |
+| **M** | UX degradation, release delays, additional rework costs |
+| **H** | Missed KPIs, reputational damage, fines, pilot shutdown |
 
-### 4.2. Обоснование оценок рисков (Basis of Estimate)
+### 4.2. Rationale for the Risk Scores (Basis of Estimate)
 
-Баллы P и I в реестре §4.4 — **предварительная экспертная оценка** на этапе pre-discovery. Это не фактические метрики RetailPartnerX (аудит данных и workshop ещё впереди).
+The P and I scores in the §4.4 register are a **preliminary expert estimate** at the pre-discovery stage. They are not actual RetailPartnerX metrics (the data audit and workshop are still ahead).
 
-| Источник обоснования | Что учтено в оценке |
+| Source of rationale | What the estimate takes into account |
 |--------------------|---------------------|
-| **Допущения проекта (§1)** | Размытые требования, FMCG, omnichannel, регуляторика GDPR/152-ФЗ |
-| **Контекст этапа** | PoC — фокус на данных; MVP — пилот и cold start; Prod — drift, нагрузка, MLOps |
-| **Отраслевые паттерны** | Типовые риски recsys в grocery/FMCG (качество событий, cold start, сезонность SKU) |
-| **Практика интегратора** | Накопленный опыт внедрений AI в ритейле до старта измерений у заказчика |
-| **Методика курса** | Формат матрицы 3×3 и качественная шкала из `Risk_Matrix_Example.xlsx` |
+| **Project assumptions (§1)** | Vague requirements, FMCG, omnichannel, GDPR/152-FZ regulation |
+| **Stage context** | PoC — focus on data; MVP — pilot and cold start; Prod — drift, load, MLOps |
+| **Industry patterns** | Typical recsys risks in grocery/FMCG (event quality, cold start, SKU seasonality) |
+| **Integrator practice** | Accumulated experience of AI rollouts in retail before measurements start at the client |
+| **Course method** | The 3×3 matrix format and qualitative scale from `Risk_Matrix_Example.xlsx` |
 
-**Статус оценок:** *Draft — subject to validation* после workshop (§2) и data audit в PoC; при изменении допущений — пересчёт P/I и уровней, при необходимости — количественная оценка (§4.5).
+**Status of the estimates:** *Draft — subject to validation* after the workshop (§2) and the data audit in the PoC; if assumptions change, P/I and levels are recalculated and, if needed, a quantitative assessment is done (§4.5).
 
-### 4.3. Качественная матрица 3×3
+### 4.3. Qualitative 3×3 Matrix
 
-Легенда ячеек: **Н** — низкий приоритет, **С** — средний, **В** — высокий (требует плана митигации).
+Cell legend: **L** — low priority, **M** — medium, **H** — high (requires a mitigation plan).
 
-| P \\ I | Низкое воздействие (I=Н) | Среднее воздействие (I=С) | Высокое воздействие (I=В) |
+| P \\ I | Low impact (I=L) | Medium impact (I=M) | High impact (I=H) |
 |--------|--------------------------|---------------------------|---------------------------|
-| **Низкая вероятность (P=Н)** | Н | С | С |
-| **Средняя вероятность (P=С)** | С | С | **В** |
-| **Высокая вероятность (P=В)** | С | **В** | **В** |
+| **Low probability (P=L)** | L | M | M |
+| **Medium probability (P=M)** | M | M | **H** |
+| **High probability (P=H)** | M | **H** | **H** |
 
-**Как получить «Уровень» для риска:** найдите в таблице ячейку на пересечении строки P и столбца I. Пример: R1 имеет P=**С**, I=**В** → ячейка **В**; R6 имеет P=**Н**, I=**В** → ячейка **С** (низкая вероятность, но высокий ущерб при инциденте).
+**How to get the "Level" of a risk:** find the cell at the intersection of row P and column I. Example: R1 has P=**M**, I=**H** → cell **H**; R6 has P=**L**, I=**H** → cell **M** (low probability, but high damage if an incident occurs).
 
-### 4.4. Реестр рисков (AI-специфичные)
+### 4.4. Risk Register (AI-Specific)
 
-| ID | Риск | P | I | Уровень | Митигация | Владелец | Этап |
+| ID | Risk | P | I | Level | Mitigation | Owner | Stage |
 |----|------|---|---|---------|-----------|----------|------|
-| R1 | Низкое качество/полнота поведенческих данных | С | В | **В** | Data audit в PoC; единый customer ID; договорённость по событиям | Data Lead RetailPartnerX | PoC |
-| R2 | Cold start: новые пользователи и SKU | В | С | **В** | Popularity + content-based fallback; правила для гостей | ML Architect | MVP |
-| R3 | Деградация модели (concept/data drift) | С | В | **В** | Мониторинг метрик online/offline; регламент retrain | MLOps | Prod |
-| R4 | Нерелевантные/«токсичные» рекомендации (репутация, compliance) | С | В | **В** | Фильтры категорий, blocklists, human-in-the-loop на пилоте | Product + Legal | MVP |
-| R5 | Latency inference в пик (распродажи) | С | С | **С** | Кэш, batch features, autoscaling, нагрузочные тесты | Platform | Prod |
-| R6 | Несоответствие GDPR / 152-ФЗ / отсутствие согласий | Н | В | **С** | Privacy review; минимизация ПДн; псевдонимизация; DPIA по юрисдикциям | Legal / Security | PoC–Prod |
-| R7 | Vendor lock-in внешнего LLM/API (если используется genAI) | С | С | **С** | Абстракция провайдера; self-hosted опция в roadmap | Architect | MVP |
-| R8 | Галлюцинации / фактические ошибки genAI (описания товаров, чат-ассистент) | С | С | **С** | Запрет автопубликации без валидации; шаблоны + human review; guardrails и blocklists | Product + ML | MVP–Prod |
+| R1 | Low quality/completeness of behavioral data | M | H | **H** | Data audit in the PoC; unified customer ID; agreement on events | Data Lead RetailPartnerX | PoC |
+| R2 | Cold start: new users and SKUs | H | M | **H** | Popularity + content-based fallback; rules for guests | ML Architect | MVP |
+| R3 | Model degradation (concept/data drift) | M | H | **H** | Online/offline metric monitoring; retrain procedure | MLOps | Prod |
+| R4 | Irrelevant/"toxic" recommendations (reputation, compliance) | M | H | **H** | Category filters, blocklists, human-in-the-loop in the pilot | Product + Legal | MVP |
+| R5 | Inference latency at peak (sales events) | M | M | **M** | Cache, batch features, autoscaling, load tests | Platform | Prod |
+| R6 | Non-compliance with GDPR / 152-FZ / missing consent | L | H | **M** | Privacy review; personal data minimization; pseudonymization; DPIA by jurisdiction | Legal / Security | PoC–Prod |
+| R7 | Vendor lock-in of an external LLM/API (if genAI is used) | M | M | **M** | Provider abstraction; self-hosted option in the roadmap | Architect | MVP |
+| R8 | Hallucinations / factual errors of genAI (product descriptions, chat assistant) | M | M | **M** | No auto-publishing without validation; templates + human review; guardrails and blocklists | Product + ML | MVP–Prod |
 
-**Сводка по приоритетам:** четыре риска уровня **В** (R1–R4) — в фокус митигации на PoC/MVP; четыре уровня **С** (R5–R8) — контроль по мере выхода в prod и при использовании genAI.
+**Priority summary:** the four **H**-level risks (R1–R4) are the mitigation focus in the PoC/MVP; the four **M**-level risks (R5–R8) are controlled as the system moves to prod and when genAI is used.
 
-### 4.5. Количественная оценка (следующий шаг)
+### 4.5. Quantitative Assessment (Next Step)
 
-После workshop рекомендуется перенести топ-5 рисков в реестр количественной оценки (шаблон ISAR: вероятность %, min/expected/max ущерб, лимит толерантности).
+After the workshop, we recommend moving the top 5 risks into a quantitative register (ISAR template: probability %, min/expected/max damage, tolerance limit).
 
 ---
 
-## 5. Дорожная карта (Roadmap)
+## 5. Roadmap
 
-### 5.1. Сводная таблица вех
+### 5.1. Milestone Summary
 
-| Веха | Срок | Цель | Ключевые deliverables | DoD (критерии успеха) | Контракт |
+| Milestone | Timing | Goal | Key deliverables | DoD (success criteria) | Contract |
 |------|------|------|----------------------|------------------------|----------|
-| **Discovery** | Нед. 0–2 | Согласовать вопросы §2 | Матрица ответов, уточнённый scope | Подписан charter PoC | T&M / внутренний |
-| **PoC** | Нед. 3–8 | Проверить гипотезу ценности | Pipeline на исторических данных; 1–2 сценария; offline-отчёт | NDCG@10 / HitRate@10 ≥ согласованного baseline **или** явный no-go с причинами | T&M with cap |
-| **MVP** | Мес. 3–6 | Выход на пользователей | API рекомендаций; интеграция в 1 канал; A/B или shadow; dashboard | Статзначимый lift по primary KPI **или** parity + план улучшений; нет критических инцидентов 2 нед. | Гибрид FP+T&M |
-| **Production** | Мес. 7–10 | Масштабирование | Все ключевые touchpoints; MLOps (retrain, alert); SLO | p95 latency ≤ целевого; uptime ≥ SLA; drift-alerts отрабатываются | FP + SLA + ретейнер |
+| **Discovery** | Wk 0–2 | Align on the §2 questions | Answer matrix, refined scope | PoC charter signed | T&M / internal |
+| **PoC** | Wk 3–8 | Test the value hypothesis | Pipeline on historical data; 1–2 scenarios; offline report | NDCG@10 / HitRate@10 ≥ the agreed baseline **or** an explicit no-go with reasons | T&M with cap |
+| **MVP** | Mo 3–6 | Reach users | Recommendations API; integration into 1 channel; A/B or shadow; dashboard | Statistically significant lift on the primary KPI **or** parity + an improvement plan; no critical incidents for 2 weeks | Hybrid FP+T&M |
+| **Production** | Mo 7–10 | Scaling | All key touchpoints; MLOps (retrain, alert); SLO | p95 latency ≤ target; uptime ≥ SLA; drift alerts are handled | FP + SLA + retainer |
 
-### 5.2. Definition of Done по этапам
+### 5.2. Definition of Done by Stage
 
 #### PoC
-- [ ] Аудит данных: покрытие событий, % идентифицированных пользователей.
-- [ ] Offline-метрики на hold-out: **NDCG@10**, **HitRate@10**, coverage.
-- [ ] Сравнение с rule-based baseline.
-- [ ] Документ **go/no-go** с рекомендацией scope MVP.
+- [ ] Data audit: event coverage, % of identified users.
+- [ ] Offline metrics on a hold-out: **NDCG@10**, **HitRate@10**, coverage.
+- [ ] Comparison with a rule-based baseline.
+- [ ] **Go/no-go** document with an MVP scope recommendation.
 
 #### MVP
-- [ ] Рекомендации в **одном** production-канале (например, карточка товара).
-- [ ] **A/B** (5–10% трафика) или shadow mode ≥ 2 недели.
-- [ ] Мониторинг: latency, error rate, business KPI daily.
-- [ ] Runbook инцидентов и rollback.
+- [ ] Recommendations in **one** production channel (for example, the product page).
+- [ ] **A/B** (5–10% of traffic) or shadow mode for ≥ 2 weeks.
+- [ ] Monitoring: latency, error rate, daily business KPIs.
+- [ ] Incident runbook and rollback.
 
 #### Production
-- [ ] Rollout на согласованные touchpoints (≥80% целевого трафика).
-- [ ] MLOps: scheduled retrain, версионирование моделей, feature store SLA.
-- [ ] SLO: availability, p95 latency, время восстановления.
-- [ ] Квартальный review KPI с Product Owner RetailPartnerX.
+- [ ] Rollout to the agreed touchpoints (≥80% of target traffic).
+- [ ] MLOps: scheduled retrain, model versioning, feature store SLA.
+- [ ] SLO: availability, p95 latency, recovery time.
+- [ ] Quarterly KPI review with the RetailPartnerX Product Owner.
 
-### 5.3. Визуализации
+### 5.3. Visualizations
 
-**Фазы проекта:**
+**Project phases:**
 
 ```mermaid
 flowchart LR
-    D[Discovery<br/>нед. 0–2] --> P[PoC<br/>нед. 3–8]
-    P --> M[MVP<br/>мес. 3–6]
-    M --> R[Production<br/>мес. 7–10]
+    D[Discovery<br/>wk 0–2] --> P[PoC<br/>wk 3–8]
+    P --> M[MVP<br/>mo 3–6]
+    M --> R[Production<br/>mo 7–10]
 ```
 
-**План-график (недели и месяцы от T0, ~10 мес.):**
+**Schedule (weeks and months from T0, ~10 months):**
 
-*T0 — согласованный старт программы; календарные даты не используются.*
+*T0 is the agreed program start; calendar dates are not used.*
 
 ```mermaid
 timeline
-    title Roadmap AI-рекомендаций RetailPartnerX
+    title RetailPartnerX AI Recommendations Roadmap
     section Discovery
-        Нед. 0–2 : Workshop и charter PoC
+        Wk 0–2 : Workshop and PoC charter
     section PoC
-        Нед. 3–8 : Data audit, offline-метрики
+        Wk 3–8 : Data audit, offline metrics
     section MVP
-        Мес. 3–6 : API, интеграция, A/B pilot
+        Mo 3–6 : API, integration, A/B pilot
     section Production
-        Мес. 7–10 : MLOps и масштабирование
+        Mo 7–10 : MLOps and scaling
 ```
 
 ---
 
-## 6. План согласования с RetailPartnerX
+## 6. Alignment Plan with RetailPartnerX
 
-| # | Действие | Срок | Результат |
+| # | Action | Timing | Result |
 |---|----------|------|-----------|
-| 1 | Презентация данного документа | Нед. 1 | Общее согласие по подходу |
-| 2 | Workshop по вопросам §2 | Нед. 1–2 | Заполненная матрица требований |
-| 3 | Подписание SOW PoC (T&M with cap) | Нед. 2 | Старт PoC |
-| 4 | Review go/no-go | Нед. 8 | Решение о MVP |
-| 5 | Согласование гибридного контракта MVP + CR policy | Нед. 9–10 | Kick-off MVP |
+| 1 | Presentation of this document | Wk 1 | General agreement on the approach |
+| 2 | Workshop on the §2 questions | Wk 1–2 | Completed requirements matrix |
+| 3 | Signing the PoC SOW (T&M with cap) | Wk 2 | PoC start |
+| 4 | Go/no-go review | Wk 8 | MVP decision |
+| 5 | Agreeing the hybrid MVP contract + CR policy | Wk 9–10 | MVP kick-off |
 
 ---

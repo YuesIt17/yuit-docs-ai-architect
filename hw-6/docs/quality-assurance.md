@@ -1,34 +1,34 @@
 # Quality Assurance — RetailPartnerX
 
-**Проект:** персонализированные рекомендации + шопинг-ассистент  
-**Этап:** MVP → Prod readiness  
-**Схема Security:** [diagrams/security-layer.drawio](../diagrams/security-layer.drawio) · [PNG](../diagrams/security-layer.png)
+**Project:** personalized recommendations + shopping assistant  
+**Stage:** MVP → Prod readiness  
+**Security diagram:** [diagrams/security-layer.drawio](../diagrams/security-layer.drawio) · [PNG](../diagrams/security-layer.png)
 
-Связь с предыдущими ДЗ: риски **R4 / R6 / R8** ([hw-1](../../hw-1/RetailPartnerX_AI_Strategy.md)); AI Service / `POST /get_recommendation` ([hw-2](../../hw-2/diagrams/README.md)); агенты + Policy Analyst / Guardrails ([hw-3](../../hw-3/docs/agents.md)); хостинг LLM ([hw-4](../../hw-4/README.md)); свежесть Product KB ([hw-5](../../hw-5/docs/data-pipeline.md)).
+Link to previous assignments: risks **R4 / R6 / R8** ([hw-1](../../hw-1/RetailPartnerX_AI_Strategy.md)); AI Service / `POST /get_recommendation` ([hw-2](../../hw-2/diagrams/README.md)); agents + Policy Analyst / Guardrails ([hw-3](../../hw-3/docs/agents.md)); LLM hosting ([hw-4](../../hw-4/README.md)); Product KB freshness ([hw-5](../../hw-5/docs/data-pipeline.md)).
 
 ## 1. Security Layer
 
-Цель: усилить путь чата и рекомендаций компонентами **PII Sanitizer**, **Input Guard** (Prompt Injection), **Output Guardrails** и **Secret Manager** — до того, как ответ попадёт пользователю или промпт уйдёт во внешний LLM.
+Goal: strengthen the chat and recommendation path with a **PII Sanitizer**, **Input Guard** (Prompt Injection), **Output Guardrails** and **Secret Manager** — before a reply reaches the user or a prompt goes to an external LLM.
 
-### Компоненты на схеме
+### Components on the Diagram
 
-| Компонент | Где в потоке | Что делает | Риски / OWASP |
+| Component | Where in the flow | What it does | Risks / OWASP |
 | --------- | ------------ | ---------- | ------------- |
-| **API Gateway** | Вход | AuthN, rate limit, TLS | Abuse / DoS |
-| **PII Sanitizer** | До LLM | Маскирует `customer_id`, ФИО, телефон, адрес, email в промпте и трейсах | **R6**, LLM02 Sensitive Information Disclosure |
-| **Input Guard** | После sanitize | Детект / блокировка Prompt Injection, jailbreak, попыток «игнорируй политику» | **LLM01 Prompt Injection** |
-| **Orchestrator + агенты** | Ядро (hw-3) / Ranker (hw-2) | Бизнес-логика; секреты только через Secret Manager | — |
-| **Output Guardrails** | После LLM | Citations к RAG-чанкам, blocklist (18+, токсичность), отказ при низком score | **R4, R8**, LLM05 Improper Output Handling |
-| **Secret Manager** | Вне кода | API keys LLM / Vector DB; ротация | LLM10 Model Theft / credential leak |
-| **Observability (redacted)** | Параллельно | Трейсы без сырых ПДн (Langfuse + Prometheus) | R6 |
+| **API Gateway** | Entry | AuthN, rate limit, TLS | Abuse / DoS |
+| **PII Sanitizer** | Before the LLM | Masks `customer_id`, full name, phone, address, email in prompts and traces | **R6**, LLM02 Sensitive Information Disclosure |
+| **Input Guard** | After sanitize | Detects / blocks Prompt Injection, jailbreaks, "ignore the policy" attempts | **LLM01 Prompt Injection** |
+| **Orchestrator + agents** | Core (hw-3) / Ranker (hw-2) | Business logic; secrets only via the Secret Manager | — |
+| **Output Guardrails** | After the LLM | Citations to RAG chunks, blocklist (18+, toxicity), refusal on a low score | **R4, R8**, LLM05 Improper Output Handling |
+| **Secret Manager** | Outside the code | LLM / Vector DB API keys; rotation | LLM10 Model Theft / credential leak |
+| **Observability (redacted)** | In parallel | Traces without raw personal data (Langfuse + Prometheus) | R6 |
 
-### Последовательность (happy path)
+### Sequence (Happy Path)
 
-Компонентная схема — в [security-layer.png](../diagrams/security-layer.png). Ниже — порядок вызовов на одном запросе чата / рекомендации.
+The component diagram is in [security-layer.png](../diagrams/security-layer.png). Below is the call order for a single chat / recommendation request.
 
 ```mermaid
 sequenceDiagram
-  actor U as Покупатель
+  actor U as Customer
   participant GW as API Gateway
   participant PII as PII Sanitizer
   participant IG as Input Guard
@@ -48,59 +48,59 @@ sequenceDiagram
   SM-->>ORCH: API keys
   ORCH->>VDB: retrieve (Product / Policy KB)
   VDB-->>ORCH: chunks
-  ORCH->>LLM: completion (без сырых ПДн)
+  ORCH->>LLM: completion (no raw personal data)
   LLM-->>ORCH: raw answer
   ORCH->>OG: raw answer
   OG->>GW: validated response
   GW-->>U: response
 ```
 
-Policy Analyst (hw-3) остаётся semantic-guard по Policy KB; **Output Guardrails** — технический валидатор ответа (schema, blocklist, grounding check) на границе сервиса.
+The Policy Analyst (hw-3) remains a semantic guard over the Policy KB; **Output Guardrails** are a technical reply validator (schema, blocklist, grounding check) at the service boundary.
 
 ## 2. Testing Strategy (RAG quality)
 
-Оцениваем качество **шопинг-ассистента** (Policy KB + Product KB) и, отдельно, релевантность ответов Ranker там, где есть genAI-объяснения. Для сравнения LLM (SaaS vs self-host из hw-4) фиксируем один gold-набор сценариев.
+We evaluate the quality of the **shopping assistant** (Policy KB + Product KB) and, separately, the relevance of Ranker replies where genAI explanations exist. To compare LLMs (SaaS vs self-host from hw-4), we fix one gold set of scenarios.
 
-### Метрики RAG
+### RAG Metrics
 
-| Метрика | Что измеряет | Зачем RetailPartnerX |
+| Metric | What it measures | Why RetailPartnerX needs it |
 | ------- | ------------ | -------------------- |
-| **Faithfulness** | Ответ опирается на retrieved chunks, без выдуманных фактов | Анти-галлюцинации по SKU, аллергенам, акциям (**R8**) |
-| **Answer Relevancy** | Ответ соответствует вопросу пользователя | «Собери ужин без глютена…» — не уводит в нерелевантные SKU |
-| **Context Precision** (доп.) | В Top-K мало «шума» | Качество Product/Policy retrieval после hw-5 embedding pipeline |
-| **Context Recall** (доп.) | Нужные факты попали в контекст | Аллергены / политики не «потерялись» |
+| **Faithfulness** | The reply relies on retrieved chunks, with no invented facts | Anti-hallucination for SKUs, allergens, promotions (**R8**) |
+| **Answer Relevancy** | The reply matches the user's question | "Build a gluten-free dinner…" does not drift to irrelevant SKUs |
+| **Context Precision** (extra) | Little "noise" in the Top-K | Product/Policy retrieval quality after the hw-5 embedding pipeline |
+| **Context Recall** (extra) | The needed facts made it into the context | Allergens / policies are not "lost" |
 
-Инфраструктурные метрики (CPU, RAM) **не заменяют** эти оценки качества.
+Infrastructure metrics (CPU, RAM) **do not replace** these quality evaluations.
 
-### Инструмент
+### Tooling
 
-**Ragas** (primary) + опционально **DeepEval** для CI-гейтов:
+**Ragas** (primary) + optionally **DeepEval** for CI gates:
 
-| Слой | Инструмент | Как используем |
+| Layer | Tool | How we use it |
 | ---- | ---------- | -------------- |
-| Offline eval / сравнение LLM | **Ragas** | Датасет из 30–50 диалогов (happy path + adversarial: injection, аллергены); метрики выше; A/B двух LLM |
-| CI / regression | **DeepEval** (или Ragas в pytest) | Порог Faithfulness ≥ 0.85, Answer Relevancy ≥ 0.8 на smoke-наборе перед релизом агентов |
-| Online (prod) | Сэмпл + human review | 1–2% трейсов в Langfuse → разметка; алерт при падении скользящего Faithfulness |
+| Offline eval / LLM comparison | **Ragas** | A dataset of 30–50 dialogs (happy path + adversarial: injection, allergens); the metrics above; A/B of two LLMs |
+| CI / regression | **DeepEval** (or Ragas in pytest) | Thresholds Faithfulness ≥ 0.85, Answer Relevancy ≥ 0.8 on a smoke set before agent releases |
+| Online (prod) | Sample + human review | 1–2% of traces in Langfuse → labeling; alert when rolling Faithfulness drops |
 
-**Gold-сценарии (минимум):** бюджетный ужин без глютена; отказ без `personalization_consent` (R6); Prompt Injection «игнорируй аллергены»; SKU с устаревшей акцией (связь с hw-5 freshness).
+**Gold scenarios (minimum):** a budget gluten-free dinner; refusal without `personalization_consent` (R6); the Prompt Injection "ignore allergens"; a SKU with an expired promotion (link to hw-5 freshness).
 
 ## 3. Observability (Grafana dashboard)
 
-Стек: **Prometheus** (метрики) + **Tempo**/OTel (traces) + **Langfuse** (LLM traces, cost) → виджеты в **Grafana**.
+Stack: **Prometheus** (metrics) + **Tempo**/OTel (traces) + **Langfuse** (LLM traces, cost) → widgets in **Grafana**.
 
-### Список виджетов дашборда «AI Service — RetailPartnerX»
+### Widgets of the "AI Service — RetailPartnerX" Dashboard
 
-| # | Виджет | Источник | SLO / зачем |
+| # | Widget | Source | SLO / why |
 | - | ------ | -------- | ----------- |
-| 1 | **Latency** — p50 / p95 / p99 `POST /get_recommendation` и chat turn | Prometheus / Tempo | NFR latency; деградация Ranker / LLM |
-| 2 | **Traffic** — RPS по endpoint / каналу (карточка vs чат) | Prometheus | Нагрузка, capacity |
-| 3 | **Errors** — 4xx/5xx, доля blocked Input Guard / Output Guardrails | Prometheus | Инциденты, ложные срабатывания guard |
-| 4 | **Saturation** — queue depth Orchestrator, Redis / Vector DB util | Prometheus | Узкие места до OOM / таймаутов |
-| 5 | **Token usage** — tokens in/out per request, by model | Langfuse → Prometheus | Стоимость и лимиты провайдера |
+| 1 | **Latency** — p50 / p95 / p99 `POST /get_recommendation` and chat turn | Prometheus / Tempo | Latency NFR; Ranker / LLM degradation |
+| 2 | **Traffic** — RPS by endpoint / channel (product page vs chat) | Prometheus | Load, capacity |
+| 3 | **Errors** — 4xx/5xx, share blocked by Input Guard / Output Guardrails | Prometheus | Incidents, guard false positives |
+| 4 | **Saturation** — Orchestrator queue depth, Redis / Vector DB util | Prometheus | Bottlenecks before OOM / timeouts |
+| 5 | **Token usage** — tokens in/out per request, by model | Langfuse → Prometheus | Cost and provider limits |
 | 6 | **Avg cost per request** — $ / turn (LLM + embedding batch amort.) | Langfuse | Unit economics MVP→Prod |
-| 7 | **AI quality (sampled)** — rolling Faithfulness / Answer Relevancy | Eval job → Prometheus | Не CPU: качество ответов модели |
+| 7 | **AI quality (sampled)** — rolling Faithfulness / Answer Relevancy | Eval job → Prometheus | Not CPU: quality of model replies |
 
-### Мокап раскладки (Grafana)
+### Layout Mockup (Grafana)
 
 ```mermaid
 %%{init: {"theme": "base", "themeVariables": {"primaryTextColor": "#000000", "secondaryTextColor": "#000000", "tertiaryTextColor": "#000000", "lineColor": "#64748b", "primaryBorderColor": "#64748b"}}}%%
@@ -108,7 +108,7 @@ flowchart TB
   subgraph golden["Golden Signals"]
     direction LR
     L["1. Latency<br/>p50 / p95 / p99<br/>chat + rec"]
-    T["2. Traffic<br/>RPS по каналу"]
+    T["2. Traffic<br/>RPS by channel"]
     E["3. Errors<br/>4xx/5xx + guard blocks"]
     S["4. Saturation<br/>queue / Redis / Vector DB"]
   end
@@ -132,12 +132,12 @@ flowchart TB
   style ai fill:#f8fafc,stroke:#94a3b8,color:#000
 ```
 
-| Ряд | Смысл |
+| Row | Meaning |
 | --- | ----- |
 | 1–4 | Golden Signals (SRE) |
 | 5–6 | Cost / tokens (Langfuse) |
-| 7 | Качество ответов модели (не CPU) |
+| 7 | Quality of model replies (not CPU) |
 
-Алерты (минимум): p95 latency > SLA; error rate > 2%; cost/request spike ×2; Faithfulness ниже порога 2 часа подряд.
+Alerts (minimum): p95 latency > SLA; error rate > 2%; cost/request spike ×2; Faithfulness below the threshold for 2 hours in a row.
 
-> **Сокращения:** [Глоссарий](../Glossary.md)
+> **Abbreviations:** [Glossary](../Glossary.md)

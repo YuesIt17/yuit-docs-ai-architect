@@ -1,67 +1,67 @@
 # Data Pipeline — RetailPartnerX
 
-**Проект:** персонализированные рекомендации + шопинг-ассистент  
-**Этап:** MVP  
-**Схема:** [diagrams/data-pipeline.drawio](../diagrams/data-pipeline.drawio) · [PNG](../diagrams/data-pipeline.png)  
-**Паттерн:** Lambda-подобная схема (batch каталог + stream поведение → общий serving)
+**Project:** personalized recommendations + shopping assistant  
+**Stage:** MVP  
+**Diagram:** [diagrams/data-pipeline.drawio](../diagrams/data-pipeline.drawio) · [PNG](../diagrams/data-pipeline.png)  
+**Pattern:** Lambda-like design (batch catalog + stream behavior → shared serving)
 
-Связь с предыдущими ДЗ: риск **R1** ([hw-1](../../hw-1/RetailPartnerX_AI_Strategy.md)); PIM / CDP / Vector DB / Ranker ([hw-2](../../hw-2/diagrams/README.md)); Product KB ([hw-3](../../hw-3/docs/rag-pipeline.md)).
+Link to previous assignments: risk **R1** ([hw-1](../../hw-1/RetailPartnerX_AI_Strategy.md)); PIM / CDP / Vector DB / Ranker ([hw-2](../../hw-2/diagrams/README.md)); Product KB ([hw-3](../../hw-3/docs/rag-pipeline.md)).
 
 ## 1. Data Sources
 
-| Источник | Тип | Сущности | SLA обновления | Потребитель downstream |
+| Source | Type | Entities | Update SLA | Downstream consumer |
 | -------- | --- | -------- | -------------- | ---------------------- |
-| **App / CDP** | Stream | `view`, `click`, `add_to_cart`, `purchase`; `customer_id`, `sku_id`, `ts` | Near-real-time (секунды–минуты) | Feature Store (онлайн-агрегаты), offline train |
-| **PIM / ERP** | Batch (ночной + CDC при изменении SKU) | `sku_id`, название, категория, атрибуты, аллергены, остатки | Nightly full + CDC deltas | Data Lake → curated catalog → embeddings / SQL |
-| **CMS / Legal** (опц.) | Batch | Policy-документы | По релизу политик | Vector DB коллекция `policies` (hw-3) |
+| **App / CDP** | Stream | `view`, `click`, `add_to_cart`, `purchase`; `customer_id`, `sku_id`, `ts` | Near-real-time (seconds to minutes) | Feature Store (online aggregates), offline training |
+| **PIM / ERP** | Batch (nightly + CDC on SKU changes) | `sku_id`, name, category, attributes, allergens, stock | Nightly full + CDC deltas | Data Lake → curated catalog → embeddings / SQL |
+| **CMS / Legal** (optional) | Batch | Policy documents | On policy release | Vector DB `policies` collection (hw-3) |
 
-Единый `customer_id` и контракт событий — митигация **R1** (качество поведенческих данных).
+A unified `customer_id` and an event contract mitigate **R1** (behavioral data quality).
 
 ## 2. Pipeline Design
 
-### Поток (ETL / ELT)
+### Flow (ETL / ELT)
 
 1. **Ingest**
-   - Stream: App/CDP → **Kafka** (топики `events.click`, `events.purchase`, …).
-   - Batch: PIM/ERP → выгрузка / API → **Spark batch**.
-2. **Clean / transform** (граница Spark)
-   - Валидация schema, дедуп, отсев ботов, нормализация `customer_id` / `sku_id`.
-   - Stream: Spark Structured Streaming → агрегаты (CTR-окна, co-view).
-   - Batch: raw → curated catalog в Lake.
+   - Stream: App/CDP → **Kafka** (topics `events.click`, `events.purchase`, …).
+   - Batch: PIM/ERP → export / API → **Spark batch**.
+2. **Clean / transform** (Spark boundary)
+   - Schema validation, deduplication, bot filtering, `customer_id` / `sku_id` normalization.
+   - Stream: Spark Structured Streaming → aggregates (CTR windows, co-view).
+   - Batch: raw → curated catalog in the Lake.
 3. **Load**
-   - Curated + агрегаты → **S3 Data Lake** (ELT: тяжёлая трансформация после посадки raw).
-   - Feature materialization → **Feature Store** (offline в Lake, online в Redis).
-   - Embedding batch (после curated catalog) → **Vector DB** (Product KB).
+   - Curated + aggregates → **S3 Data Lake** (ELT: heavy transformation after raw landing).
+   - Feature materialization → **Feature Store** (offline in the Lake, online in Redis).
+   - Embedding batch (after the curated catalog) → **Vector DB** (Product KB).
 4. **Serve**
-   - AI Service **Ranker** читает online features + при необходимости Vector DB.
-   - RAG-агенты hw-3 читают Product KB (не пересчитывают эмбеддинги на запросе).
+   - The AI Service **Ranker** reads online features + the Vector DB when needed.
+   - The hw-3 RAG agents read the Product KB (they do not recompute embeddings per request).
 
-**Где очистка:** Spark (stream + batch).  
-**Где эмбеддинги:** offline batch-job после curated catalog — **не** в online path `POST /get_recommendation`.
+**Where cleaning happens:** Spark (stream + batch).  
+**Where embeddings happen:** an offline batch job after the curated catalog — **not** in the online path of `POST /get_recommendation`.
 
 ## 3. Storage Selection
 
-| Слой | Технология | Зачем |
+| Layer | Technology | Why |
 | ---- | ---------- | ----- |
-| Event bus | **Kafka** | Буфер stream-событий; развязка App/CDP и обработчиков; replay |
-| Compute | **Spark** (batch + Structured Streaming) | Единый стек Stream vs Batch; очистка и агрегаты |
-| Data Lake | **S3** (raw + curated) | Дешёвое хранение сырья и истории для retrain / audit |
-| Feature Store | Offline (Lake/Parquet) + **Redis** online | Одни feature definitions для train и serve |
-| Vector DB | **Pinecone** (или pgvector/Qdrant из hw-2/3) | ANN-поиск эмбеддингов SKU для RAG / semantic re-rank |
-| Online cache | **Redis** | p95 latency Ranker (precomputed кандидаты / features), см. hw-2 |
+| Event bus | **Kafka** | Buffer for stream events; decouples App/CDP from processors; replay |
+| Compute | **Spark** (batch + Structured Streaming) | A single stack for Stream vs Batch; cleaning and aggregates |
+| Data Lake | **S3** (raw + curated) | Cheap storage of raw data and history for retrain / audit |
+| Feature Store | Offline (Lake/Parquet) + **Redis** online | The same feature definitions for train and serve |
+| Vector DB | **Pinecone** (or pgvector/Qdrant from hw-2/3) | ANN search over SKU embeddings for RAG / semantic re-rank |
+| Online cache | **Redis** | Ranker p95 latency (precomputed candidates / features), see hw-2 |
 
-Стек end-to-end: **Kafka → Spark → S3 → Feature Store / Pinecone**.
+End-to-end stack: **Kafka → Spark → S3 → Feature Store / Pinecone**.
 
 ## 4. Data Governance (Training-Serving Skew)
 
-| Мера | Как закрыто |
+| Measure | How it is addressed |
 | ---- | ----------- |
-| Единые feature definitions | Один реестр признаков (имя, тип, окно агрегации); offline и online считают по одной логике |
-| Point-in-time joins | При обучении — join признаков **на момент события**, без «заглядывания» в будущее |
-| Версии эмбеддингов | `index_version` / model id в метаданных Vector DB; rollback индекса без даунтайма Ranker |
-| Свежесть online store | TTL и backfill из offline; алерты на lag Kafka → Redis |
-| Drift / качество | Мониторинг полноты событий и распределения признаков (R1); data audit из PoC |
+| Unified feature definitions | One feature registry (name, type, aggregation window); offline and online compute with the same logic |
+| Point-in-time joins | During training, features are joined **as of the event time**, with no "peeking" into the future |
+| Embedding versions | `index_version` / model id in the Vector DB metadata; index rollback without Ranker downtime |
+| Online store freshness | TTL and backfill from offline; alerts on Kafka → Redis lag |
+| Drift / quality | Monitoring event completeness and feature distributions (R1); data audit from the PoC |
 
-**Итог:** Feature Store — не «ещё одно хранилище», а контракт между offline-обучением Ranker и online-инференсом на карточке товара / в чате.
+**Bottom line:** the Feature Store is not "yet another store" but a contract between offline Ranker training and online inference on the product page / in the chat.
 
-> **Сокращения:** [Глоссарий](../Glossary.md)
+> **Abbreviations:** [Glossary](../Glossary.md)

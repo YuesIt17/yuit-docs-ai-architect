@@ -3,64 +3,64 @@ from __future__ import annotations
 import pandas as pd
 
 USER_QUERY = (
-    "Собери ужин на 4 человека: паста, без глютена, бюджет до 2000 рублей"
+    "Build a dinner for 4 people: pasta, gluten-free, budget up to 2000 rubles"
 )
 
 CATALOG = pd.DataFrame(
     [
         {
             "sku": "SKU-101",
-            "title": "Паста рисовая без глютена",
-            "category": "паста",
+            "title": "Gluten-free rice pasta",
+            "category": "pasta",
             "price": 189,
             "gluten_free": True,
         },
         {
             "sku": "SKU-102",
-            "title": "Соус томатный классический",
-            "category": "соусы",
+            "title": "Classic tomato sauce",
+            "category": "sauces",
             "price": 129,
             "gluten_free": True,
         },
         {
             "sku": "SKU-103",
-            "title": "Пармезан тёртый",
-            "category": "сыры",
+            "title": "Grated Parmesan",
+            "category": "cheeses",
             "price": 249,
             "gluten_free": True,
         },
         {
             "sku": "SKU-104",
-            "title": "Паста пшеничная спагетти",
-            "category": "паста",
+            "title": "Wheat spaghetti pasta",
+            "category": "pasta",
             "price": 99,
             "gluten_free": False,
         },
         {
             "sku": "SKU-105",
-            "title": "Оливковое масло Extra Virgin",
-            "category": "масла",
+            "title": "Extra Virgin olive oil",
+            "category": "oils",
             "price": 399,
             "gluten_free": True,
         },
         {
             "sku": "SKU-106",
-            "title": "Салат руккола",
-            "category": "овощи",
+            "title": "Arugula salad",
+            "category": "vegetables",
             "price": 159,
             "gluten_free": True,
         },
         {
             "sku": "SKU-107",
-            "title": "Крутоны пшеничные",
-            "category": "готовые",
+            "title": "Wheat croutons",
+            "category": "ready-made",
             "price": 89,
             "gluten_free": False,
         },
         {
             "sku": "SKU-108",
-            "title": "Соус песто",
-            "category": "соусы",
+            "title": "Pesto sauce",
+            "category": "sauces",
             "price": 219,
             "gluten_free": True,
         },
@@ -70,20 +70,20 @@ CATALOG = pd.DataFrame(
 POLICY_KB = [
     {
         "policy_id": "POL-ALLERGEN-01",
-        "text": "Товары с глютеном запрещены при запросе безглютенового рациона.",
+        "text": "Products containing gluten are prohibited when a gluten-free diet is requested.",
     },
     {
         "policy_id": "POL-ALLERGEN-02",
-        "text": "Паста из пшеницы содержит глютен и не подходит для диеты gluten-free.",
+        "text": "Wheat pasta contains gluten and is not suitable for a gluten-free diet.",
     },
     {
         "policy_id": "POL-PROMO-01",
-        "text": "Акция 2+1 на соусы томатные до конца месяца.",
+        "text": "2+1 promotion on tomato sauces up to the end of the month.",
     },
     {
         "policy_id": "POL-GDPR-01",
-        "text": "Персональные рекомендации требуют согласия пользователя на обработку данных.",
+        "text": "Personalized recommendations require user consent for data processing.",
     },
 ]
 
-DINNER_CATEGORIES = ("паста", "соусы", "сыры", "овощи")
+DINNER_CATEGORIES = ("pasta", "sauces", "cheeses", "vegetables")
