@@ -5,7 +5,7 @@
   "nodes": [
     {
       "id": "user",
-      "label": "Покупатель\nчат / карточка",
+      "label": "Shopper\nchat / product page",
       "style": "person",
       "x": 40,
       "y": 300,
@@ -33,7 +33,7 @@
     },
     {
       "id": "pii",
-      "label": "PII Sanitizer\nмаскирование ПДн\nдо LLM (R6)",
+      "label": "PII Sanitizer\nPII masking\nbefore LLM (R6)",
       "style": "component",
       "x": 240,
       "y": 270,
@@ -53,7 +53,7 @@
     },
     {
       "id": "orch",
-      "label": "Orchestrator\n+ агенты hw-3\n/ Ranker hw-2",
+      "label": "Orchestrator\n+ hw-3 agents\n/ Ranker hw-2",
       "style": "container",
       "x": 460,
       "y": 270,
@@ -83,7 +83,7 @@
     },
     {
       "id": "out",
-      "label": "Output Guardrails\nвалидация ответа\ncitations / blocklist (R4,R8)",
+      "label": "Output Guardrails\nresponse validation\ncitations / blocklist (R4,R8)",
       "style": "component",
       "x": 700,
       "y": 100,
@@ -103,7 +103,7 @@
     },
     {
       "id": "obs",
-      "label": "Observability\nLangfuse + Prometheus\n(без сырых ПДн в логах)",
+      "label": "Observability\nLangfuse + Prometheus\n(no raw PII in logs)",
       "style": "container",
       "x": 40,
       "y": 520,
@@ -113,7 +113,7 @@
     },
     {
       "id": "note",
-      "label": "Цель: не отдавать ПДн во внешний LLM;\nблокировать injection и токсичные/галлюцинированные ответы\nдо пользователя (R4, R6, R8).",
+      "label": "Goal: keep PII from reaching the external LLM;\nblock injection and toxic/hallucinated responses\nbefore they reach the user (R4, R6, R8).",
       "style": "note",
       "x": 1210,
       "y": 280,

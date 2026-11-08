@@ -1,28 +1,28 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>RetailPartnerX — AI Architecture Case Study</title>
-  <meta name="description" content="Учебный архитектурный кейс: персонализированные рекомендации и shopping assistant для FMCG-ритейлера">
+  <meta name="description" content="Educational architecture case study: personalized recommendations and a shopping assistant for an FMCG retailer">
   <link rel="stylesheet" href="styles.css">
 </head>
 <body>
 
   <header class="top-bar">
     <div class="top-bar__brand">RetailPartnerX <span>AI Architecture</span></div>
-    <nav aria-label="Основная навигация">
+    <nav aria-label="Main navigation">
       <ul class="top-nav" id="top-nav">
-        <li><a href="#hero">Обзор</a></li>
+        <li><a href="#hero">Overview</a></li>
         <li><a href="#summary">Summary</a></li>
-        <li><a href="#journey">Путь</a></li>
-        <li><a href="#architecture">Архитектура</a></li>
-        <li><a href="#decisions">Решения</a></li>
+        <li><a href="#journey">Journey</a></li>
+        <li><a href="#architecture">Architecture</a></li>
+        <li><a href="#decisions">Decisions</a></li>
         <li><a href="#capabilities">Capabilities</a></li>
         <li><a href="#readiness">Readiness</a></li>
         <li><a href="#enterprise">Retail</a></li>
         <li><a href="#evidence">Evidence</a></li>
-        <li><a href="#author">Автор</a></li>
+        <li><a href="#author">Author</a></li>
       </ul>
     </nav>
     <div class="top-bar__controls">
@@ -39,7 +39,7 @@
       <div class="section__inner">
         <h1>RetailPartnerX — AI Architecture Case Study</h1>
         <p class="hero__subtitle">
-          Архитектура AI-native системы для FMCG-ритейла: персонализированные рекомендации и shopping assistant в мобильном приложении
+          Architecture of an AI-native system for FMCG retail: personalized recommendations and a shopping assistant in a mobile app
         </p>
         <div class="badges">
           <span class="badge">Educational</span>
@@ -47,8 +47,8 @@
           <span class="badge badge--prototype">Prototype</span>
         </div>
         <div class="hero__actions">
-          <a class="btn btn--primary" href="#architecture">Обзор архитектуры</a>
-          <a class="btn" href="#journey">Архитектурный путь</a>
+          <a class="btn btn--primary" href="#architecture">Architecture overview</a>
+          <a class="btn" href="#journey">Architecture journey</a>
           <a class="btn" href="#evidence">Evidence</a>
           <a class="btn" href="https://github.com/YuesIt17/yuit-docs-ai-architect" target="_blank" rel="noopener">GitHub Repository</a>
         </div>
@@ -58,26 +58,26 @@
     <!-- 2. Executive Summary -->
     <section class="section" id="summary">
       <p class="section__label">Executive Summary</p>
-      <h2 class="section__title">О чём этот кейс</h2>
+      <h2 class="section__title">What this case covers</h2>
       <p class="section__lead">
-        FMCG-ритейлер RetailPartnerX хочет персональные рекомендации и conversational commerce, но требования размыты — нет KPI, границ данных и каналов. Кейс прорабатывает полный architecture lifecycle: от discovery и contract model до C4, agentic RAG, data pipeline и production-readiness design.
+        RetailPartnerX, an FMCG retailer, wants personalized recommendations and conversational commerce, but the requirements are vague: no KPIs, data boundaries or channels. The case works through the full architecture lifecycle, from discovery and the contract model to C4, agentic RAG, the data pipeline and production-readiness design.
       </p>
       <div class="card-grid">
         <article class="card">
-          <h3 class="card__title">Что демонстрирует портфолио</h3>
-          <p>AI-системы как распределённые программные системы: границы, data flows, integrations, trust boundaries, failure modes, evaluation и trade-offs — не только список технологий.</p>
+          <h3 class="card__title">What this portfolio demonstrates</h3>
+          <p>AI systems treated as distributed software systems: boundaries, data flows, integrations, trust boundaries, failure modes, evaluation and trade-offs, not just a list of technologies.</p>
         </article>
         <article class="card">
-          <h3 class="card__title">Архитектурный дизайн</h3>
-          <p>C4 (C1–C3), Sequence, OpenAPI, multi-agent RAG, ADR LLM hosting, data pipeline, security/eval/observability — ~85% артефактов.</p>
+          <h3 class="card__title">Architecture design</h3>
+          <p>C4 (C1–C3), Sequence, OpenAPI, multi-agent RAG, ADR LLM hosting, data pipeline, security/eval/observability: ~85% of the artifacts.</p>
         </article>
         <article class="card">
-          <h3 class="card__title">Прототип</h3>
-          <p>LangGraph stub: 6-agent flow, keyword RAG, policy deny, 7 pytest. Без API keys, без реального LLM и Vector DB.</p>
+          <h3 class="card__title">Prototype</h3>
+          <p>LangGraph stub: 6-agent flow, keyword RAG, policy deny, 7 pytest. No API keys, no real LLM or Vector DB.</p>
         </article>
         <article class="card">
-          <h3 class="card__title">Что это не является</h3>
-          <p>Production deployment. Нет работающего Kafka, Spark, Pinecone, Prometheus, Ragas CI. Числовой SLO latency не фиксируется без замеров MVP.</p>
+          <h3 class="card__title">What this is not</h3>
+          <p>A production deployment. There is no running Kafka, Spark, Pinecone, Prometheus or Ragas CI. No numeric latency SLO is set until MVP measurements exist.</p>
         </article>
       </div>
     </section>
@@ -85,32 +85,32 @@
     <!-- 3. Architecture Journey -->
     <section class="section" id="journey">
       <p class="section__label">Architecture Journey</p>
-      <h2 class="section__title">Архитектурный путь</h2>
-      <p class="section__lead">Единый case study, последовательно развивающийся через учебные модули. Физические имена <code>hw-*</code> сохранены для процесса сдачи курса.</p>
+      <h2 class="section__title">Architecture journey</h2>
+      <p class="section__lead">A single case study developed step by step across the course modules. The physical <code>hw-*</code> directory names are kept for course submission.</p>
 
       <div class="timeline timeline--horizontal">
         <div class="timeline__item">
           <div class="timeline__step">hw-1</div>
-          <h3 class="timeline__title"><a href="../hw-1/RetailPartnerX_AI_Strategy.md">Программа и управление рисками</a></h3>
-          <p class="timeline__desc">Discovery, contract model, AI-риски R1–R8, roadmap PoC→MVP→Prod</p>
+          <h3 class="timeline__title"><a href="../hw-1/RetailPartnerX_AI_Strategy.md">Program and risk management</a></h3>
+          <p class="timeline__desc">Discovery, contract model, AI risks R1–R8, roadmap PoC→MVP→Prod</p>
           <p class="timeline__evidence"><a href="../hw-1/RetailPartnerX_AI_Strategy.md">Strategy doc →</a></p>
         </div>
         <div class="timeline__item">
           <div class="timeline__step">hw-2</div>
-          <h3 class="timeline__title"><a href="../hw-2/diagrams/README.md">Системная архитектура и API</a></h3>
-          <p class="timeline__desc">C4, Sequence, OpenAPI — границы и контракт Backend ↔ AI Service</p>
+          <h3 class="timeline__title"><a href="../hw-2/diagrams/README.md">System architecture and API</a></h3>
+          <p class="timeline__desc">C4, Sequence, OpenAPI: boundaries and the Backend ↔ AI Service contract</p>
           <p class="timeline__evidence"><a href="../hw-2/diagrams/c2-containers.png">C2 diagram →</a></p>
         </div>
         <div class="timeline__item">
           <div class="timeline__step">hw-3</div>
-          <h3 class="timeline__title"><a href="../hw-3/README.md">Agentic RAG и прототип</a></h3>
+          <h3 class="timeline__title"><a href="../hw-3/README.md">Agentic RAG and prototype</a></h3>
           <p class="timeline__desc">Supervisor multi-agent, dual KB, LangGraph stub + pytest</p>
           <p class="timeline__evidence"><a href="../hw-3/docs/agents.md">agents.md →</a></p>
         </div>
         <div class="timeline__item">
           <div class="timeline__step">hw-4</div>
           <h3 class="timeline__title"><a href="../hw-4/docs/adr-001-llm-hosting.md">ADR: LLM hosting</a></h3>
-          <p class="timeline__desc">SaaS vs Self-hosted — формализованное решение для PoC/MVP</p>
+          <p class="timeline__desc">SaaS vs self-hosted: a formal decision for PoC/MVP</p>
           <p class="timeline__evidence"><a href="../hw-4/docs/adr-001-llm-hosting.md">ADR-001 →</a></p>
         </div>
         <div class="timeline__item">
@@ -131,13 +131,13 @@
     <!-- 4. Architecture at a Glance -->
     <section class="section" id="architecture">
       <p class="section__label">Architecture at a Glance</p>
-      <h2 class="section__title">Архитектура системы</h2>
-      <p class="section__lead">Две ключевые проекции: контейнерная архитектура recsys (hw-2) и agentic layer shopping assistant (hw-3).</p>
+      <h2 class="section__title">System architecture</h2>
+      <p class="section__lead">Two key views: the recsys container architecture (hw-2) and the shopping assistant agentic layer (hw-3).</p>
 
       <div class="diagram-row diagram-row--2">
         <figure class="diagram-block">
           <img src="../hw-2/diagrams/c2-containers.png" alt="C2 Container Diagram — Frontend, Backend, AI Service, SQL DB, Vector DB" width="800" height="600">
-          <figcaption class="diagram-block__caption">C2 — контейнеры: Frontend → Backend → AI Service; PIM, CDP снаружи</figcaption>
+          <figcaption class="diagram-block__caption">C2 — containers: Frontend → Backend → AI Service; PIM and CDP are external</figcaption>
         </figure>
         <figure class="diagram-block">
           <img src="../hw-3/diagrams/multi-agent-architecture.png" alt="Multi-agent architecture — 6 agents, Orchestrator, Policy Analyst" width="800" height="600">
@@ -146,30 +146,30 @@
       </div>
 
       <ul class="arch-notes">
-        <li><strong>Границы системы:</strong> Backend оркестрирует UI и каталог; AI Service — отдельный deployable с REST-контрактом</li>
+        <li><strong>System boundaries:</strong> Backend orchestrates the UI and catalog; AI Service is a separate deployable with a REST contract</li>
         <li><strong>Major components:</strong> Ranker, RAG Manager, LLM Client (recsys); Orchestrator, Policy Analyst, Catalog Searcher (assistant)</li>
-        <li><strong>Data flows:</strong> PIM/CDP → data pipeline → Feature Store / Vector DB → AI Service; синхронный запрос на карточке товара</li>
-        <li><strong>Orchestration:</strong> LangGraph state machine (prototype); Supervisor pattern в design</li>
-        <li><strong>Integrations:</strong> <code>POST /get_recommendation</code> — Basket Assembler вызывает recsys API из hw-2</li>
-        <li><strong>Trust boundaries:</strong> Backend не знает ML-деталей; PII Sanitizer до LLM; Secret Manager для API keys</li>
+        <li><strong>Data flows:</strong> PIM/CDP → data pipeline → Feature Store / Vector DB → AI Service; synchronous request on the product page</li>
+        <li><strong>Orchestration:</strong> LangGraph state machine (prototype); Supervisor pattern in the design</li>
+        <li><strong>Integrations:</strong> <code>POST /get_recommendation</code> — Basket Assembler calls the recsys API from hw-2</li>
+        <li><strong>Trust boundaries:</strong> Backend has no knowledge of ML details; PII Sanitizer before the LLM; Secret Manager for API keys</li>
         <li><strong>Security:</strong> Input Guard (prompt injection), Output Guardrails, Policy Analyst semantic guard</li>
-        <li><strong>Observability:</strong> Prometheus + Tempo + Langfuse → Grafana (design, не deployed)</li>
+        <li><strong>Observability:</strong> Prometheus + Tempo + Langfuse → Grafana (design, not deployed)</li>
       </ul>
     </section>
 
     <!-- 5. Key Architecture Decisions -->
     <section class="section" id="decisions">
       <p class="section__label">Key Architecture Decisions</p>
-      <h2 class="section__title">Ключевые архитектурные решения</h2>
+      <h2 class="section__title">Key architecture decisions</h2>
 
       <div class="decision-grid">
         <article class="decision-card">
-          <h3>AI Service — отдельный контейнер</h3>
+          <h3>AI Service as a separate container</h3>
           <dl>
-            <dt>Контекст</dt>
-            <dd>ML/LLM-нагрузка с отдельным циклом релизов и SLA</dd>
+            <dt>Context</dt>
+            <dd>ML/LLM workload with its own release cycle and SLA</dd>
             <dt>Trade-off</dt>
-            <dd>(+) независимый деплой; (−) явный API-контракт и auth между сервисами</dd>
+            <dd>(+) independent deployment; (−) requires an explicit API contract and service-to-service auth</dd>
             <dt>Evidence</dt>
             <dd><a href="../hw-2/diagrams/README.md">hw-2/diagrams/README.md §1</a></dd>
           </dl>
@@ -177,10 +177,10 @@
         <article class="decision-card">
           <h3>Ranker → Top-K → RAG/LLM</h3>
           <dl>
-            <dt>Контекст</dt>
-            <dd>Синхронный блок на карточке; NFR p95 latency без фиксированного ms-порога (A-001)</dd>
+            <dt>Context</dt>
+            <dd>Synchronous block on the product page; p95 latency NFR with no fixed ms threshold (A-001)</dd>
             <dt>Trade-off</dt>
-            <dd>(+) latency и cost под контролем; (−) двухэтапный pipeline</dd>
+            <dd>(+) latency and cost stay under control; (−) two-stage pipeline</dd>
             <dt>Evidence</dt>
             <dd><a href="../hw-2/diagrams/c3-ai-service-recsys.png">C3 diagram</a>, <a href="../hw-2/diagrams/README.md">README §2</a></dd>
           </dl>
@@ -188,10 +188,10 @@
         <article class="decision-card">
           <h3>SaaS LLM for PoC/MVP (ADR-001)</h3>
           <dl>
-            <dt>Контекст</dt>
-            <dd>PoC/MVP shopping assistant; GDPR/152-ФЗ; риски R6/R7</dd>
+            <dt>Context</dt>
+            <dd>PoC/MVP shopping assistant; GDPR/152-FZ; risks R6/R7</dd>
             <dt>Trade-off</dt>
-            <dd>(+) TTM и quality; (−) vendor lock-in, остаточный privacy risk</dd>
+            <dd>(+) TTM and quality; (−) vendor lock-in, residual privacy risk</dd>
             <dt>Evidence</dt>
             <dd><a href="../hw-4/docs/adr-001-llm-hosting.md">ADR-001</a></dd>
           </dl>
@@ -199,10 +199,10 @@
         <article class="decision-card">
           <h3>Supervisor multi-agent (6 agents)</h3>
           <dl>
-            <dt>Контекст</dt>
-            <dd>Разные data sources: каталог vs policies; compliance R4/R6/R8</dd>
+            <dt>Context</dt>
+            <dd>Different data sources: catalog vs policies; compliance R4/R6/R8</dd>
             <dt>Trade-off</dt>
-            <dd>(+) SRP, изоляция Policy Analyst; (−) сложнее orchestration</dd>
+            <dd>(+) SRP, Policy Analyst isolation; (−) more complex orchestration</dd>
             <dt>Evidence</dt>
             <dd><a href="../hw-3/docs/agents.md">agents.md</a></dd>
           </dl>
@@ -210,21 +210,21 @@
         <article class="decision-card">
           <h3>Dual KB RAG (Product + Policy)</h3>
           <dl>
-            <dt>Контекст</dt>
-            <dd>Catalog search vs policy compliance — разные retrieval-стратегии</dd>
+            <dt>Context</dt>
+            <dd>Catalog search vs policy compliance: different retrieval strategies</dd>
             <dt>Trade-off</dt>
-            <dd>(+) точность и audit; (−) два индекса, sync pipeline</dd>
+            <dd>(+) accuracy and auditability; (−) two indexes, sync pipeline</dd>
             <dt>Evidence</dt>
             <dd><a href="../hw-3/docs/rag-pipeline.md">rag-pipeline.md</a></dd>
           </dl>
         </article>
         <article class="decision-card">
-          <h3>Security Layer до LLM</h3>
+          <h3>Security Layer before the LLM</h3>
           <dl>
-            <dt>Контекст</dt>
+            <dt>Context</dt>
             <dd>PII, prompt injection, improper output — OWASP LLM Top 10</dd>
             <dt>Trade-off</dt>
-            <dd>(+) defense in depth; (−) latency overhead на каждый запрос</dd>
+            <dd>(+) defense in depth; (−) latency overhead on every request</dd>
             <dt>Evidence</dt>
             <dd><a href="../hw-6/docs/quality-assurance.md">quality-assurance.md §1</a></dd>
           </dl>
@@ -236,7 +236,7 @@
     <section class="section" id="capabilities">
       <p class="section__label">AI Architecture Capabilities</p>
       <h2 class="section__title">Capability map</h2>
-      <p class="section__lead">Статусы основаны на repository evidence. Не все capabilities реализованы — это честная карта maturity.</p>
+      <p class="section__lead">Statuses are based on repository evidence. Not all capabilities are implemented; this is an honest maturity map.</p>
 
       <div class="capability-list">
         <div class="capability-item"><span class="capability-item__name">Program / Risk / Roadmap</span><span class="status-tag status-tag--design">Architecture Design</span></div>
@@ -260,16 +260,16 @@
     <!-- 7. Production Readiness -->
     <section class="section" id="readiness">
       <p class="section__label">Production Readiness</p>
-      <h2 class="section__title">Готовность к production</h2>
-      <p class="section__lead">AI Architecture — не только LLM API. Ниже — что учтено в design и какой статус у каждой области.</p>
+      <h2 class="section__title">Production readiness</h2>
+      <p class="section__lead">AI architecture is more than an LLM API. Below is what the design covers and the status of each area.</p>
 
       <div class="table-wrap">
         <table>
           <thead>
             <tr>
-              <th>Область</th>
-              <th>Статус</th>
-              <th>Что учтено</th>
+              <th>Area</th>
+              <th>Status</th>
+              <th>What is covered</th>
               <th>Evidence</th>
             </tr>
           </thead>
@@ -283,7 +283,7 @@
             <tr>
               <td>Reliability</td>
               <td><span class="status-tag status-tag--studied">Studied + Design</span></td>
-              <td>OpenAPI 503, graceful degradation, cold start fallback в стратегии</td>
+              <td>OpenAPI 503, graceful degradation, cold start fallback in the strategy</td>
               <td><a href="../hw-2/openapi/recommendation-api.yaml">OpenAPI</a>, <a href="../hw-1/RetailPartnerX_AI_Strategy.md">hw-1</a></td>
             </tr>
             <tr>
@@ -307,7 +307,7 @@
             <tr>
               <td>Platform</td>
               <td><span class="status-tag status-tag--none">Not evidenced</span></td>
-              <td>Deployment, K8s, CI/CD — вне scope репозитория</td>
+              <td>Deployment, K8s, CI/CD: out of scope for this repository</td>
               <td>—</td>
             </tr>
           </tbody>
@@ -318,33 +318,33 @@
     <!-- 8. Enterprise / Retail Context -->
     <section class="section" id="enterprise">
       <p class="section__label">Enterprise / Retail Context</p>
-      <h2 class="section__title">Применимость к enterprise-retail</h2>
-      <p class="section__lead">Архитектурные patterns кейса могут быть применены к типовым задачам FMCG / grocery retail — без привязки к конкретным production-системам.</p>
+      <h2 class="section__title">Applicability to enterprise retail</h2>
+      <p class="section__lead">The architecture patterns in this case can be applied to typical FMCG / grocery retail problems, without being tied to any specific production system.</p>
 
       <div class="card-grid">
         <article class="card">
           <h3 class="card__title">Product recommendations</h3>
-          <p>Блок «С этим покупают» на карточке SKU с Ranker → Top-K → LLM re-rank и контролем latency-budget.</p>
+          <p>A “Frequently bought together” block on the SKU page, with Ranker → Top-K → LLM re-rank and latency budget control.</p>
         </article>
         <article class="card">
           <h3 class="card__title">Shopping assistant</h3>
-          <p>Conversational commerce: constraint parsing (аллергены, бюджет, акции), сборка корзины через recsys API.</p>
+          <p>Conversational commerce: constraint parsing (allergens, budget, promotions) and basket assembly through the recsys API.</p>
         </article>
         <article class="card">
           <h3 class="card__title">Policy compliance</h3>
-          <p>RAG по internal policies (GDPR, 18+, аллергены) как semantic guard — Policy Analyst изолирован для audit.</p>
+          <p>RAG over internal policies (GDPR, 18+, allergens) as a semantic guard, with Policy Analyst isolated for audit.</p>
         </article>
         <article class="card">
           <h3 class="card__title">Knowledge freshness</h3>
-          <p>Data pipeline для актуальности Product KB, embeddings и online features — связь Faithfulness с hw-5 freshness.</p>
+          <p>Data pipeline that keeps the Product KB, embeddings and online features current, linking Faithfulness to hw-5 freshness.</p>
         </article>
         <article class="card">
           <h3 class="card__title">Enterprise copilots</h3>
-          <p>Supervisor multi-agent pattern применим к internal knowledge workflows с явными guardrails и evaluation.</p>
+          <p>The Supervisor multi-agent pattern applies to internal knowledge workflows with explicit guardrails and evaluation.</p>
         </article>
         <article class="card">
           <h3 class="card__title">Supplier workflows</h3>
-          <p>Dual KB architecture (operational data + policy docs) — pattern для разделения retrieval-стратегий.</p>
+          <p>Dual KB architecture (operational data + policy docs): a pattern for separating retrieval strategies.</p>
         </article>
       </div>
     </section>
@@ -352,13 +352,13 @@
     <!-- 9. Evidence Map -->
     <section class="section" id="evidence">
       <p class="section__label">Evidence Map</p>
-      <h2 class="section__title">Карта артефактов</h2>
+      <h2 class="section__title">Artifact map</h2>
 
       <div class="table-wrap">
         <table>
           <thead>
             <tr>
-              <th>Модуль</th>
+              <th>Module</th>
               <th>Architecture focus</th>
               <th>Key artifact</th>
               <th>Link</th>
@@ -405,7 +405,7 @@
         </table>
       </div>
 
-      <h3 class="section__title" style="font-size:1.1rem;margin-top:2rem;">Дополнительные диаграммы</h3>
+      <h3 class="section__title" style="font-size:1.1rem;margin-top:2rem;">Additional diagrams</h3>
       <div class="diagram-row diagram-row--2">
         <figure class="diagram-block">
           <img src="../hw-2/diagrams/c3-ai-service-recsys.png" alt="C3 AI Service components" loading="lazy">
@@ -429,20 +429,20 @@
     <!-- 10. Author -->
     <section class="section" id="author">
       <p class="section__label">Author</p>
-      <h2 class="section__title">Автор</h2>
+      <h2 class="section__title">About the author</h2>
       <div class="author-block">
-        <p class="author-block__name">Евгений Юлов</p>
-        <p class="author-block__role">Engineering Manager с 13+ годами опыта в IT / software development</p>
-        <p class="author-block__role">15+ лет общего инженерного опыта · руководство кросс-функциональной командой ~15 человек</p>
-        <p><strong>Профессиональный фокус:</strong></p>
+        <p class="author-block__name">Eugene Yulov</p>
+        <p class="author-block__role">Engineering Manager with 13+ years of experience in IT / software development</p>
+        <p class="author-block__role">15+ years of overall engineering experience · leading a cross-functional team of ~15 people</p>
+        <p><strong>Professional focus:</strong></p>
         <ul>
           <li>Solution Architecture</li>
           <li>Distributed Systems</li>
           <li>Platform Engineering</li>
-          <li>AI Architecture (развиваемая специализация на базе system engineering background)</li>
+          <li>AI Architecture (a developing specialization built on a system engineering background)</li>
         </ul>
         <p style="margin-top:1rem;font-size:0.9rem;color:var(--text-muted);">
-          AI Architecture — не многолетний production AI/ML опыт, а системная проработка AI-native архитектуры с опорой на distributed systems, platform engineering и enterprise integrations.
+          AI Architecture here does not mean many years of production AI/ML experience. It means systematic work on AI-native architecture, grounded in distributed systems, platform engineering and enterprise integrations.
         </p>
         <p style="margin-top:0.75rem;">
           <a href="https://www.linkedin.com/in/eugene-yulov/" target="_blank" rel="noopener">LinkedIn</a>
@@ -455,12 +455,12 @@
     <!-- 11. Project Status -->
     <section class="section" id="status">
       <p class="section__label">Project Status</p>
-      <h2 class="section__title">Статус проекта</h2>
+      <h2 class="section__title">Project status</h2>
       <div class="disclaimer">
-        <p><strong>RetailPartnerX</strong> — учебный архитектурный кейс, развиваемый в рамках программы AI Architect.</p>
-        <p>Репозиторий содержит architecture design, прототип LangGraph (stub), эксперименты и coursework artifacts в <code>hw-*</code>.</p>
-        <p>Цель проекта — практическая проработка архитектуры AI-native систем и production-oriented trade-offs.</p>
-        <p><strong>Проект не является production deployment.</strong></p>
+        <p><strong>RetailPartnerX</strong> — an educational architecture case study developed as part of the AI Architect program.</p>
+        <p>The repository contains the architecture design, a LangGraph prototype (stub), experiments and coursework artifacts in <code>hw-*</code>.</p>
+        <p>The goal of the project is hands-on work on the architecture of AI-native systems and production-oriented trade-offs.</p>
+        <p><strong>This project is not a production deployment.</strong></p>
       </div>
       <p style="margin-top:1.5rem;">
         <a class="btn" href="../README.md">Root README</a>

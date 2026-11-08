@@ -6,28 +6,28 @@
       <root>
         <mxCell id="0"/>
         <mxCell id="1" parent="0"/>
-        <mxCell id="2" value="Покупатель" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#08427B;fontColor=#ffffff;" vertex="1" parent="1">
+        <mxCell id="2" value="Shopper" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlign=top;html=1;outlineConnect=0;fillColor=#08427B;fontColor=#ffffff;" vertex="1" parent="1">
           <mxGeometry x="30" y="320" width="90" height="120" as="geometry"/>
         </mxCell>
         <mxCell id="3" value="RetailPartnerX E-commerce" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 8;fillColor=none;strokeColor=#666666;align=left;verticalAlign=top;fontStyle=1;fontColor=#333333;" vertex="1" parent="1">
           <mxGeometry x="180" y="60" width="1180" height="680" as="geometry"/>
         </mxCell>
-        <mxCell id="4" value="Frontend&amp;#10;Чат в приложении" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#438DD5;strokeColor=#3C7FC0;fontColor=#ffffff;align=center;" vertex="1" parent="3">
+        <mxCell id="4" value="Frontend&amp;#10;In-app chat" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#438DD5;strokeColor=#3C7FC0;fontColor=#ffffff;align=center;" vertex="1" parent="3">
           <mxGeometry x="30" y="50" width="150" height="75" as="geometry"/>
         </mxCell>
-        <mxCell id="5" value="Backend&amp;#10;BFF, сессия чата" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#438DD5;strokeColor=#3C7FC0;fontColor=#ffffff;align=center;" vertex="1" parent="3">
+        <mxCell id="5" value="Backend&amp;#10;BFF, chat session" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#438DD5;strokeColor=#3C7FC0;fontColor=#ffffff;align=center;" vertex="1" parent="3">
           <mxGeometry x="220" y="50" width="150" height="75" as="geometry"/>
         </mxCell>
         <mxCell id="6" value="AI Service — Shopping Assistant" style="rounded=0;whiteSpace=wrap;html=1;dashed=1;dashPattern=8 8;fillColor=none;strokeColor=#666666;align=left;verticalAlign=top;fontStyle=1;fontColor=#333333;" vertex="1" parent="3">
           <mxGeometry x="400" y="30" width="750" height="420" as="geometry"/>
         </mxCell>
-        <mxCell id="7" value="Orchestrator&amp;#10;(Менеджер)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;strokeColor=#3C7FC0;fontColor=#000000;align=center;" vertex="1" parent="6">
+        <mxCell id="7" value="Orchestrator&amp;#10;(Manager)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;strokeColor=#3C7FC0;fontColor=#000000;align=center;" vertex="1" parent="6">
           <mxGeometry x="30" y="45" width="150" height="70" as="geometry"/>
         </mxCell>
         <mxCell id="8" value="Intent Parser" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;strokeColor=#3C7FC0;fontColor=#000000;align=center;" vertex="1" parent="6">
           <mxGeometry x="210" y="45" width="130" height="70" as="geometry"/>
         </mxCell>
-        <mxCell id="9" value="Catalog Searcher&amp;#10;(Поисковик)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;strokeColor=#3C7FC0;fontColor=#000000;align=center;" vertex="1" parent="6">
+        <mxCell id="9" value="Catalog Searcher&amp;#10;(Searcher)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;strokeColor=#3C7FC0;fontColor=#000000;align=center;" vertex="1" parent="6">
           <mxGeometry x="30" y="150" width="150" height="70" as="geometry"/>
         </mxCell>
         <mxCell id="10" value="Policy Analyst&amp;#10;(RAG)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;strokeColor=#3C7FC0;fontColor=#000000;align=center;" vertex="1" parent="6">
@@ -36,7 +36,7 @@
         <mxCell id="11" value="Promo and Budget&amp;#10;Analyst" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;strokeColor=#3C7FC0;fontColor=#000000;align=center;" vertex="1" parent="6">
           <mxGeometry x="370" y="150" width="140" height="70" as="geometry"/>
         </mxCell>
-        <mxCell id="12" value="Basket Assembler&amp;#10;(Сборщик)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;strokeColor=#3C7FC0;fontColor=#000000;align=center;" vertex="1" parent="6">
+        <mxCell id="12" value="Basket Assembler&amp;#10;(Assembler)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;strokeColor=#3C7FC0;fontColor=#000000;align=center;" vertex="1" parent="6">
           <mxGeometry x="540" y="150" width="140" height="70" as="geometry"/>
         </mxCell>
         <mxCell id="13" value="Rec API&amp;#10;get_recommendation" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#85BBF0;strokeColor=#3C7FC0;fontColor=#000000;align=center;" vertex="1" parent="6">
@@ -45,13 +45,13 @@
         <mxCell id="14" value="Vector DB&amp;#10;products, policies" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=12;fillColor=#438DD5;strokeColor=#3C7FC0;fontColor=#ffffff;" vertex="1" parent="3">
           <mxGeometry x="30" y="500" width="180" height="85" as="geometry"/>
         </mxCell>
-        <mxCell id="15" value="SQL DB&amp;#10;цены, акции, наличие" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=12;fillColor=#438DD5;strokeColor=#3C7FC0;fontColor=#ffffff;" vertex="1" parent="3">
+        <mxCell id="15" value="SQL DB&amp;#10;prices, promotions, availability" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=12;fillColor=#438DD5;strokeColor=#3C7FC0;fontColor=#ffffff;" vertex="1" parent="3">
           <mxGeometry x="250" y="500" width="170" height="85" as="geometry"/>
         </mxCell>
         <mxCell id="16" value="Policy KB&amp;#10;CMS, Legal" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#999999;strokeColor=#666666;fontColor=#ffffff;align=center;" vertex="1" parent="3">
           <mxGeometry x="480" y="500" width="150" height="70" as="geometry"/>
         </mxCell>
-        <mxCell id="17" value="PIM&amp;#10;Каталог" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#999999;strokeColor=#666666;fontColor=#ffffff;align=center;" vertex="1" parent="3">
+        <mxCell id="17" value="PIM&amp;#10;Catalog" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#999999;strokeColor=#666666;fontColor=#ffffff;align=center;" vertex="1" parent="3">
           <mxGeometry x="680" y="500" width="130" height="70" as="geometry"/>
         </mxCell>
         <mxCell id="18" value="Offline ingestion&amp;#10;chunk, embed, index" style="shape=note;whiteSpace=wrap;html=1;backgroundOutline=1;fillColor=#fff2cc;strokeColor=#d6b656;size=14;align=left;" vertex="1" parent="3">
